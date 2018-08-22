@@ -81,4 +81,6 @@ if __name__ == '__main__':
             createMap()
 
     pygame.quit()
+    print("hello world")
+    
 
