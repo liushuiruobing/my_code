@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QPalette,QColor,QPixmap
 import sys
 
 class Ui_MainWindow(object):
@@ -19,11 +20,17 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.label_title_img = QtWidgets.QLabel(self.centralwidget)
         self.label_title_img.setGeometry(QtCore.QRect(0, 0, 960, 141))
+        title_img = QPixmap('img/bg1.png')   #加载顶部图片
+        self.label_title_img.setPixmap(title_img)  #调色板设置位图
         self.label_title_img.setText("")
         self.label_title_img.setObjectName("label_title_img")
         self.widget_query = QtWidgets.QWidget(self.centralwidget)
         self.widget_query.setGeometry(QtCore.QRect(0, 141, 960, 80))
         self.widget_query.setObjectName("widget_query")
+        self.widget_query.setAutoFillBackground(True)   #开启自动填充背景
+        palete = QPalette()   #创建调色板的对象
+        palete.setBrush(QPalette.Background,QtGui.QBrush(QtGui.QPixmap('img/bg2.png')))
+
         self.label = QtWidgets.QLabel(self.widget_query)
         self.label.setGeometry(QtCore.QRect(30, 30, 54, 12))
         self.label.setObjectName("label")
@@ -70,9 +77,14 @@ class Ui_MainWindow(object):
         self.label_5.setGeometry(QtCore.QRect(0, 301, 960, 71))
         self.label_5.setText("")
         self.label_5.setObjectName("label_5")
+        tran_imag = QPixmap('img/bg4.png')
+        self.label_5.setPixmap(tran_imag)
+
+
         self.tableView = QtWidgets.QTableView(self.centralwidget)
         self.tableView.setGeometry(QtCore.QRect(0, 373, 960, 411))
         self.tableView.setObjectName("tableView")
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
