@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import imge_rc
 import sys
 
 class Ui_MainWindow(object):
@@ -19,10 +20,12 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.label_title_img = QtWidgets.QLabel(self.centralwidget)
         self.label_title_img.setGeometry(QtCore.QRect(0, 0, 960, 141))
+        self.label_title_img.setStyleSheet("background-image: url(:/png/img/bg1.png);")
         self.label_title_img.setText("")
         self.label_title_img.setObjectName("label_title_img")
         self.widget_query = QtWidgets.QWidget(self.centralwidget)
         self.widget_query.setGeometry(QtCore.QRect(0, 141, 960, 80))
+        self.widget_query.setStyleSheet("background-image: url(:/png/img/bg2.png);")
         self.widget_query.setObjectName("widget_query")
         self.label = QtWidgets.QLabel(self.widget_query)
         self.label.setGeometry(QtCore.QRect(30, 30, 54, 12))
@@ -47,6 +50,7 @@ class Ui_MainWindow(object):
         self.pushButton_check.setObjectName("pushButton_check")
         self.widget = QtWidgets.QWidget(self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(0, 221, 960, 80))
+        self.widget.setStyleSheet("background-image: url(:/png/img/bg3.png);")
         self.widget.setObjectName("widget")
         self.label_4 = QtWidgets.QLabel(self.widget)
         self.label_4.setGeometry(QtCore.QRect(30, 30, 80, 12))
@@ -68,6 +72,7 @@ class Ui_MainWindow(object):
         self.checkBox_K.setObjectName("checkBox_K")
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setGeometry(QtCore.QRect(0, 301, 960, 71))
+        self.label_5.setStyleSheet("background-image: url(:/png/img/bg4.png);")
         self.label_5.setText("")
         self.label_5.setObjectName("label_5")
         self.tableView = QtWidgets.QTableView(self.centralwidget)
@@ -101,5 +106,10 @@ def show_MainWindow():
     MainWindow.show();
     sys.exit(app.exec())  #当窗口创建完成以后，需要结束主循环
 
+from get_stations import*
+
 if __name__ == '__main__':
+   # if isStations() == False:   #文件不存在则下载文件
+    getStation()
     show_MainWindow()
+
