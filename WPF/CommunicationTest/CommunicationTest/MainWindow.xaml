@@ -21,28 +21,16 @@
                     </Grid.ColumnDefinitions>
                     <Label x:Name="label" Content="Ip地址：" HorizontalAlignment="Left" Margin="25,18,0,0" VerticalAlignment="Top" Height="26" Width="58"/>
                     <Label x:Name="labe2" Content="端口号：" HorizontalAlignment="Left" Margin="25,45,0,0" VerticalAlignment="Top" Height="26" Width="58"/>
-                    <TextBox x:Name="textBoxIp" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,17,0,0" TextWrapping="Wrap" Text="192.168.81.11" VerticalAlignment="Top" Width="100"/>
-                    <TextBox x:Name="textBoxPort" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,46,0,0" TextWrapping="Wrap" Text="5025" VerticalAlignment="Top" Width="100"/>
+                    <TextBox x:Name="textBox_Ip" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,17,0,0" TextWrapping="Wrap" Text="192.168.81.11" VerticalAlignment="Top" Width="100"/>
+                    <TextBox x:Name="textBox_Port" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,46,0,0" TextWrapping="Wrap" Text="5025" VerticalAlignment="Top" Width="100"/>
                     <Button x:Name="button_Connect" Content="连接" Grid.Column="1" Margin="10,20,10,0" VerticalAlignment="Top" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" Click="button_Connect_Click"/>
                     <Button x:Name="button_DisConnect" Content="断开" Grid.Column="1" Margin="10,50,10,0" VerticalAlignment="Top" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" Click="button_DisConnect_Click"/>
                     <GroupBox x:Name="groupBoxSend" Header="发送区" Margin="2,2.2,1.8,2.6" Grid.Row="1">
-                        <RichTextBox x:Name="richTextBox_Send" Margin="0,2,0,0">
-                            <FlowDocument>
-                                <Paragraph>
-                                    <Run Text="*IDN?\n"/>
-                                </Paragraph>
-                            </FlowDocument>
-                        </RichTextBox>
+                        <TextBox x:Name="textBox_Send" AcceptsReturn="True" Margin="0,3,0,0" TextWrapping="Wrap" Text="*idn?"/>
                     </GroupBox>
                     <Button x:Name="button_Send" Content="发送" Margin="0" Grid.Row="2" VerticalAlignment="Center" Width="75" Click="button_Send_Click"/>
                     <GroupBox x:Name="groupBoxRecv" Grid.Column="1" Header="接收区" Margin="2.2,2.2,2.4,2.6" Grid.Row="1">
-                        <RichTextBox x:Name="richTextBox_Recv" Margin="0,2,0,0">
-                            <FlowDocument>
-                                <Paragraph>
-                                    <Run Text=""/>
-                                </Paragraph>
-                            </FlowDocument>
-                        </RichTextBox>
+                        <TextBox x:Name="textBox_Recv" Margin="0,3,0,0" TextWrapping="Wrap"/>
                     </GroupBox>
                     <Button x:Name="button_Clear" Content="清空" Grid.Column="1" Margin="0" Grid.Row="2" Width="75" VerticalAlignment="Center" Click="button_Clear_Click"/>
                 </Grid>
