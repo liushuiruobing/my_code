@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO.Ports;
+using System.Threading;
+using System.Diagnostics;
 
 namespace CommunicationTest
 {
@@ -22,14 +25,25 @@ namespace CommunicationTest
     /// </summary>
     public partial class MainWindow : Window
     {
-        MySocket mySocket = null;
+        public  MySocket mySocket = null;
+        public MySerial MySerial = null;
+        public Thread readSerialThread = null;
+        private AutoResetEvent readSerialThreadexitEvent;
+        private int nWaitTime = 10;
+
+        SynchronizationContext m_SyncContext = null; 
+
         public MainWindow()
         {
             InitializeComponent();
             mySocket = new MySocket();
+            MySerial = new MySerial();
 
             button_TcpDisConnect.IsEnabled = false;
             button_TcpSend.IsEnabled = false;
+
+            button_SerialDisConnect.IsEnabled = false;
+            button_SerialSend.IsEnabled = false;
         }
 
         private void button_TcpConnect_Click(object sender, RoutedEventArgs e)
@@ -70,24 +84,81 @@ namespace CommunicationTest
             textBox_TcpRecv.Clear();
         }
 
+        //连接串口
         private void button_SerialConnect_Click(object sender, RoutedEventArgs e)
         {
+            MySerial.strPort = textBox_SerialPort.Text;
+            MySerial.nBaudRate = int.Parse(textBox_BaudRate.Text);
+            MySerial.nParity = (Parity)Enum.Parse(typeof(Parity), textBox_CheckBit.Text, true); 
+            MySerial.nDataBits = int.Parse(textBox_DataBit.Text);
+            MySerial.StopBits = (StopBits)Enum.Parse(typeof(StopBits), textBox_StopBit.Text, true);
 
+            MySerial.Connect(ref MySerial.serialPort);
+            
+            if (MySerial != null && MySerial.serialPort.IsOpen)
+            {
+                m_SyncContext = SynchronizationContext.Current;
+                readSerialThreadexitEvent = new AutoResetEvent(false);
+                readSerialThread = new Thread(SerialReadFunc);
+                readSerialThread.Start();
+            }
+
+            button_SerialConnect.IsEnabled = false;
+            button_SerialDisConnect.IsEnabled = true;
+            button_SerialSend.IsEnabled = true;
         }
 
         private void button_SerialDisConnect_Click(object sender, RoutedEventArgs e)
-        {
+        {           
+            if (readSerialThread != null)
+            {
+                readSerialThreadexitEvent.Set();
+                readSerialThread.Join();
+                readSerialThread = null;
+            }
 
+            MySerial.serialPort.Close();
+            button_SerialConnect.IsEnabled = true;
+            button_SerialDisConnect.IsEnabled = false;
+            button_SerialSend.IsEnabled = false;
         }
 
         private void button_SerialSend_Click(object sender, RoutedEventArgs e)
         {
-
+            if(MySerial != null)
+                MySerial.SerialWrite(textBox_SerialSend.Text);
         }
 
         private void button_SerialClear_Click(object sender, RoutedEventArgs e)
         {
+            textBox_SerialRecv.Text = "清除！";
+        }
 
+        public void SerialReadFunc()
+        {
+            while (true)
+            {
+                MySerial.SerialRead();
+                m_SyncContext.Post(UpdateSerialRecv, MySerial.strRead);
+                if (readSerialThreadexitEvent.WaitOne(nWaitTime))
+                {
+                    break;
+                }             
+            }
+        }
+
+        private void UpdateSerialRecv(object text)
+        {
+            textBox_SerialRecv.Text += text.ToString();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (readSerialThread != null)
+            {
+                readSerialThread.Abort();
+                readSerialThread.Join();
+            }          
         }
     }
 
@@ -151,6 +222,80 @@ namespace CommunicationTest
             while (nRecvTemp > 0);
 
             return strRecv;
+        }
+    }
+
+    public partial class MyUsb
+    {
+
+    }
+
+    public partial class MySerial
+    {
+        public SerialPort serialPort = null;
+        public string strRead = " ";
+        public string strWrite;
+        public string strPort;
+        public int nBaudRate;
+        public Parity nParity;
+        public int nDataBits;
+        public StopBits StopBits;
+        public int nReadTimeOut = 500;
+        public int nWriteTimeOut = 500;
+
+        public bool Connect(ref SerialPort tempSerial)
+        {
+            bool bRe = false;
+            tempSerial = new SerialPort(strPort, nBaudRate, nParity, nDataBits, StopBits);
+
+            //默认是InfiniteTimeout
+            tempSerial.ReadTimeout = nReadTimeOut;
+            //tempSerial.WriteTimeout = nWriteTimeOut;
+
+            try
+            {
+                serialPort.Open();
+                bRe = true;
+            }
+            catch
+            {
+                MessageBox.Show("打开串口失败！");
+            }
+
+            return bRe;
+        }
+
+        public void SerialRead()
+        {
+            try
+            {
+                strRead = serialPort.ReadLine();
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("指定端口未打开！");
+            }
+            catch (TimeoutException)
+            {
+                strRead = "";
+            }
+            Debug.WriteLine(strRead);
+        }
+
+        public void SerialWrite(string strWrite)
+        {
+            try
+            {
+                serialPort.Write(strWrite);
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("指定端口未打开！");
+            }
+            catch (TimeoutException)
+            {
+                //MessageBox.Show("写入超时！");
+            }
         }
     }
 }
