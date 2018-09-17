@@ -16,30 +16,60 @@
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="224*"/>
-                        <ColumnDefinition Width="251*"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label x:Name="label" Content="Ip地址：" HorizontalAlignment="Left" Margin="25,18,0,0" VerticalAlignment="Top" Height="26" Width="58"/>
                     <Label x:Name="labe2" Content="端口号：" HorizontalAlignment="Left" Margin="25,45,0,0" VerticalAlignment="Top" Height="26" Width="58"/>
                     <TextBox x:Name="textBox_Ip" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,17,0,0" TextWrapping="Wrap" Text="192.168.81.11" VerticalAlignment="Top" Width="100"/>
                     <TextBox x:Name="textBox_Port" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,46,0,0" TextWrapping="Wrap" Text="5025" VerticalAlignment="Top" Width="100"/>
-                    <Button x:Name="button_Connect" Content="连接" Grid.Column="1" Margin="10,20,10,0" VerticalAlignment="Top" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" Click="button_Connect_Click"/>
-                    <Button x:Name="button_DisConnect" Content="断开" Grid.Column="1" Margin="10,50,10,0" VerticalAlignment="Top" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" Click="button_DisConnect_Click"/>
-                    <GroupBox x:Name="groupBoxSend" Header="发送区" Margin="2,2.2,1.8,2.6" Grid.Row="1">
-                        <TextBox x:Name="textBox_Send" AcceptsReturn="True" Margin="0,3,0,0" TextWrapping="Wrap" Text="*idn?"/>
+                    <Button x:Name="button_TcpConnect" Content="连接" Grid.Column="1" Margin="0,0,0,35" VerticalAlignment="Center" MinWidth="70" MaxWidth="75" HorizontalAlignment="Center" Click="button_TcpConnect_Click"/>
+                    <Button x:Name="button_TcpDisConnect" Content="断开" Grid.Column="1" Margin="0,35,0,0" VerticalAlignment="Center" MinWidth="70" MaxWidth="75" HorizontalAlignment="Center" Click="button_TcpDisConnect_Click"/>
+                    <GroupBox x:Name="groupBoxSend" Header="发送区" Margin="2,2,2,3" Grid.Row="1">
+                        <TextBox x:Name="textBox_TcpSend" AcceptsReturn="True" Margin="0,3,0,0" TextWrapping="Wrap" Text="*idn?"/>
                     </GroupBox>
-                    <Button x:Name="button_Send" Content="发送" Margin="0" Grid.Row="2" VerticalAlignment="Center" Width="75" Click="button_Send_Click"/>
-                    <GroupBox x:Name="groupBoxRecv" Grid.Column="1" Header="接收区" Margin="2.2,2.2,2.4,2.6" Grid.Row="1">
-                        <TextBox x:Name="textBox_Recv" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                    <Button x:Name="button_TcpSend" Content="发送" Margin="0" Grid.Row="2" Click="button_TcpSend_Click" MinWidth="70" MaxWidth="75" HorizontalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <GroupBox x:Name="groupBoxRecv" Grid.Column="1" Header="接收区" Margin="2,2,2,3" Grid.Row="1">
+                        <TextBox x:Name="textBox_TcpRecv" Margin="0,3,0,0" TextWrapping="Wrap"/>
                     </GroupBox>
-                    <Button x:Name="button_Clear" Content="清空" Grid.Column="1" Margin="0" Grid.Row="2" Width="75" VerticalAlignment="Center" Click="button_Clear_Click"/>
+                    <Button x:Name="button_TcpClear" Content="清空" Grid.Column="1" Grid.Row="2" Click="button_TcpClear_Click" MinWidth="70" MaxWidth="75" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </TabItem>
             <TabItem Header="USB通信">
                 <Grid Background="#FFE5E5E5"/>
             </TabItem>
             <TabItem Header="串口通信">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="LightGreen" Margin="3,2,3,2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="9*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="labe3l" Content="端口号：" HorizontalAlignment="Left" Margin="25,18,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="labe32" Content="波特率：" HorizontalAlignment="Left" Margin="25,45,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="labe33" Content="停止位：" HorizontalAlignment="Center" Margin="60,18,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="labe34" Content="数据位：" HorizontalAlignment="Center" Margin="60,45,0,0" VerticalAlignment="Top" RenderTransformOrigin="2.81,0.654" />
+                    <Label x:Name="labe35" Content="奇偶校验位：" HorizontalAlignment="Left" Margin="10,18,0,0" VerticalAlignment="Top" RenderTransformOrigin="2.81,0.654" Grid.Column="1" />
+                    <TextBox x:Name="textBox_SerialPort" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="85,22,0,0" TextWrapping="Wrap" Text="Com1" VerticalAlignment="Top" MinWidth="52" MaxWidth="60" />
+                    <TextBox x:Name="textBox_BaudRate" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="84,48,0,0" TextWrapping="Wrap" Text="115200" VerticalAlignment="Top" MinWidth="52" MaxWidth="60"/>
+                    <TextBox x:Name="textBox_StopBit" Grid.Column="0" HorizontalAlignment="Center" Height="20" Margin="180,22,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" RenderTransformOrigin="3.528,0.55" MinWidth="52" MaxWidth="60" />
+                    <TextBox x:Name="textBox_DataBit" Grid.Column="0" HorizontalAlignment="Center" Height="20" Margin="180,48,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" RenderTransformOrigin="11,2" MinWidth="52" MaxWidth="60"/>
+                    <TextBox x:Name="textBox_CheckBit" Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="95,22,0,0" TextWrapping="Wrap" Text="无" VerticalAlignment="Top" MinWidth="52" MaxWidth="60"/>
+                    <Button x:Name="button_SerialConnect" Content="连接" Grid.Column="1" VerticalAlignment="Center" MinWidth="70" MaxWidth="75" HorizontalAlignment="Center" Click="button_SerialConnect_Click" Margin="180,0,0,28"/>
+                    <Button x:Name="button_SerialDisConnect" Content="断开" Grid.Column="1" VerticalAlignment="Center" MinWidth="70" MaxWidth="75" HorizontalAlignment="Center"  Click="button_SerialDisConnect_Click" RenderTransformOrigin="0.507,1.182" Margin="180,35,0,0"/>
+                    <GroupBox x:Name="groupBoxSerialSend" Header="发送区" Margin="2,2,2,3" Grid.Row="1">
+                        <TextBox x:Name="textBox_SerialSend" AcceptsReturn="True" Margin="0,3,0,0" TextWrapping="Wrap" Text="*idn?"/>
+                    </GroupBox>
+                    <Button x:Name="button_SerialSend" Content="发送" Margin="0" Grid.Row="2" VerticalAlignment="Center" Click="button_SerialSend_Click" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center"/>
+                    <GroupBox x:Name="groupBoxSerialRecv" Grid.Column="1" Header="接收区" Margin="2,2,2,3" Grid.Row="1">
+                        <TextBox x:Name="textBox_SerialRecv" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                    </GroupBox>
+                    <Button x:Name="button_SerialClear" Content="清空" Grid.Column="1" Grid.Row="2" Click="button_SerialSend_Click" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

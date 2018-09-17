@@ -28,36 +28,36 @@ namespace CommunicationTest
             InitializeComponent();
             mySocket = new MySocket();
 
-            button_DisConnect.IsEnabled = false;
-            button_Send.IsEnabled = false;
+            button_TcpDisConnect.IsEnabled = false;
+            button_TcpSend.IsEnabled = false;
         }
 
-        private void button_Connect_Click(object sender, RoutedEventArgs e)
+        private void button_TcpConnect_Click(object sender, RoutedEventArgs e)
         {
             string strIp = textBox_Ip.Text;
             int nPort = int.Parse(textBox_Port.Text);
             mySocket.socket = mySocket.ConnectSocket(strIp, nPort);
-            button_Connect.IsEnabled = false;
-            button_DisConnect.IsEnabled = true;
-            button_Send.IsEnabled = true;
+            button_TcpConnect.IsEnabled = false;
+            button_TcpDisConnect.IsEnabled = true;
+            button_TcpSend.IsEnabled = true;
         }
 
-        private void button_DisConnect_Click(object sender, RoutedEventArgs e)
+        private void button_TcpDisConnect_Click(object sender, RoutedEventArgs e)
         {
             if (mySocket.socket != null)
                 mySocket.socket.Close();
 
-            button_Connect.IsEnabled = true;
-            button_DisConnect.IsEnabled = false;
-            button_Send.IsEnabled = false;
+            button_TcpConnect.IsEnabled = true;
+            button_TcpDisConnect.IsEnabled = false;
+            button_TcpSend.IsEnabled = false;
         }
 
-        private void button_Send_Click(object sender, RoutedEventArgs e)
+        private void button_TcpSend_Click(object sender, RoutedEventArgs e)
         {
             if (mySocket.socket != null)
             {
-                string strRecv = mySocket.SocketSendAndReceive(ref mySocket.socket, textBox_Send.Text);
-                textBox_Recv.Text += strRecv;
+                string strRecv = mySocket.SocketSendAndReceive(ref mySocket.socket, textBox_TcpSend.Text);
+                textBox_TcpRecv.Text += strRecv;
             }
             else
             {
@@ -65,9 +65,29 @@ namespace CommunicationTest
             }
         }
 
-        private void button_Clear_Click(object sender, RoutedEventArgs e)
+        private void button_TcpClear_Click(object sender, RoutedEventArgs e)
         {
-            textBox_Recv.Clear();
+            textBox_TcpRecv.Clear();
+        }
+
+        private void button_SerialConnect_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void button_SerialDisConnect_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void button_SerialSend_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void button_SerialClear_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 
