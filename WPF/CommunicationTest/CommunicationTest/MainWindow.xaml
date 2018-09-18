@@ -36,7 +36,9 @@
                 </Grid>
             </TabItem>
             <TabItem Header="USB通信">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="LightGreen" Margin="3,2,3,2">
+                    
+                </Grid>
             </TabItem>
             <TabItem Header="串口通信">
                 <Grid Background="LightGreen" Margin="3,2,3,2">
