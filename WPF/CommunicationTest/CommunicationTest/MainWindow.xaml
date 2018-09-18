@@ -21,8 +21,8 @@
                     </Grid.ColumnDefinitions>
                     <Label x:Name="label" Content="Ip地址：" HorizontalAlignment="Left" Margin="25,18,0,0" VerticalAlignment="Top" Height="26" Width="58"/>
                     <Label x:Name="labe2" Content="端口号：" HorizontalAlignment="Left" Margin="25,45,0,0" VerticalAlignment="Top" Height="26" Width="58"/>
-                    <TextBox x:Name="textBox_Ip" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,17,0,0" TextWrapping="Wrap" Text="192.168.81.11" VerticalAlignment="Top" Width="100"/>
-                    <TextBox x:Name="textBox_Port" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,46,0,0" TextWrapping="Wrap" Text="5025" VerticalAlignment="Top" Width="100"/>
+                    <TextBox x:Name="textBox_Ip" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,20,0,0" TextWrapping="Wrap" Text="192.168.81.11" VerticalAlignment="Top" Width="100"/>
+                    <TextBox x:Name="textBox_Port" Grid.Column="0" HorizontalAlignment="Left" Height="20" Margin="88,49,0,0" TextWrapping="Wrap" Text="5025" VerticalAlignment="Top" Width="100"/>
                     <Button x:Name="button_TcpConnect" Content="连接" Grid.Column="1" Margin="0,0,0,35" VerticalAlignment="Center" MinWidth="70" MaxWidth="75" HorizontalAlignment="Center" Click="button_TcpConnect_Click"/>
                     <Button x:Name="button_TcpDisConnect" Content="断开" Grid.Column="1" Margin="0,35,0,0" VerticalAlignment="Center" MinWidth="70" MaxWidth="75" HorizontalAlignment="Center" Click="button_TcpDisConnect_Click"/>
                     <GroupBox x:Name="groupBoxSend" Header="发送区" Margin="2,2,2,3" Grid.Row="1">
@@ -37,7 +37,27 @@
             </TabItem>
             <TabItem Header="USB通信">
                 <Grid Background="LightGreen" Margin="3,2,3,2">
-                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="9*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="labe2l" Content="USB状态：" HorizontalAlignment="Center" Margin="0,0,100,0" VerticalAlignment="Center"/>
+                    <Label x:Name="labe22" Content="未连接" HorizontalAlignment="Center" Margin="150,0,0,0" VerticalAlignment="Center" />
+                    <Button x:Name="button_UsbConnect" Content="连接" Grid.Column="1" VerticalAlignment="Center" MinWidth="70" MaxWidth="75" HorizontalAlignment="Center" Margin="0,0,150,0" Click="button_UsbConnect_Click"/>
+                    <Button x:Name="button_UsbDisConnect" Content="断开" Grid.Column="1" VerticalAlignment="Center" MinWidth="70" MaxWidth="75" HorizontalAlignment="Center"  RenderTransformOrigin="0.507,1.182" Margin="150,0,0,0" Click="button_UsbDisConnect_Click"/>
+                    <GroupBox x:Name="groupBoxUsbSend" Header="发送区" Margin="2,2,2,3" Grid.Row="1">
+                        <TextBox x:Name="textBox_UsbSend" AcceptsReturn="True" Margin="0,3,0,0" TextWrapping="Wrap" Text="*idn?"/>
+                    </GroupBox>
+                    <Button x:Name="button_UsbSend" Content="发送" Margin="0" Grid.Row="2" VerticalAlignment="Center" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" Click="button_UsbSend_Click"/>
+                    <GroupBox x:Name="groupBoxUsbRecv" Grid.Column="1" Header="接收区" Margin="2,2,2,3" Grid.Row="1">
+                        <TextBox x:Name="textBox_UsbRecv" Margin="0,3,0,0"  TextWrapping="Wrap"/>
+                    </GroupBox>
+                    <Button x:Name="button_UsbClear" Content="清空" Grid.Column="1" Grid.Row="2" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" VerticalAlignment="Center" Click="button_UsbClear_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="串口通信">
@@ -68,7 +88,7 @@
                     </GroupBox>
                     <Button x:Name="button_SerialSend" Content="发送" Margin="0" Grid.Row="2" VerticalAlignment="Center" Click="button_SerialSend_Click" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center"/>
                     <GroupBox x:Name="groupBoxSerialRecv" Grid.Column="1" Header="接收区" Margin="2,2,2,3" Grid.Row="1">
-                        <TextBox x:Name="textBox_SerialRecv" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                        <TextBox x:Name="textBox_SerialRecv" Margin="0,3,0,0"  TextWrapping="Wrap"/>
                     </GroupBox>
                     <Button x:Name="button_SerialClear" Content="清空" Grid.Column="1" Grid.Row="2" Click="button_SerialClear_Click" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>

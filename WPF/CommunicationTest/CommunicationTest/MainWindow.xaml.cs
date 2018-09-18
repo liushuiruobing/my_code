@@ -46,6 +46,16 @@ namespace CommunicationTest
             button_SerialSend.IsEnabled = false;
         }
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (readSerialThread != null)
+            {
+                readSerialThread.Abort();
+                readSerialThread.Join();
+            }
+        }
+
+        //网络相关操作
         private void button_TcpConnect_Click(object sender, RoutedEventArgs e)
         {
             string strIp = textBox_Ip.Text;
@@ -84,7 +94,28 @@ namespace CommunicationTest
             textBox_TcpRecv.Clear();
         }
 
-        //连接串口
+        //USB的相关操作
+        private void button_UsbConnect_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void button_UsbDisConnect_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void button_UsbSend_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void button_UsbClear_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        //串口相关操作
         private void button_SerialConnect_Click(object sender, RoutedEventArgs e)
         {
             MySerial.strPort = textBox_SerialPort.Text;
@@ -150,15 +181,6 @@ namespace CommunicationTest
         private void UpdateSerialRecv(object text)
         {
             textBox_SerialRecv.Text += text.ToString();
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            if (readSerialThread != null)
-            {
-                readSerialThread.Abort();
-                readSerialThread.Join();
-            }          
         }
     }
 
