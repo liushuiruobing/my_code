@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.IO.Ports;
 using System.Threading;
 using System.Diagnostics;
+using LibUsbDotNet.DeviceNotify;
 
 namespace CommunicationTest
 {
@@ -25,23 +26,35 @@ namespace CommunicationTest
     /// </summary>
     public partial class MainWindow : Window
     {
+        //网络
         public  MySocket mySocket = null;
+
+        //Usb
+        public MyUsb myUsb = null;
+
+        //串口
         public MySerial MySerial = null;
         public Thread readSerialThread = null;
         private AutoResetEvent readSerialThreadexitEvent;
         private int nWaitTime = 10;
 
-        SynchronizationContext m_SyncContext = null; 
+        SynchronizationContext m_SyncContext = null;
 
         public MainWindow()
         {
             InitializeComponent();
             mySocket = new MySocket();
+            myUsb = new MyUsb();
             MySerial = new MySerial();
 
+            //网络
             button_TcpDisConnect.IsEnabled = false;
             button_TcpSend.IsEnabled = false;
 
+            //Usb
+            lable_UsbState.Foreground = new SolidColorBrush(Colors.Red);
+
+            //串口
             button_SerialDisConnect.IsEnabled = false;
             button_SerialSend.IsEnabled = false;
         }
@@ -114,6 +127,8 @@ namespace CommunicationTest
         {
 
         }
+
+
 
         //串口相关操作
         private void button_SerialConnect_Click(object sender, RoutedEventArgs e)
@@ -250,6 +265,26 @@ namespace CommunicationTest
     public partial class MyUsb
     {
 
+        public string strUsbState = "断开";
+        public IDeviceNotifier UsbDeviceNotifier = DeviceNotifier.OpenDeviceNotifier();
+
+        public MyUsb()
+        {
+            UsbDeviceNotifier.OnDeviceNotify += OnDeviceNotifyEvent;
+        }
+
+        private void OnDeviceNotifyEvent(object sender, DeviceNotifyEventArgs e)
+        {
+            // A Device system-level event has occured
+            if (e.EventType == EventType.DeviceArrival)
+            {
+                strUsbState = "连接";
+            }
+            else if (e.EventType == EventType.DeviceRemoveComplete)
+            {
+                strUsbState = "断开";
+            }
+        }
     }
 
     public partial class MySerial
