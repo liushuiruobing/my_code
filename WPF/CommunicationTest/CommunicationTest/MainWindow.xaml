@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CommunicationTest"
         mc:Ignorable="d"
-        Title="通信测试" Height="600" Width="800" MinWidth="600" MinHeight="500" MaxWidth="800" MaxHeight="600" Closed="Window_Closed">
+        Title="通信测试" Height="600" Width="800" MinWidth="600" MinHeight="500" MaxWidth="800" MaxHeight="600" Closed="Window_Closed" Icon="Communication.ico">
     <Grid>
         <TabControl x:Name="tabControl" Margin="2" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
             <TabItem Header="网络通信">
@@ -47,7 +47,6 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label x:Name="labe2l" Content="USB状态：" HorizontalAlignment="Center" Margin="0,0,100,0" VerticalAlignment="Center"/>
-                    <Label x:Name="lable_UsbState" Content="断开" HorizontalAlignment="Right" Margin="0" VerticalAlignment="Center" />
                     <GroupBox x:Name="groupBoxUsbSend" Header="发送区" Margin="2,2,2,3" Grid.Row="1">
                         <TextBox x:Name="textBox_UsbSend" AcceptsReturn="True" Margin="0,3,0,0" TextWrapping="Wrap" Text="*idn?"/>
                     </GroupBox>
@@ -56,6 +55,7 @@
                         <TextBox x:Name="textBox_UsbRecv" Margin="0,3,0,0"  TextWrapping="Wrap"/>
                     </GroupBox>
                     <Button x:Name="button_UsbClear" Content="清空" Grid.Column="1" Grid.Row="2" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" VerticalAlignment="Center" Click="button_UsbClear_Click"/>
+                    <TextBlock x:Name="textBlock_UbsState" HorizontalAlignment="Right" Margin="0,36,10,0" TextWrapping="Wrap" Text="123" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="串口通信">

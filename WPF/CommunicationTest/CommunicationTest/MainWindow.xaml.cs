@@ -1,23 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.IO.Ports;
 using System.Threading;
 using System.Diagnostics;
 using LibUsbDotNet.DeviceNotify;
+using System.ComponentModel;
 
 namespace CommunicationTest
 {
@@ -52,7 +45,15 @@ namespace CommunicationTest
             button_TcpSend.IsEnabled = false;
 
             //Usb
-            lable_UsbState.Foreground = new SolidColorBrush(Colors.Red);
+            Binding binding = new Binding();
+            binding.Source = myUsb;
+            binding.Path = new PropertyPath("USB_State");
+            BindingOperations.SetBinding(textBlock_UbsState, TextBlock.TextProperty, binding);
+
+            Binding bdColor = new Binding();
+            bdColor.Source = myUsb;
+            bdColor.Path = new PropertyPath("USB_StateColor");
+            BindingOperations.SetBinding(textBlock_UbsState, TextBlock.ForegroundProperty, bdColor);
 
             //串口
             button_SerialDisConnect.IsEnabled = false;
@@ -120,15 +121,12 @@ namespace CommunicationTest
 
         private void button_UsbSend_Click(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void button_UsbClear_Click(object sender, RoutedEventArgs e)
         {
 
         }
-
-
 
         //串口相关操作
         private void button_SerialConnect_Click(object sender, RoutedEventArgs e)
@@ -262,27 +260,57 @@ namespace CommunicationTest
         }
     }
 
-    public partial class MyUsb
+    public partial class MyUsb : INotifyPropertyChanged
     {
+        private string strMyUsbState = "无设备";
+        private Brush strMyUsbStateColor = new SolidColorBrush(Colors.Black);
 
-        public string strUsbState = "断开";
+        public event PropertyChangedEventHandler PropertyChanged;
         public IDeviceNotifier UsbDeviceNotifier = DeviceNotifier.OpenDeviceNotifier();
-
+       
         public MyUsb()
         {
             UsbDeviceNotifier.OnDeviceNotify += OnDeviceNotifyEvent;
         }
 
+        public string USB_State
+        {
+            get { return strMyUsbState; }
+            set
+            {
+                strMyUsbState = value;
+                if (this.PropertyChanged != null)
+                {
+                    this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs("USB_State"));
+                }
+            }
+        }
+
+        public Brush USB_StateColor
+        {
+            get { return strMyUsbStateColor; }
+            set
+            {
+                strMyUsbStateColor = value;
+                if (this.PropertyChanged != null)
+                {
+                    this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs("USB_StateColor"));
+                }
+            }
+        }
+     
         private void OnDeviceNotifyEvent(object sender, DeviceNotifyEventArgs e)
         {
             // A Device system-level event has occured
             if (e.EventType == EventType.DeviceArrival)
             {
-                strUsbState = "连接";
+                USB_State = "连接";
+                USB_StateColor = new SolidColorBrush(Colors.Blue);
             }
             else if (e.EventType == EventType.DeviceRemoveComplete)
             {
-                strUsbState = "断开";
+                USB_State = "断开";
+                USB_StateColor = new SolidColorBrush(Colors.Red);
             }
         }
     }
