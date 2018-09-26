@@ -48,13 +48,14 @@ namespace CommunicationTest
             Binding binding = new Binding();
             binding.Source = myUsb;
             binding.Path = new PropertyPath("USB_State");
+            ////使用Binding 连接数据源与绑定目标
             BindingOperations.SetBinding(textBlock_UbsState, TextBlock.TextProperty, binding);
 
             Binding bdColor = new Binding();
             bdColor.Source = myUsb;
             bdColor.Path = new PropertyPath("USB_StateColor");
             BindingOperations.SetBinding(textBlock_UbsState, TextBlock.ForegroundProperty, bdColor);
-
+            
             //串口
             button_SerialDisConnect.IsEnabled = false;
             button_SerialSend.IsEnabled = false;
@@ -109,18 +110,9 @@ namespace CommunicationTest
         }
 
         //USB的相关操作
-        private void button_UsbConnect_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void button_UsbDisConnect_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void button_UsbSend_Click(object sender, RoutedEventArgs e)
         {
+
         }
 
         private void button_UsbClear_Click(object sender, RoutedEventArgs e)
@@ -298,7 +290,7 @@ namespace CommunicationTest
                 }
             }
         }
-     
+
         private void OnDeviceNotifyEvent(object sender, DeviceNotifyEventArgs e)
         {
             // A Device system-level event has occured
