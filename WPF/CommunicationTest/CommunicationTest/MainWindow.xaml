@@ -56,6 +56,7 @@
                     </GroupBox>
                     <Button x:Name="button_UsbClear" Content="清空" Grid.Column="1" Grid.Row="2" MinWidth="75" MaxWidth="75" HorizontalAlignment="Center" VerticalAlignment="Center" Click="button_UsbClear_Click"/>
                     <TextBlock x:Name="textBlock_UbsState" HorizontalAlignment="Right" Margin="0,36,10,0" TextWrapping="Wrap" Text="123" VerticalAlignment="Top"/>
+                    <Button x:Name="button_UsbStart" Content="开启通信" Grid.Column="1" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" MinWidth="60" MaxWidth="60" Click="button_UsbStart_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="串口通信">

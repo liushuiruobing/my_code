@@ -11,6 +11,10 @@ using System.Threading;
 using System.Diagnostics;
 using LibUsbDotNet.DeviceNotify;
 using System.ComponentModel;
+using LibUsbDotNet.Main;
+using LibUsbDotNet;
+using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace CommunicationTest
 {
@@ -24,6 +28,11 @@ namespace CommunicationTest
 
         //Usb
         public MyUsb myUsb = null;
+        public Thread readUsbThread = null;
+        private AutoResetEvent readUsbThreadexitEvent;
+        public int nVID = 0x1234;
+        public int nPID = 0x5677;
+        public string strUsbRead = "";
 
         //串口
         public MySerial MySerial = null;
@@ -37,7 +46,7 @@ namespace CommunicationTest
         {
             InitializeComponent();
             mySocket = new MySocket();
-            myUsb = new MyUsb();
+            myUsb = new MyUsb(nVID, nPID);
             MySerial = new MySerial();
 
             //网络
@@ -55,7 +64,9 @@ namespace CommunicationTest
             bdColor.Source = myUsb;
             bdColor.Path = new PropertyPath("USB_StateColor");
             BindingOperations.SetBinding(textBlock_UbsState, TextBlock.ForegroundProperty, bdColor);
-            
+
+            textBox_UsbRecv.SetBinding(TextBox.TextProperty, new Binding("USB_ReadString") { Source = myUsb });
+
             //串口
             button_SerialDisConnect.IsEnabled = false;
             button_SerialSend.IsEnabled = false;
@@ -110,14 +121,54 @@ namespace CommunicationTest
         }
 
         //USB的相关操作
+        private void button_UsbStart_Click(object sender, RoutedEventArgs e)
+        {
+            if (myUsb != null)
+            {
+                myUsb.OpenDevice();
+                if (myUsb.MyUsbDevice != null && myUsb.MyUsbDevice.IsOpen)
+                {
+                    if (textBlock_UbsState.Text != "连接")
+                    {
+                        myUsb.USB_State = "连接";
+                        myUsb.USB_StateColor = new SolidColorBrush(Colors.Blue);
+                    }
+
+                    readUsbThreadexitEvent = new AutoResetEvent(false);
+                    readUsbThread = new Thread(UsbReadThreadFunc);
+                    readUsbThread.Start();
+                }
+                else
+                    MessageBox.Show("请连接USB设备！");
+            }
+            
+        }
+
         private void button_UsbSend_Click(object sender, RoutedEventArgs e)
         {
-
+            if (myUsb != null && myUsb.MyUsbDevice != null && myUsb.MyUsbDevice.IsOpen)
+            {
+                int nWrite = -1;
+                myUsb.Write(textBox_UsbSend.Text, ref nWrite);
+            }
         }
 
         private void button_UsbClear_Click(object sender, RoutedEventArgs e)
         {
+            textBox_UsbRecv.Text = "";
+        }
 
+        public void UsbReadThreadFunc()
+        {
+            while (true)
+            {               
+                myUsb.Read(); //已经把myUsb.USB_ReadString绑定到 textBox_UsbRecv上
+
+                if (readUsbThreadexitEvent.WaitOne(nWaitTime))
+                {
+                    break;
+                }
+            }
         }
 
         //串口相关操作
@@ -187,6 +238,10 @@ namespace CommunicationTest
         {
             textBox_SerialRecv.Text += text.ToString();
         }
+
+
+
+
     }
 
     public partial class MySocket
@@ -254,15 +309,33 @@ namespace CommunicationTest
 
     public partial class MyUsb : INotifyPropertyChanged
     {
+        //USB 通断监控
         private string strMyUsbState = "无设备";
         private Brush strMyUsbStateColor = new SolidColorBrush(Colors.Black);
-
         public event PropertyChangedEventHandler PropertyChanged;
         public IDeviceNotifier UsbDeviceNotifier = DeviceNotifier.OpenDeviceNotifier();
-       
-        public MyUsb()
+
+        //USB参数
+        public int nVid = 0;
+        public int nPid = 0;
+        public int nWriteTimeOut = 2000;
+        public int nReadTimeOut = 100;
+        public readonly int nReadBufSize = 64;
+        public UsbDevice MyUsbDevice = null;
+        public UsbDeviceFinder MyUsbFinder = null;
+        public UsbEndpointReader reader = null;
+        public UsbEndpointWriter writer = null;
+        private string strUsbRead = "";
+        
+
+        public MyUsb(int nVId, int nPId)
         {
             UsbDeviceNotifier.OnDeviceNotify += OnDeviceNotifyEvent;
+
+            nVid = nVId;
+            nPid = nPId;
+            MyUsbFinder = new UsbDeviceFinder(nVId, nPId);
+           
         }
 
         public string USB_State
@@ -291,7 +364,20 @@ namespace CommunicationTest
             }
         }
 
-        private void OnDeviceNotifyEvent(object sender, DeviceNotifyEventArgs e)
+        public string USB_ReadString
+        {
+            get { return strUsbRead; }
+            set
+            {
+                strUsbRead = value;
+                if (this.PropertyChanged != null)
+                {
+                    this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs("USB_ReadString"));
+                }
+            }
+        }
+
+        public void OnDeviceNotifyEvent(object sender, DeviceNotifyEventArgs e)
         {
             // A Device system-level event has occured
             if (e.EventType == EventType.DeviceArrival)
@@ -304,6 +390,134 @@ namespace CommunicationTest
                 USB_State = "断开";
                 USB_StateColor = new SolidColorBrush(Colors.Red);
             }
+        }
+
+        public bool OpenDevice()
+        {
+            MyUsbDevice = UsbDevice.OpenUsbDevice(MyUsbFinder);
+            if (MyUsbDevice == null)
+            {
+                return false;
+            }
+
+            #region   当设备是一个 "whole" USB 时，我们的设备一般不会是此情况
+            // If this is a "whole" usb device (libusb-win32, linux libusb)
+            // it will have an IUsbDevice interface. If not (WinUSB) the 
+            // variable will be null indicating this is an interface of a 
+            // device.
+            IUsbDevice wholeUsbDevice = MyUsbDevice as IUsbDevice;
+            if (!ReferenceEquals(wholeUsbDevice, null))
+            {
+                // This is a "whole" USB device. Before it can be used, 
+                // the desired configuration and interface must be selected.
+
+                // Select config #1
+                wholeUsbDevice.SetConfiguration(1);
+
+                // Claim interface #0.
+                wholeUsbDevice.ClaimInterface(0);
+            }
+            #endregion
+
+            reader = MyUsbDevice.OpenEndpointReader(ReadEndpointID.Ep02);
+            reader.ReadBufferSize = nReadBufSize;
+
+            writer = MyUsbDevice.OpenEndpointWriter(WriteEndpointID.Ep01);
+            return true;
+        }
+
+        public bool Write(string strWrite, ref int bytesWritten)
+        {
+            bool bRe = false;
+            
+            if (!String.IsNullOrEmpty(strWrite))
+            {
+                ErrorCode ec = writer.Write(Encoding.Default.GetBytes(strWrite), nWriteTimeOut, out bytesWritten);
+                if (ec != ErrorCode.None)
+                    bRe = false;
+            }
+
+            return bRe;
+        }
+
+        public bool Read()
+        {
+            bool bRe = false;
+            int nReadCount = 0;
+            byte[] readBuffer = new byte[nReadBufSize];
+
+            ErrorCode ec = ErrorCode.None;
+            while (true)
+            {
+                int bytesRead = -1;
+
+                // If the device hasn't sent data in the last nReadTimeOut milliseconds,
+                // a timeout error (ec = IoTimedOut) will occur. 
+                ec = reader.Read(readBuffer, nReadTimeOut, out bytesRead);
+
+                nReadCount += bytesRead;
+                if (nReadCount != 0 && (bytesRead == 0 && ec == ErrorCode.IoTimedOut))
+                    break;
+            }
+
+            USB_ReadString += byteToHexStr(readBuffer);
+
+            //USB_ReadString += Encoding.Default.GetString(readBuffer, 0, nReadCount).TrimEnd('\0');
+            nReadCount = 0;
+
+            if (ec == ErrorCode.None)
+                bRe = true;
+
+            return bRe;
+        }
+
+        public bool WriteAndRead(string strWrite, ref string strRead)
+        {
+            bool bRe = false;
+            if (!String.IsNullOrEmpty(strWrite))
+            {
+                ErrorCode ec = ErrorCode.None;
+                int bytesWritten;
+                ec = writer.Write(Encoding.Default.GetBytes(strWrite), nWriteTimeOut, out bytesWritten);
+                if (ec != ErrorCode.None)
+                    return false;
+
+                int nReadCount = 0;
+                byte[] readBuffer = new byte[nReadBufSize];
+                while (true)
+                {
+                    int bytesRead = -1;
+
+                    // If the device hasn't sent data in the last nReadTimeOut milliseconds,
+                    // a timeout error (ec = IoTimedOut) will occur. 
+                    ec = reader.Read(readBuffer, nReadTimeOut, out bytesRead);
+
+                    nReadCount += bytesRead;
+                    if (nReadCount != 0 && (bytesRead == 0 && ec == ErrorCode.IoTimedOut))
+                        break;
+                }
+
+                strRead = Encoding.Default.GetString(readBuffer, 0, nReadCount);
+
+                if (ec == ErrorCode.None)
+                    bRe = true;
+            }
+
+            return bRe;
+        }
+
+        //字节数组转16进制字符串
+        public static string byteToHexStr(byte[] bytes)
+        {
+            string returnStr = "";
+            if (bytes != null)
+            {
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    returnStr += bytes[i].ToString("X2") + " ";
+                }
+            }
+            return returnStr;
         }
     }
 
