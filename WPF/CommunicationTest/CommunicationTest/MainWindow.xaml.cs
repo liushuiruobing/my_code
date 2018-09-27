@@ -79,7 +79,7 @@ namespace CommunicationTest
                 readUsbThread.Abort();
                 readUsbThread.Join();
 
-                myUsb.MyUsbDevice.Close();
+                myUsb.CloseDevice();
 
             }
            
@@ -513,6 +513,17 @@ namespace CommunicationTest
             }
 
             return bRe;
+        }
+
+        public void CloseDevice()
+        {
+            if (MyUsbDevice != null)
+            {
+                MyUsbDevice.Close();
+                MyUsbDevice = null;
+
+                UsbDevice.Exit(); // Free usb resources
+            }
         }
 
         //字节数组转16进制字符串
