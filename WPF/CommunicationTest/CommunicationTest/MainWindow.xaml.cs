@@ -28,7 +28,7 @@ namespace CommunicationTest
         //Usb
         public MyUsb myUsb = null;
         public Thread readUsbThread = null;
-        private AutoResetEvent readUsbThreadexitEvent;
+        private AutoResetEvent readUsbThreadExitEvent;
         public int nVID = 0x1234;
         public int nPID = 0x5677;
         public string strUsbRead = "";
@@ -36,8 +36,8 @@ namespace CommunicationTest
         //串口
         public MySerial MySerial = null;
         public Thread readSerialThread = null;
-        private AutoResetEvent readSerialThreadexitEvent;
-        private int nWaitTime = 10;
+        private AutoResetEvent readSerialThreadExitEvent;
+        private int nWaitTime = 50;
 
         SynchronizationContext m_SyncContext = null;
 
@@ -64,7 +64,7 @@ namespace CommunicationTest
             bdColor.Path = new PropertyPath("USB_StateColor");
             BindingOperations.SetBinding(textBlock_UbsState, TextBlock.ForegroundProperty, bdColor);
 
-            textBox_UsbRecv.SetBinding(TextBox.TextProperty, new Binding("USB_ReadString") { Source = myUsb });
+            textBox_UsbRecv.SetBinding(TextBox.TextProperty, new Binding("USB_ReadString") { Source = myUsb});
 
             //串口
             button_SerialDisConnect.IsEnabled = false;
@@ -73,6 +73,16 @@ namespace CommunicationTest
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            if (readUsbThread != null)
+            {
+                readUsbThreadExitEvent.Set();
+                readUsbThread.Abort();
+                readUsbThread.Join();
+
+                myUsb.MyUsbDevice.Close();
+
+            }
+           
             if (readSerialThread != null)
             {
                 readSerialThread.Abort();
@@ -122,7 +132,7 @@ namespace CommunicationTest
         //USB的相关操作
         private void button_UsbStart_Click(object sender, RoutedEventArgs e)
         {
-            if (myUsb != null)
+            if (myUsb.MyUsbDevice == null)
             {
                 myUsb.OpenDevice();
                 if (myUsb.MyUsbDevice != null && myUsb.MyUsbDevice.IsOpen)
@@ -133,7 +143,7 @@ namespace CommunicationTest
                         myUsb.USB_StateColor = new SolidColorBrush(Colors.Blue);
                     }
 
-                    readUsbThreadexitEvent = new AutoResetEvent(false);
+                    readUsbThreadExitEvent = new AutoResetEvent(false);
                     readUsbThread = new Thread(UsbReadThreadFunc);
                     readUsbThread.Start();
                 }
@@ -154,7 +164,7 @@ namespace CommunicationTest
 
         private void button_UsbClear_Click(object sender, RoutedEventArgs e)
         {
-            textBox_UsbRecv.Text = "";
+            myUsb.USB_ReadString = "";
         }
 
         public void UsbReadThreadFunc()
@@ -163,10 +173,11 @@ namespace CommunicationTest
             {               
                 myUsb.Read(); //已经把myUsb.USB_ReadString绑定到 textBox_UsbRecv上
 
-                if (readUsbThreadexitEvent.WaitOne(nWaitTime))
+                if (readUsbThreadExitEvent.WaitOne(nWaitTime))
                 {
                     break;
                 }
+               
             }
         }
 
@@ -184,7 +195,7 @@ namespace CommunicationTest
             if (MySerial != null && MySerial.serialPort.IsOpen)
             {
                 m_SyncContext = SynchronizationContext.Current;
-                readSerialThreadexitEvent = new AutoResetEvent(false);
+                readSerialThreadExitEvent = new AutoResetEvent(false);
                 readSerialThread = new Thread(SerialReadFunc);
                 readSerialThread.Start();
             }
@@ -198,7 +209,7 @@ namespace CommunicationTest
         {           
             if (readSerialThread != null)
             {
-                readSerialThreadexitEvent.Set();
+                readSerialThreadExitEvent.Set();
                 readSerialThread.Join();
                 readSerialThread = null;
             }
@@ -226,7 +237,7 @@ namespace CommunicationTest
             {
                 MySerial.SerialRead();
                 m_SyncContext.Post(UpdateSerialRecv, MySerial.strRead);
-                if (readSerialThreadexitEvent.WaitOne(nWaitTime))
+                if (readSerialThreadExitEvent.WaitOne(nWaitTime))
                 {
                     break;
                 }             
@@ -237,8 +248,6 @@ namespace CommunicationTest
         {
             textBox_SerialRecv.Text += text.ToString();
         }
-
-
 
 
     }
@@ -317,8 +326,8 @@ namespace CommunicationTest
         //USB参数
         public int nVid = 0;
         public int nPid = 0;
-        public int nWriteTimeOut = 2000;
-        public int nReadTimeOut = 100;
+        public int nWriteTimeOut = 1000;
+        public int nReadTimeOut = 10;
         public readonly int nReadBufSize = 64;
         public UsbDevice MyUsbDevice = null;
         public UsbDeviceFinder MyUsbFinder = null;
@@ -455,14 +464,15 @@ namespace CommunicationTest
                 ec = reader.Read(readBuffer, nReadTimeOut, out bytesRead);
 
                 nReadCount += bytesRead;
-                if (nReadCount != 0 && (bytesRead == 0 && ec == ErrorCode.IoTimedOut))
+                if (bytesRead == 0 && ec == ErrorCode.IoTimedOut)
                     break;
             }
 
-            USB_ReadString += byteToHexStr(readBuffer);
-
+            if (nReadCount != 0)
+                USB_ReadString += (byteToHexStr(readBuffer) + "\n");
+            else
+                USB_ReadString += "";
             //USB_ReadString += Encoding.Default.GetString(readBuffer, 0, nReadCount).TrimEnd('\0');
-            nReadCount = 0;
 
             if (ec == ErrorCode.None)
                 bRe = true;
@@ -569,7 +579,7 @@ namespace CommunicationTest
             {
                 strRead = "";
             }
-            Debug.WriteLine(strRead);
+            //Debug.WriteLine(strRead);
         }
 
         public void SerialWrite(string strWrite)
