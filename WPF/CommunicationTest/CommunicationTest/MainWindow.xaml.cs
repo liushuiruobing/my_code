@@ -13,8 +13,7 @@ using LibUsbDotNet.DeviceNotify;
 using System.ComponentModel;
 using LibUsbDotNet.Main;
 using LibUsbDotNet;
-using System.Runtime.InteropServices;
-using System.Collections;
+
 
 namespace CommunicationTest
 {
