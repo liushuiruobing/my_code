@@ -65,7 +65,7 @@ namespace DR30A_CS_WPF_
             double nScreenHeight = SystemParameters.WorkArea.Height; 
 
             this.MinWidth = this.MaxWidth = nScreenWidth;
-            this.MinHeight = this.MaxHeight = nScreenHeight;  
+            this.MinHeight = this.MaxHeight = nScreenHeight;         
         }
 
         //设置控件背景色
@@ -76,6 +76,8 @@ namespace DR30A_CS_WPF_
             label_Title.Foreground = customColor.TextColor;
             tabControl.Background = customColor.BackGroundColor;
             tabControl.SelectedIndex = 1;
+            listView_TestExample.Background = customColor.BackGroundColor;
+            listView_TestAction.Background = customColor.BackGroundColor;
         }
 
         private void image_Close_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
