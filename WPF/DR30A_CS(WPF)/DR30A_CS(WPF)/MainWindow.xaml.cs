@@ -51,6 +51,8 @@ namespace DR30A_CS_WPF_
             InitializeComponent();
             InitWindowSize();
             InitControlColor();
+
+            SystemParameters.StaticPropertyChanged += SystemParameters_StaticPropertyChanged;
         }
 
         //设置窗体的大小
@@ -89,6 +91,16 @@ namespace DR30A_CS_WPF_
         private void DragWindow(object sender, MouseButtonEventArgs e)
         {
             //this.DragMove();
+        }
+
+
+        private void SystemParameters_StaticPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            //系统任务栏自动隐藏后自动调整软件的高度
+            if (e.PropertyName == "WorkArea")
+            {
+                this.MinHeight = this.MaxHeight = SystemParameters.WorkArea.Height;
+            }
         }
     }
 }
