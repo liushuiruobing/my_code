@@ -24,5 +24,10 @@ namespace ControlTemplate
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("你按下的按钮是： " + ((Button)sender).Content);
+        }
     }
 }

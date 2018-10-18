@@ -6,7 +6,77 @@
         xmlns:local="clr-namespace:ControlTemplate"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+
+    <Window.Resources>
+        <ControlTemplate x:Key="ButtonTemplate1" TargetType="Button"> <!--扁平化按钮，按下改变背景色-->
+            <Border  Name="BttonBorder" BorderBrush="Red" BorderThickness="0" CornerRadius="0" Background="Black" TextBlock.FontSize="14" TextBlock.Foreground="White">
+                <Grid>
+                    <ContentPresenter HorizontalAlignment="Center"  RecognizesAccessKey="True" Margin="{TemplateBinding Padding}" ></ContentPresenter>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="BttonBorder" Property="Background" Value="Green" />
+                    <Setter TargetName="BttonBorder" Property="BorderBrush" Value="White" />
+                    <Setter TargetName="BttonBorder" Property="BorderThickness" Value="1.5" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="ButtonTemplate2" TargetType="Button"> <!--扁平化按钮，鼠标悬停改变背景色-->
+            <Border  Name="BttonBorder" BorderBrush="Red" BorderThickness="0" CornerRadius="0" Background="Black" TextBlock.FontSize="14" TextBlock.Foreground="White">
+                <Grid>
+                    <ContentPresenter HorizontalAlignment="Center"  RecognizesAccessKey="True" Margin="{TemplateBinding Padding}" ></ContentPresenter>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="BttonBorder" Property="BorderBrush" Value="White" />
+                    <Setter TargetName="BttonBorder" Property="BorderThickness" Value="1" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="ButtonTemplate3" TargetType="{x:Type Button}">
+            <Border BorderBrush="Orange" BorderThickness="1" CornerRadius="1" Background="Black" TextBlock.FontSize="14" TextBlock.Foreground="White" Name="Border">
+                <Grid>
+                    <Rectangle Name="FocusCue" Visibility="Hidden" Stroke="Black" StrokeThickness="1" StrokeDashArray="1 2" SnapsToDevicePixels="True" ></Rectangle>
+                    <ContentPresenter HorizontalAlignment="Center" RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"></ContentPresenter>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Border" Property="Background" Value="DarkRed" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="Border" Property="Background" Value="IndianRed" />
+                    <Setter TargetName="Border" Property="BorderBrush" Value="DarkKhaki" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter TargetName="FocusCue" Property="Visibility" Value="Visible" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="Border" Property="TextBlock.Foreground" Value="Gray" />
+                    <Setter TargetName="Border" Property="Background" Value="MistyRose" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="ButtonTemplate4" TargetType="{x:Type Button}">
+            <Border BorderBrush="Orange" BorderThickness="1" CornerRadius="1" Background="Black" TextBlock.FontSize="14" TextBlock.Foreground="White" Name="Border">
+                <Grid>
+                    <Rectangle Name="FocusCue" Visibility="Hidden" Stroke="Black" StrokeThickness="1" StrokeDashArray="1 2" SnapsToDevicePixels="True" ></Rectangle>
+                    <ContentPresenter HorizontalAlignment="Center" RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"></ContentPresenter>
+                </Grid>
+            </Border>
+        </ControlTemplate>
+
+    </Window.Resources>
+
+    <StackPanel>
+        <Button  Margin="10" Padding="5" FontSize="14" BorderThickness="0">普通按钮</Button>
+        <Button  Margin="10" Padding="5" Template="{StaticResource ButtonTemplate1}" Click="Button_Click" >扁平化按钮,按下改变背景色</Button>
+        <Button  Margin="10" Padding="5" Template="{StaticResource ButtonTemplate2}" Click="Button_Click" >鼠标悬停改变背景色</Button>
+        <Button  Margin="10" Padding="5" Template="{StaticResource ButtonTemplate3}" Click="Button_Click" >多个属性</Button>
+    </StackPanel>
 </Window>
