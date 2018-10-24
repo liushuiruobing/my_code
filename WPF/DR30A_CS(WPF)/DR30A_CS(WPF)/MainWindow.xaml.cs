@@ -196,6 +196,23 @@ namespace DR30A_CS_WPF_
             SetCtrlWhenOpen();            
         }
 
+        //开始采集
+        private void CarmeraStartGrab()
+        {
+            int nRet = m_pOperator.StartGrabbing();
+            if (MyCamera.MV_OK != nRet)
+            {
+                MessageBox.Show("开始取流失败！");
+                return;
+            }
+
+            //显示
+            nRet = m_pOperator.Display(m_CameraPicBox.Handle);
+            if (MyCamera.MV_OK != nRet)
+            {
+                MessageBox.Show("显示失败！");
+            }
+        }
 
         //关闭摄像头设备
         private void button_CloseCarmer_Click(object sender, RoutedEventArgs e)
@@ -220,24 +237,6 @@ namespace DR30A_CS_WPF_
             button_CloseCarmer.IsEnabled = false;
             button_SetParam.IsEnabled = false;
             button_GetParam.IsEnabled = false;
-        }
-
-        //开始采集
-        private void CarmeraStartGrab()
-        {
-            int nRet = m_pOperator.StartGrabbing();
-            if (MyCamera.MV_OK != nRet)
-            {
-                MessageBox.Show("开始取流失败！");
-                return;
-            }
-
-            //显示
-            nRet = m_pOperator.Display(m_CameraPicBox.Handle);
-            if (MyCamera.MV_OK != nRet)
-            {
-                MessageBox.Show("显示失败！");
-            }
         }
 
         private void button_SetParam_Click(object sender, RoutedEventArgs e)

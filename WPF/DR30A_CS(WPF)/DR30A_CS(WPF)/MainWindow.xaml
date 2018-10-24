@@ -6,17 +6,9 @@
         xmlns:local="clr-namespace:DR30A_CS_WPF_"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         mc:Ignorable="d"
-        Title="DR30A" d:DesignWidth="1500" d:DesignHeight="850" HorizontalAlignment="Center" VerticalAlignment="Center" WindowStartupLocation="CenterScreen" Icon="Resources\DR30A.ico" WindowStyle="None"
-        MouseLeftButtonDown="DragWindow" Closing="Window_Closing" ResizeMode="NoResize" >
-
-    <Window.Resources>
-        <WindowChrome x:Key="WindowChromeKey">
-            <WindowChrome.ResizeBorderThickness>
-                <Thickness>0</Thickness>
-            </WindowChrome.ResizeBorderThickness>
-        </WindowChrome>
-    </Window.Resources>
-
+        Title="DR30A" d:DesignWidth="1500" d:DesignHeight="850" HorizontalAlignment="Center" VerticalAlignment="Center" WindowStartupLocation="CenterScreen" Icon="Resources\DR30A.ico" 
+        WindowStyle="None" ResizeMode="NoResize" MouseLeftButtonDown="DragWindow" Closing="Window_Closing"  >
+    
     <Grid  Width="{Binding ActualWidth, ElementName=window, Mode=OneWay}"
            Height="{Binding ActualHeight, ElementName=window, Mode=OneWay}">
         <Grid.RowDefinitions>
