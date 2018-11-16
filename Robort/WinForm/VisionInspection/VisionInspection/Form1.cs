@@ -9,6 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisionInspection.Camera;
+using RABD.Lib;
+using System.Threading;
+using SmartWorkStationDR11A;
+using RABD.DROE.SystemDefine;
 
 namespace VisionInspection
 {
@@ -26,6 +30,10 @@ namespace VisionInspection
         private Pen m_RectPen = new Pen(Color.Red, 2);
         private bool m_bDrawing = false;
 
+        //机器人
+        private RobotDevice m_RobotDevice = new RobotDevice();
+        List<cPoint> m_PointList = new List<cPoint>();
+        cPoint m_MovePoint = null;
         public FormMain()
         {
             InitializeComponent();
@@ -33,7 +41,7 @@ namespace VisionInspection
 
             m_VisionCamera.m_CameraPictureBox = CameraPictureBox;
 
-
+            InitRobot();
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -144,6 +152,8 @@ namespace VisionInspection
             //SaveBmp();
             m_bDrawing = false;
             m_BitmapBak = null;
+
+            //System.GC.Collect();
             //button_AnalyzeArea_Click(null, null);
         }
 
@@ -162,6 +172,13 @@ namespace VisionInspection
             m_DrawRect.Y = m_DrawRect.Y * 2;
             m_DrawRect.Width = m_DrawRect.Width * 2;
             m_DrawRect.Height = m_DrawRect.Height * 2;
+
+            if (m_DrawRect.Width > m_BitmapBak.Width)
+                m_DrawRect.Width = m_BitmapBak.Width;
+
+            if (m_DrawRect.Height > m_BitmapBak.Height)
+                m_DrawRect.Height = m_BitmapBak.Height;
+
             g.DrawRectangle(m_RectPen, m_DrawRect);
 
             if (bDrawCenterPoint)
@@ -181,6 +198,172 @@ namespace VisionInspection
             m_StartPoint.Y = 0;
             m_EndPoint.X = 0;
             m_EndPoint.Y = 0;
+        }
+
+        public void InitRobot()
+        {
+
+            bool bRe = m_RobotDevice.Open("192.168.1.124");
+            if (bRe)
+            {
+                m_RobotDevice.ServoOn();
+                Thread.Sleep(100);  //必须延时, 否则反应很慢
+                m_RobotDevice.SetSpeed(40);
+                m_RobotDevice.SetJointDistance(1000);
+                m_RobotDevice.SetCartesianDistance(1000);
+
+                m_PointList = m_RobotDevice.GetGlobalPointData();
+                //InitCoordPoints();
+            }
+            else
+            {
+                MessageBox.Show("机械臂连接错误！");
+            }
+
+        }
+
+        public void InitCoordPoints()
+        {
+            /*
+            if (m_RobotDevice.HasAlarm())
+            {
+                m_RobotDevice.ResetAlarm();
+                Debug.WriteLine("ResetAlarm");
+            }
+
+            //点0
+            cPoint tempPoint = m_RobotDevice.GetGlobalPoint(299);  //第300个点
+            tempPoint[eAxisName.X] =-204.00 * 1000;
+            tempPoint[eAxisName.Y] = -296.00 * 1000;
+            tempPoint[eAxisName.Z] = -84.00 * 1000;
+            tempPoint[eAxisName.RZ] = -267.00 * 1000;
+            m_RobotDevice.GotoMovP(tempPoint);
+            Thread.Sleep(5000);
+            m_RobotDevice.TechGlobalPoint(299);
+
+            //点1
+            tempPoint = m_RobotDevice.GetGlobalPoint(300);  //第300个点
+            tempPoint[eAxisName.X] = -204.00 * 1000;
+            tempPoint[eAxisName.Y] = -536.00 * 1000;
+            tempPoint[eAxisName.Z] = -84.00 * 1000;
+            m_RobotDevice.GotoMovP(tempPoint);
+            Thread.Sleep(5000);
+            m_RobotDevice.TechGlobalPoint(300);
+
+            //点2
+            tempPoint = m_RobotDevice.GetGlobalPoint(301);  //第300个点
+            tempPoint[eAxisName.X] = -69.00 * 1000;
+            tempPoint[eAxisName.Y] = -536.00 * 1000;
+            tempPoint[eAxisName.Z] = -84.00 * 1000;
+            m_RobotDevice.GotoMovP(tempPoint);
+            Thread.Sleep(5000);
+            m_RobotDevice.TechGlobalPoint(301);
+
+            //点3
+            tempPoint = m_RobotDevice.GetGlobalPoint(302);  //第300个点
+            tempPoint[eAxisName.X] = -69.00 * 1000;
+            tempPoint[eAxisName.Y] = -296.00 * 1000;
+            tempPoint[eAxisName.Z] = -84.00 * 1000;
+            m_RobotDevice.GotoMovP(tempPoint);
+            Thread.Sleep(5000);
+            m_RobotDevice.TechGlobalPoint(302);
+            */
+
+        }
+
+        private void button_Robot_Get_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button_RobotRun_MouseDown(object sender, MouseEventArgs e)
+        {
+            Debug.WriteLine("Down");
+
+
+            //m_RobotDevice.TechGlobalPoint(209);
+          //  GetSystemPoint();
+
+            if (m_RobotDevice.HasAlarm())
+            {
+                m_RobotDevice.ResetAlarm();
+                MessageBox.Show("HasAlarm And ResetAlarm");
+                return;
+            }
+
+            if(m_MovePoint == null)
+                m_MovePoint = m_RobotDevice.GetGlobalPoint(304);
+            
+
+            if (m_MovePoint != null)
+            {
+                //Debug.WriteLine("改变前:");
+                //Debug.WriteLine($"p[eAxisName.X] = {p[eAxisName.X]}");
+                //Debug.WriteLine($"p[eAxisName.Y] = {p[eAxisName.Y]}");
+                //Debug.WriteLine($"p[eAxisName.Z] = {p[eAxisName.Z]}");
+                //Debug.WriteLine($"p[eAxisName.RZ] = {p[eAxisName.RZ]}");
+
+                m_MovePoint[eAxisName.X] = double.Parse(textBox_Robot_X.Text) * 1000;
+                m_MovePoint[eAxisName.Y] = double.Parse(textBox_Robot_Y.Text) * 1000;
+                m_MovePoint[eAxisName.Z] = double.Parse(textBox_Robot_Z.Text) * 1000;
+                m_MovePoint[eAxisName.RZ] = double.Parse(textBox_Robot_RZ.Text) * 1000;
+
+                // m_RobotDevice.TechGlobalPoint(208);
+                if (m_MovePoint != null)
+                {
+                    //Debug.WriteLine("改变后:");
+                    //Debug.WriteLine($"p[eAxisName.X] = {p[eAxisName.X]}");
+                    //Debug.WriteLine($"p[eAxisName.Y] = {p[eAxisName.Y]}");
+                    //Debug.WriteLine($"p[eAxisName.Z] = {p[eAxisName.Z]}");
+                    //Debug.WriteLine($"p[eAxisName.RZ] = {p[eAxisName.RZ]}");
+
+                    m_RobotDevice.GotoMovP(m_MovePoint);
+                    //cPoint StartPoint = m_RobotDevice.GetPos();
+                    //m_RobotDevice.StartContinuousMovP(StartPoint);
+                    //m_RobotDevice.EndContinuousMovP(p);
+                }
+            }       
+        }
+
+        private void button_RobotRun_MouseUp(object sender, MouseEventArgs e)
+        {            
+            if (m_RobotDevice != null)
+                m_RobotDevice.MovStop();
+
+            Debug.WriteLine("up");
+        }
+
+        private void button_RobotRun_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (m_RobotDevice != null)
+            {
+                m_RobotDevice.Close();
+            }
+        }
+
+        //定时读取机械臂的信息
+        private void timer_Robot_Tick(object sender, EventArgs e)
+        {
+            if (m_RobotDevice != null)
+            {
+                cPoint pos = m_RobotDevice.GetPos();
+                textBox_CurX.Text = (pos[eAxisName.X] / 1000).ToString("0.000");
+                textBox_CurY.Text = (pos[eAxisName.Y] / 1000).ToString("0.000");
+                textBox_CurZ.Text = (pos[eAxisName.Z] / 1000).ToString("0.000");
+                textBox_CurRZ.Text = (pos[eAxisName.RZ] / 1000).ToString("0.000");
+            }
+        }
+
+        private void button_RobotCleraCurPosMeas_Click(object sender, EventArgs e)
+        {
+            textBox_CurX.Text = "";
+            textBox_CurY.Text = "";
+            textBox_CurZ.Text = "";
         }
     }
 }
