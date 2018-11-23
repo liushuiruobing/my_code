@@ -1,4 +1,4 @@
-﻿namespace XuGuang
+﻿namespace RobotWorkstation
 {
     partial class FormMain
     {
@@ -150,7 +150,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.BackgroundImage = global::XuGuang.Properties.Resources.Backcolor;
+            this.BackgroundImage = global::RobotWorkstation.Properties.Resources.Backcolor;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(1600, 860);
             this.ControlBox = false;

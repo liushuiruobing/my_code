@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace XuGuang
+namespace RobotWorkstation
 {
     public partial class FormMain : Form
     {
@@ -19,7 +19,6 @@ namespace XuGuang
         {
             InitializeComponent();
             this.CenterToScreen();
-
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -29,7 +28,6 @@ namespace XuGuang
             InitCtrlColor();
         }
 
-        //设置窗体的大小
         public void InitWindowSize()
         {
             //得到屏幕工作区域的参数，比如去除属性任务栏的高度
