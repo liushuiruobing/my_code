@@ -13,7 +13,8 @@ namespace RobotWorkstation
 {
     public partial class FormMain : Form
     {
-        CustomColor customColor;
+        CustomColor m_CustomColor;
+        ManualDebug m_ManualDebug = new ManualDebug();  //手动调试对话框
 
         public FormMain()
         {
@@ -23,7 +24,7 @@ namespace RobotWorkstation
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            customColor.InitColor();
+            m_CustomColor.InitColor();
             InitWindowSize();
             InitCtrlColor();
         }
@@ -38,13 +39,18 @@ namespace RobotWorkstation
             this.Width = nScreenWidth;
             this.Height = nScreenHeight;
             CmdTreeView.Height = this.Height - pictureBox_Title.Height - 2;
+            if (m_ManualDebug != null)
+            {
+                m_ManualDebug.Location = new Point(CmdTreeView.Width, pictureBox_Title.Height);
+                m_ManualDebug.Width = pictureBox_Title.Width - CmdTreeView.Width - 2;
+                m_ManualDebug.Height = CmdTreeView.Height - 2;
+            }
         }
 
         public void InitCtrlColor()
         {
-            CmdTreeView.BackColor = customColor.TreeViewColor;
+            CmdTreeView.BackColor = m_CustomColor.TreeViewColor;
         }
-
 
         private void CmdTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -55,20 +61,23 @@ namespace RobotWorkstation
                     }break;
                 case "Run":
                     {
-                    }
-                    break;
+                    }break;
                 case "Manual":
                     {
-                    }
-                    break;
+                        if (m_ManualDebug != null)
+                        {
+                            m_ManualDebug.MdiParent = this;
+                            //m_ManualDebug.Width = pictureBox_Title.Width - CmdTreeView.Width - 1;
+                            //m_ManualDebug.Height = this.Height - pictureBox_Title.Height - 2;
+                            m_ManualDebug.Show();
+                        }                        
+                    }break;
                 case "SystemSeting":
                     {
-                    }
-                    break;
+                    }break;
                 case "UserLimits":
                     {
-                    }
-                    break;
+                    } break;
                 case "Exit":
                     {
                         this.Close();
@@ -76,6 +85,11 @@ namespace RobotWorkstation
                 default:
                     break;
             }
+        }
+
+        private void FormMain_MaximumSizeChanged(object sender, EventArgs e)
+        {
+            InitWindowSize();
         }
     }
 }

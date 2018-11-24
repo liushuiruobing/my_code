@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RobotWorkstation
 {
@@ -51,7 +52,7 @@ namespace RobotWorkstation
             }
             catch(Exception ex) //(SocketException)
             {
-                System.Windows.Forms.MessageBox.Show(ex.Message, "DR30A");
+                System.Windows.Forms.MessageBox.Show(ex.Message, "警告");
                 Debug.WriteLine(ex.Message);
                 return false;
             }

@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("登录");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("运行", 1, 1);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("手动", 2, 2);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("手动控制", 2, 2);
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("系统设置", 3, 3);
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("权限管理", 4, 4);
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("退出", 5, 5);
@@ -102,7 +102,7 @@
             treeNode3.Name = "Manual";
             treeNode3.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             treeNode3.SelectedImageIndex = 2;
-            treeNode3.Text = "手动";
+            treeNode3.Text = "手动控制";
             treeNode4.ImageIndex = 3;
             treeNode4.Name = "SystemSeting";
             treeNode4.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -171,6 +171,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.TransparencyKey = System.Drawing.Color.White;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.MaximumSizeChanged += new System.EventHandler(this.FormMain_MaximumSizeChanged);
             this.Load += new System.EventHandler(this.FormMain_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Title)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
