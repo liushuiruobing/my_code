@@ -93,9 +93,29 @@ namespace RobotWorkstation.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap SmallGreen {
+            get {
+                object obj = ResourceManager.GetObject("SmallGreen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap SmallRed {
             get {
                 object obj = ResourceManager.GetObject("SmallRed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap SmallYellow {
+            get {
+                object obj = ResourceManager.GetObject("SmallYellow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

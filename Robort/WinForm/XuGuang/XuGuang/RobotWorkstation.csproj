@@ -45,6 +45,12 @@
     <Reference Include="RABD.Lib">
       <HintPath>lib\RABD.Lib.dll</HintPath>
     </Reference>
+    <Reference Include="RABD.Modbus.Client">
+      <HintPath>lib\RABD.Modbus.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.Modbus.Define">
+      <HintPath>lib\RABD.Modbus.Define.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -115,6 +121,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="deviser.ico" />
+    <Content Include="Resources\image\SmallGreen.png" />
+    <None Include="Resources\image\SmallYellow.png" />
     <None Include="Resources\image\SmallRed.png" />
     <None Include="Resources\image\SmallDarkRed.png" />
     <None Include="Resources\image\SmallDarkGreen.png" />

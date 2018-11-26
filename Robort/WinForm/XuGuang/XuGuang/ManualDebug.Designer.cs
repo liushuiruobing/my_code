@@ -35,6 +35,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.TimerLoadRobotOtherGlobalPoints = new System.Windows.Forms.Timer(this.components);
+            this.RefreshTimer = new System.Windows.Forms.Timer(this.components);
             this.tabControlManualDebug = new RobotWorkstation.CustomTabControl();
             this.tabPage_Robot = new System.Windows.Forms.TabPage();
             this.groupBoxRobot = new RobotWorkstation.CustomGroupBox();
@@ -109,7 +110,7 @@
             this.pictureBoxRobotExecut = new System.Windows.Forms.PictureBox();
             this.customLabel2 = new RobotWorkstation.CustomLabel();
             this.CButtonReset = new RobotWorkstation.CustomButton();
-            this.pictureBoxWarn = new System.Windows.Forms.PictureBox();
+            this.pictureBoxRobotAlarm = new System.Windows.Forms.PictureBox();
             this.customLabel1 = new RobotWorkstation.CustomLabel();
             this.CButtonServoOff = new RobotWorkstation.CustomButton();
             this.CBttonServoOn = new RobotWorkstation.CustomButton();
@@ -124,13 +125,19 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotMove)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTemperature)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotExecut)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWarn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotAlarm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxServo)).BeginInit();
             this.SuspendLayout();
             // 
             // TimerLoadRobotOtherGlobalPoints
             // 
             this.TimerLoadRobotOtherGlobalPoints.Tick += new System.EventHandler(this.timer_LoadRobotOtherGlobalPoints_Tick);
+            // 
+            // RefreshTimer
+            // 
+            this.RefreshTimer.Enabled = true;
+            this.RefreshTimer.Interval = 200;
+            this.RefreshTimer.Tick += new System.EventHandler(this.RefreshTimer_Tick);
             // 
             // tabControlManualDebug
             // 
@@ -218,7 +225,7 @@
             this.groupBoxRobot.Controls.Add(this.pictureBoxRobotExecut);
             this.groupBoxRobot.Controls.Add(this.customLabel2);
             this.groupBoxRobot.Controls.Add(this.CButtonReset);
-            this.groupBoxRobot.Controls.Add(this.pictureBoxWarn);
+            this.groupBoxRobot.Controls.Add(this.pictureBoxRobotAlarm);
             this.groupBoxRobot.Controls.Add(this.customLabel1);
             this.groupBoxRobot.Controls.Add(this.CButtonServoOff);
             this.groupBoxRobot.Controls.Add(this.CBttonServoOn);
@@ -368,8 +375,9 @@
             dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             this.DGV_RobotGlobalPoint.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.DGV_RobotGlobalPoint.RowTemplate.Height = 23;
-            this.DGV_RobotGlobalPoint.Size = new System.Drawing.Size(778, 547);
+            this.DGV_RobotGlobalPoint.Size = new System.Drawing.Size(778, 546);
             this.DGV_RobotGlobalPoint.TabIndex = 0;
+            this.DGV_RobotGlobalPoint.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DGV_RobotGlobalPoint_CellClick);
             // 
             // RobotTestName
             // 
@@ -882,7 +890,7 @@
             // radioButtonRobotDeviceContinuous
             // 
             this.radioButtonRobotDeviceContinuous.AutoSize = true;
-            this.radioButtonRobotDeviceContinuous.Location = new System.Drawing.Point(197, 217);
+            this.radioButtonRobotDeviceContinuous.Location = new System.Drawing.Point(197, 216);
             this.radioButtonRobotDeviceContinuous.Name = "radioButtonRobotDeviceContinuous";
             this.radioButtonRobotDeviceContinuous.Size = new System.Drawing.Size(60, 25);
             this.radioButtonRobotDeviceContinuous.TabIndex = 26;
@@ -894,7 +902,7 @@
             // radioButtonRobotDeviceJog
             // 
             this.radioButtonRobotDeviceJog.AutoSize = true;
-            this.radioButtonRobotDeviceJog.Location = new System.Drawing.Point(137, 217);
+            this.radioButtonRobotDeviceJog.Location = new System.Drawing.Point(137, 216);
             this.radioButtonRobotDeviceJog.Name = "radioButtonRobotDeviceJog";
             this.radioButtonRobotDeviceJog.Size = new System.Drawing.Size(54, 25);
             this.radioButtonRobotDeviceJog.TabIndex = 25;
@@ -937,6 +945,7 @@
             this.CTextBoxRobotMoveSpeed.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotMoveSpeed.TabIndex = 22;
             this.CTextBoxRobotMoveSpeed.Text = "20";
+            this.CTextBoxRobotMoveSpeed.TextChanged += new System.EventHandler(this.CTextBoxRobotMoveSpeed_TextChanged);
             // 
             // customLabel8
             // 
@@ -972,6 +981,7 @@
             this.CTextBoxJogDistanceUm.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxJogDistanceUm.TabIndex = 19;
             this.CTextBoxJogDistanceUm.Text = "1000";
+            this.CTextBoxJogDistanceUm.TextChanged += new System.EventHandler(this.CTextBoxJogDistanceUm_TextChanged);
             // 
             // customLabel6
             // 
@@ -996,6 +1006,7 @@
             this.CTextBoxJogDistance.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxJogDistance.TabIndex = 17;
             this.CTextBoxJogDistance.Text = "1000";
+            this.CTextBoxJogDistance.TextChanged += new System.EventHandler(this.CTextBoxJogDistance_TextChanged);
             // 
             // customLabel5
             // 
@@ -1094,7 +1105,7 @@
             // 
             // pictureBoxRobotExecut
             // 
-            this.pictureBoxRobotExecut.Image = global::RobotWorkstation.Properties.Resources.SmallRed;
+            this.pictureBoxRobotExecut.Image = global::RobotWorkstation.Properties.Resources.SmallDarkGreen;
             this.pictureBoxRobotExecut.Location = new System.Drawing.Point(110, 118);
             this.pictureBoxRobotExecut.Name = "pictureBoxRobotExecut";
             this.pictureBoxRobotExecut.Size = new System.Drawing.Size(22, 22);
@@ -1127,15 +1138,15 @@
             this.CButtonReset.UseVisualStyleBackColor = false;
             this.CButtonReset.Click += new System.EventHandler(this.CButtonReset_Click);
             // 
-            // pictureBoxWarn
+            // pictureBoxRobotAlarm
             // 
-            this.pictureBoxWarn.Image = global::RobotWorkstation.Properties.Resources.SmallDarkRed;
-            this.pictureBoxWarn.Location = new System.Drawing.Point(110, 86);
-            this.pictureBoxWarn.Name = "pictureBoxWarn";
-            this.pictureBoxWarn.Size = new System.Drawing.Size(22, 22);
-            this.pictureBoxWarn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxWarn.TabIndex = 5;
-            this.pictureBoxWarn.TabStop = false;
+            this.pictureBoxRobotAlarm.Image = global::RobotWorkstation.Properties.Resources.SmallDarkRed;
+            this.pictureBoxRobotAlarm.Location = new System.Drawing.Point(110, 86);
+            this.pictureBoxRobotAlarm.Name = "pictureBoxRobotAlarm";
+            this.pictureBoxRobotAlarm.Size = new System.Drawing.Size(22, 22);
+            this.pictureBoxRobotAlarm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxRobotAlarm.TabIndex = 5;
+            this.pictureBoxRobotAlarm.TabStop = false;
             // 
             // customLabel1
             // 
@@ -1222,7 +1233,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotMove)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTemperature)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotExecut)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWarn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotAlarm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxServo)).EndInit();
             this.ResumeLayout(false);
 
@@ -1238,7 +1249,7 @@
         private CustomButton CBttonServoOn;
         private CustomButton CButtonServoOff;
         private CustomLabel customLabel1;
-        private System.Windows.Forms.PictureBox pictureBoxWarn;
+        private System.Windows.Forms.PictureBox pictureBoxRobotAlarm;
         private CustomButton CButtonReset;
         private CustomLabel customLabel2;
         private System.Windows.Forms.PictureBox pictureBoxRobotExecut;
@@ -1311,5 +1322,6 @@
         private CustomLabel customLabel19;
         private CustomButton CBtnRobotTestMoveToPoint;
         private CustomButton CBtnRobotTestTeachPoint;
+        private System.Windows.Forms.Timer RefreshTimer;
     }
 }

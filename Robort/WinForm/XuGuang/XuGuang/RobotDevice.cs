@@ -8,5 +8,6 @@ namespace RobotWorkstation
 {
     public class RobotDevice : RobotBase
     {
+        public bool m_IsStep = true;
     }
 }

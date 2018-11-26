@@ -14,7 +14,6 @@ namespace RobotWorkstation
     //机器人
     public abstract class RobotBase
     {
-        //public static double Speed;  //未使用
         public const ushort MODBUS_ADDR = 0x1110;
         public const short COM_LEN = 13;
         public const short TIMEOUT = 6000;  // 6000 * 10ms
@@ -24,18 +23,9 @@ namespace RobotWorkstation
         public const short MAX_SPEED = 100;  //最大速度
         
         public short[] m_SendBuf = new short[13];
-        //public static short ActNum;  // 0 -- reset action 
-        // 1 to DEVICEBOX_ROW for uploading devices
-        // DEVICEBOX_ROW + 1 to 2*DEVICEBOX_ROW for download OK devices
-        // 2*DEVICEBOX_ROW + 1 to 2*DEVICEBOX_ROW + DEVICEBOX_ROW*DEVICEBOX_COL
-        //public static DataStruct.Robot_Pos Point;
-        //public static DataStruct.Robot_Pos Tst_Pos;
-        //public static DataStruct.Robot_Pos[] DeviceBox_Pos = new DataStruct.Robot_Pos[DataStruct.DEVICEBOX_ROW];
-        //public static DataStruct.Robot_Pos[,] FailBox_Pos = new DataStruct.Robot_Pos[DataStruct.DEVICEBOX_COL, DataStruct.DEVICEBOX_COL];
 
         public Robot m_Robot = new Robot();
         public bool m_IsConnected = false;
-
         public bool m_Ready = false;
 
         public RobotBase()
@@ -57,8 +47,6 @@ namespace RobotWorkstation
                 }
                 else
                 {
-                    //ServoOn();
-                    //m_Robot.RunProgram();
                     return true;
                 }
             }
@@ -116,9 +104,7 @@ namespace RobotWorkstation
         {
             RABD.Lib.eExecutorState state = RABD.Lib.eExecutorState.Close;
             if (m_IsConnected)
-            {
                 state = m_Robot.ExecutorState();
-            }
 
             string strState = " ";
             switch (state)
@@ -135,6 +121,8 @@ namespace RobotWorkstation
                 case RABD.Lib.eExecutorState.BreakPoint:
                     strState = "断点";
                     break;
+                default:
+                    break;
             }
 
             return strState;
@@ -143,11 +131,9 @@ namespace RobotWorkstation
         /*获取温度状态字符串*/
         public string GetTemperatureStateString()
         {
-            RABD.Lib.eRobotTemperatureStatus state = RABD.Lib.eRobotTemperatureStatus.Normal;
+            eRobotTemperatureStatus state = eRobotTemperatureStatus.Normal;
             if (m_IsConnected)
-            {
                 state = m_Robot.TemperatureStatus();
-            }
 
             string strState = " ";
             switch (state)
@@ -160,6 +146,8 @@ namespace RobotWorkstation
                     break;
                 case RABD.Lib.eRobotTemperatureStatus.Modify:
                     strState = "测量";
+                    break;
+                default:
                     break;
             }
 
