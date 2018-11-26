@@ -56,5 +56,226 @@ namespace RobotWorkstation
             TimerLoadRobotOtherGlobalPoints.Stop();
             LoadRobotGlobalPoints(RobotGlobalPointsBefore, RobotBase.MAX_GLOBAL_POINTS);
         }
+
+        private void CBttonServoOn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonServoOff_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonReset_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotExecRun_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotExecPause_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotExecStop_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButtonRobotDeviceJog_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButtonRobotDeviceContinuous_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ1Add_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ1Add_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ1Sub_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ1Sub_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ2Add_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ2Add_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ2Sub_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ2Sub_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ3Add_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ3Add_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ3Sub_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ3Sub_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ4Add_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ4Add_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ4Sub_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceJ4Sub_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceXAdd_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceXAdd_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceXSub_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceXSub_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceYAdd_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceYAdd_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceYSub_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceYSub_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceZAdd_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceZAdd_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceZSub_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceZSub_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceRZAdd_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceRZAdd_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceRZSub_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CButtonRobotDistanceRZSub_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CBtnRobotTestReadPoint_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CBtnRobotTestMoveToPoint_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CBtnRobotTestMoveToPoint_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CBtnRobotTestTeachPoint_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

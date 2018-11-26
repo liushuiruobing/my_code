@@ -38,7 +38,10 @@
             this.tabControlManualDebug = new RobotWorkstation.CustomTabControl();
             this.tabPage_Robot = new System.Windows.Forms.TabPage();
             this.groupBoxRobot = new RobotWorkstation.CustomGroupBox();
-            this.CBtnRobotTestReadPoints = new RobotWorkstation.CustomButton();
+            this.CBtnRobotTestTeachPoint = new RobotWorkstation.CustomButton();
+            this.CBtnRobotTestMoveToPoint = new RobotWorkstation.CustomButton();
+            this.customLabel19 = new RobotWorkstation.CustomLabel();
+            this.CBtnRobotTestReadPoint = new RobotWorkstation.CustomButton();
             this.CTabControlBorderRobotTestPoints = new RobotWorkstation.CustomTabControlBorder();
             this.PageRobotTestGlobalPoint = new System.Windows.Forms.TabPage();
             this.DGV_RobotGlobalPoint = new System.Windows.Forms.DataGridView();
@@ -112,7 +115,6 @@
             this.CBttonServoOn = new RobotWorkstation.CustomButton();
             this.pictureBoxServo = new System.Windows.Forms.PictureBox();
             this.tabPage_Camera = new System.Windows.Forms.TabPage();
-            this.customLabel19 = new RobotWorkstation.CustomLabel();
             this.tabControlManualDebug.SuspendLayout();
             this.tabPage_Robot.SuspendLayout();
             this.groupBoxRobot.SuspendLayout();
@@ -158,8 +160,10 @@
             // 
             // groupBoxRobot
             // 
+            this.groupBoxRobot.Controls.Add(this.CBtnRobotTestTeachPoint);
+            this.groupBoxRobot.Controls.Add(this.CBtnRobotTestMoveToPoint);
             this.groupBoxRobot.Controls.Add(this.customLabel19);
-            this.groupBoxRobot.Controls.Add(this.CBtnRobotTestReadPoints);
+            this.groupBoxRobot.Controls.Add(this.CBtnRobotTestReadPoint);
             this.groupBoxRobot.Controls.Add(this.CTabControlBorderRobotTestPoints);
             this.groupBoxRobot.Controls.Add(this.CButtonRobotDistanceRZSub);
             this.groupBoxRobot.Controls.Add(this.CButtonRobotDistanceRZAdd);
@@ -223,23 +227,64 @@
             this.groupBoxRobot.ForeColor = System.Drawing.Color.White;
             this.groupBoxRobot.Location = new System.Drawing.Point(10, 10);
             this.groupBoxRobot.Name = "groupBoxRobot";
-            this.groupBoxRobot.Size = new System.Drawing.Size(1200, 745);
+            this.groupBoxRobot.Size = new System.Drawing.Size(1200, 727);
             this.groupBoxRobot.TabIndex = 0;
             this.groupBoxRobot.TabStop = false;
             this.groupBoxRobot.Text = "机械臂";
             // 
-            // CBtnRobotTestReadPoints
+            // CBtnRobotTestTeachPoint
             // 
-            this.CBtnRobotTestReadPoints.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
-            this.CBtnRobotTestReadPoints.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.CBtnRobotTestReadPoints.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.CBtnRobotTestReadPoints.ForeColor = System.Drawing.Color.Transparent;
-            this.CBtnRobotTestReadPoints.Location = new System.Drawing.Point(404, 633);
-            this.CBtnRobotTestReadPoints.Name = "CBtnRobotTestReadPoints";
-            this.CBtnRobotTestReadPoints.Size = new System.Drawing.Size(90, 30);
-            this.CBtnRobotTestReadPoints.TabIndex = 60;
-            this.CBtnRobotTestReadPoints.Text = "读取点位";
-            this.CBtnRobotTestReadPoints.UseVisualStyleBackColor = false;
+            this.CBtnRobotTestTeachPoint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
+            this.CBtnRobotTestTeachPoint.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CBtnRobotTestTeachPoint.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CBtnRobotTestTeachPoint.ForeColor = System.Drawing.Color.Transparent;
+            this.CBtnRobotTestTeachPoint.Location = new System.Drawing.Point(596, 633);
+            this.CBtnRobotTestTeachPoint.Name = "CBtnRobotTestTeachPoint";
+            this.CBtnRobotTestTeachPoint.Size = new System.Drawing.Size(90, 30);
+            this.CBtnRobotTestTeachPoint.TabIndex = 63;
+            this.CBtnRobotTestTeachPoint.Text = "学习点位";
+            this.CBtnRobotTestTeachPoint.UseVisualStyleBackColor = false;
+            this.CBtnRobotTestTeachPoint.Click += new System.EventHandler(this.CBtnRobotTestTeachPoint_Click);
+            // 
+            // CBtnRobotTestMoveToPoint
+            // 
+            this.CBtnRobotTestMoveToPoint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
+            this.CBtnRobotTestMoveToPoint.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CBtnRobotTestMoveToPoint.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CBtnRobotTestMoveToPoint.ForeColor = System.Drawing.Color.Transparent;
+            this.CBtnRobotTestMoveToPoint.Location = new System.Drawing.Point(500, 633);
+            this.CBtnRobotTestMoveToPoint.Name = "CBtnRobotTestMoveToPoint";
+            this.CBtnRobotTestMoveToPoint.Size = new System.Drawing.Size(90, 30);
+            this.CBtnRobotTestMoveToPoint.TabIndex = 62;
+            this.CBtnRobotTestMoveToPoint.Text = "移到点位";
+            this.CBtnRobotTestMoveToPoint.UseVisualStyleBackColor = false;
+            this.CBtnRobotTestMoveToPoint.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CBtnRobotTestMoveToPoint_MouseDown);
+            this.CBtnRobotTestMoveToPoint.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CBtnRobotTestMoveToPoint_MouseUp);
+            // 
+            // customLabel19
+            // 
+            this.customLabel19.AutoSize = true;
+            this.customLabel19.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel19.Location = new System.Drawing.Point(44, 52);
+            this.customLabel19.Name = "customLabel19";
+            this.customLabel19.Size = new System.Drawing.Size(61, 23);
+            this.customLabel19.TabIndex = 61;
+            this.customLabel19.Text = "伺服：";
+            // 
+            // CBtnRobotTestReadPoint
+            // 
+            this.CBtnRobotTestReadPoint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
+            this.CBtnRobotTestReadPoint.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CBtnRobotTestReadPoint.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CBtnRobotTestReadPoint.ForeColor = System.Drawing.Color.Transparent;
+            this.CBtnRobotTestReadPoint.Location = new System.Drawing.Point(404, 633);
+            this.CBtnRobotTestReadPoint.Name = "CBtnRobotTestReadPoint";
+            this.CBtnRobotTestReadPoint.Size = new System.Drawing.Size(90, 30);
+            this.CBtnRobotTestReadPoint.TabIndex = 60;
+            this.CBtnRobotTestReadPoint.Text = "读取点位";
+            this.CBtnRobotTestReadPoint.UseVisualStyleBackColor = false;
+            this.CBtnRobotTestReadPoint.Click += new System.EventHandler(this.CBtnRobotTestReadPoint_Click);
             // 
             // CTabControlBorderRobotTestPoints
             // 
@@ -422,6 +467,8 @@
             this.CButtonRobotDistanceRZSub.TabIndex = 58;
             this.CButtonRobotDistanceRZSub.Text = "RZ -";
             this.CButtonRobotDistanceRZSub.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceRZSub.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceRZSub_MouseDown);
+            this.CButtonRobotDistanceRZSub.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceRZSub_MouseUp);
             // 
             // CButtonRobotDistanceRZAdd
             // 
@@ -435,6 +482,8 @@
             this.CButtonRobotDistanceRZAdd.TabIndex = 57;
             this.CButtonRobotDistanceRZAdd.Text = "RZ +";
             this.CButtonRobotDistanceRZAdd.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceRZAdd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceRZAdd_MouseDown);
+            this.CButtonRobotDistanceRZAdd.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceRZAdd_MouseUp);
             // 
             // CTextBoxRobotDistanceRZ
             // 
@@ -471,6 +520,8 @@
             this.CButtonRobotDistanceZSub.TabIndex = 54;
             this.CButtonRobotDistanceZSub.Text = "Z -";
             this.CButtonRobotDistanceZSub.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceZSub.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceZSub_MouseDown);
+            this.CButtonRobotDistanceZSub.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceZSub_MouseUp);
             // 
             // CButtonRobotDistanceZAdd
             // 
@@ -484,6 +535,8 @@
             this.CButtonRobotDistanceZAdd.TabIndex = 53;
             this.CButtonRobotDistanceZAdd.Text = "Z +";
             this.CButtonRobotDistanceZAdd.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceZAdd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceZAdd_MouseDown);
+            this.CButtonRobotDistanceZAdd.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceZAdd_MouseUp);
             // 
             // CTextBoxRobotDistanceZ
             // 
@@ -520,6 +573,8 @@
             this.CButtonRobotDistanceYSub.TabIndex = 50;
             this.CButtonRobotDistanceYSub.Text = "Y -";
             this.CButtonRobotDistanceYSub.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceYSub.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceYSub_MouseDown);
+            this.CButtonRobotDistanceYSub.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceYSub_MouseUp);
             // 
             // CButtonRobotDistanceYAdd
             // 
@@ -533,6 +588,8 @@
             this.CButtonRobotDistanceYAdd.TabIndex = 49;
             this.CButtonRobotDistanceYAdd.Text = "Y +";
             this.CButtonRobotDistanceYAdd.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceYAdd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceYAdd_MouseDown);
+            this.CButtonRobotDistanceYAdd.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceYAdd_MouseUp);
             // 
             // CTextBoxRobotDistanceY
             // 
@@ -569,6 +626,8 @@
             this.CButtonRobotDistanceXSub.TabIndex = 46;
             this.CButtonRobotDistanceXSub.Text = "X -";
             this.CButtonRobotDistanceXSub.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceXSub.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceXSub_MouseDown);
+            this.CButtonRobotDistanceXSub.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceXSub_MouseUp);
             // 
             // CButtonRobotDistanceXAdd
             // 
@@ -582,6 +641,8 @@
             this.CButtonRobotDistanceXAdd.TabIndex = 45;
             this.CButtonRobotDistanceXAdd.Text = "X +";
             this.CButtonRobotDistanceXAdd.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceXAdd.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceXAdd_MouseDown);
+            this.CButtonRobotDistanceXAdd.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceXAdd_MouseUp);
             // 
             // CTextBoxRobotDistanceX
             // 
@@ -618,6 +679,8 @@
             this.CButtonRobotDistanceJ4Sub.TabIndex = 42;
             this.CButtonRobotDistanceJ4Sub.Text = "J4 -";
             this.CButtonRobotDistanceJ4Sub.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceJ4Sub.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ4Sub_MouseDown);
+            this.CButtonRobotDistanceJ4Sub.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ4Sub_MouseUp);
             // 
             // CButtonRobotDistanceJ4Add
             // 
@@ -631,6 +694,8 @@
             this.CButtonRobotDistanceJ4Add.TabIndex = 41;
             this.CButtonRobotDistanceJ4Add.Text = "J4 +";
             this.CButtonRobotDistanceJ4Add.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceJ4Add.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ4Add_MouseDown);
+            this.CButtonRobotDistanceJ4Add.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ4Add_MouseUp);
             // 
             // CTextBoxRobotDistanceJ4
             // 
@@ -667,6 +732,8 @@
             this.CButtonRobotDistanceJ3Sub.TabIndex = 38;
             this.CButtonRobotDistanceJ3Sub.Text = "J3 -";
             this.CButtonRobotDistanceJ3Sub.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceJ3Sub.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ3Sub_MouseDown);
+            this.CButtonRobotDistanceJ3Sub.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ3Sub_MouseUp);
             // 
             // CButtonRobotDistanceJ3Add
             // 
@@ -680,6 +747,8 @@
             this.CButtonRobotDistanceJ3Add.TabIndex = 37;
             this.CButtonRobotDistanceJ3Add.Text = "J3 +";
             this.CButtonRobotDistanceJ3Add.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceJ3Add.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ3Add_MouseDown);
+            this.CButtonRobotDistanceJ3Add.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ3Add_MouseUp);
             // 
             // CTextBoxRobotDistanceJ3
             // 
@@ -716,6 +785,8 @@
             this.CButtonRobotDistanceJ2Sub.TabIndex = 34;
             this.CButtonRobotDistanceJ2Sub.Text = "J2 -";
             this.CButtonRobotDistanceJ2Sub.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceJ2Sub.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ2Sub_MouseDown);
+            this.CButtonRobotDistanceJ2Sub.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ2Sub_MouseUp);
             // 
             // CButtonRobotDistanceJ2Add
             // 
@@ -729,6 +800,8 @@
             this.CButtonRobotDistanceJ2Add.TabIndex = 33;
             this.CButtonRobotDistanceJ2Add.Text = "J2 +";
             this.CButtonRobotDistanceJ2Add.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceJ2Add.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ2Add_MouseDown);
+            this.CButtonRobotDistanceJ2Add.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ2Add_MouseUp);
             // 
             // CTextBoxRobotDistanceJ2
             // 
@@ -765,6 +838,8 @@
             this.CButtonRobotDistanceJ1Sub.TabIndex = 30;
             this.CButtonRobotDistanceJ1Sub.Text = "J1 -";
             this.CButtonRobotDistanceJ1Sub.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceJ1Sub.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ1Sub_MouseDown);
+            this.CButtonRobotDistanceJ1Sub.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ1Sub_MouseUp);
             // 
             // CButtonRobotDistanceJ1Add
             // 
@@ -778,6 +853,8 @@
             this.CButtonRobotDistanceJ1Add.TabIndex = 29;
             this.CButtonRobotDistanceJ1Add.Text = "J1 +";
             this.CButtonRobotDistanceJ1Add.UseVisualStyleBackColor = false;
+            this.CButtonRobotDistanceJ1Add.MouseDown += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ1Add_MouseDown);
+            this.CButtonRobotDistanceJ1Add.MouseUp += new System.Windows.Forms.MouseEventHandler(this.CButtonRobotDistanceJ1Add_MouseUp);
             // 
             // CTextBoxRobotDistanceJ1
             // 
@@ -812,6 +889,7 @@
             this.radioButtonRobotDeviceContinuous.TabStop = true;
             this.radioButtonRobotDeviceContinuous.Text = "连续";
             this.radioButtonRobotDeviceContinuous.UseVisualStyleBackColor = true;
+            this.radioButtonRobotDeviceContinuous.CheckedChanged += new System.EventHandler(this.radioButtonRobotDeviceContinuous_CheckedChanged);
             // 
             // radioButtonRobotDeviceJog
             // 
@@ -823,6 +901,7 @@
             this.radioButtonRobotDeviceJog.TabStop = true;
             this.radioButtonRobotDeviceJog.Text = "Jog";
             this.radioButtonRobotDeviceJog.UseVisualStyleBackColor = true;
+            this.radioButtonRobotDeviceJog.CheckedChanged += new System.EventHandler(this.radioButtonRobotDeviceJog_CheckedChanged);
             // 
             // customLabel10
             // 
@@ -983,6 +1062,7 @@
             this.CButtonRobotExecStop.TabIndex = 11;
             this.CButtonRobotExecStop.Text = "停止";
             this.CButtonRobotExecStop.UseVisualStyleBackColor = false;
+            this.CButtonRobotExecStop.Click += new System.EventHandler(this.CButtonRobotExecStop_Click);
             // 
             // CButtonRobotExecPause
             // 
@@ -996,6 +1076,7 @@
             this.CButtonRobotExecPause.TabIndex = 10;
             this.CButtonRobotExecPause.Text = "暂停";
             this.CButtonRobotExecPause.UseVisualStyleBackColor = false;
+            this.CButtonRobotExecPause.Click += new System.EventHandler(this.CButtonRobotExecPause_Click);
             // 
             // CButtonRobotExecRun
             // 
@@ -1009,6 +1090,7 @@
             this.CButtonRobotExecRun.TabIndex = 9;
             this.CButtonRobotExecRun.Text = "运行";
             this.CButtonRobotExecRun.UseVisualStyleBackColor = false;
+            this.CButtonRobotExecRun.Click += new System.EventHandler(this.CButtonRobotExecRun_Click);
             // 
             // pictureBoxRobotExecut
             // 
@@ -1043,6 +1125,7 @@
             this.CButtonReset.TabIndex = 6;
             this.CButtonReset.Text = "复位";
             this.CButtonReset.UseVisualStyleBackColor = false;
+            this.CButtonReset.Click += new System.EventHandler(this.CButtonReset_Click);
             // 
             // pictureBoxWarn
             // 
@@ -1077,6 +1160,7 @@
             this.CButtonServoOff.TabIndex = 3;
             this.CButtonServoOff.Text = "伺服关";
             this.CButtonServoOff.UseVisualStyleBackColor = false;
+            this.CButtonServoOff.Click += new System.EventHandler(this.CButtonServoOff_Click);
             // 
             // CBttonServoOn
             // 
@@ -1090,6 +1174,7 @@
             this.CBttonServoOn.TabIndex = 2;
             this.CBttonServoOn.Text = "伺服开";
             this.CBttonServoOn.UseVisualStyleBackColor = false;
+            this.CBttonServoOn.Click += new System.EventHandler(this.CBttonServoOn_Click);
             // 
             // pictureBoxServo
             // 
@@ -1111,17 +1196,6 @@
             this.tabPage_Camera.Size = new System.Drawing.Size(1410, 761);
             this.tabPage_Camera.TabIndex = 1;
             this.tabPage_Camera.Text = "相机";
-            // 
-            // customLabel19
-            // 
-            this.customLabel19.AutoSize = true;
-            this.customLabel19.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.customLabel19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel19.Location = new System.Drawing.Point(44, 52);
-            this.customLabel19.Name = "customLabel19";
-            this.customLabel19.Size = new System.Drawing.Size(61, 23);
-            this.customLabel19.TabIndex = 61;
-            this.customLabel19.Text = "伺服：";
             // 
             // ManualDebug
             // 
@@ -1233,7 +1307,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn RobotTestUserID;
         private System.Windows.Forms.DataGridViewTextBoxColumn RobotTestToolID;
         private System.Windows.Forms.Timer TimerLoadRobotOtherGlobalPoints;
-        private CustomButton CBtnRobotTestReadPoints;
+        private CustomButton CBtnRobotTestReadPoint;
         private CustomLabel customLabel19;
+        private CustomButton CBtnRobotTestMoveToPoint;
+        private CustomButton CBtnRobotTestTeachPoint;
     }
 }
