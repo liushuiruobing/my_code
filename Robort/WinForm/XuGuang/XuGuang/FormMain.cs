@@ -39,11 +39,11 @@ namespace RobotWorkstation
             this.MaximumSize = new Size(nScreenWidth, nScreenHeight);
             this.Width = nScreenWidth;
             this.Height = nScreenHeight;
-            CmdTreeView.Height = this.Height - pictureBox_Title.Height - 2;
+            CmdTreeView.Height = this.Height - pictureBoxTitle.Height - 2;
             if (m_ManualDebug != null)
             {
-                m_ManualDebug.Location = new Point(CmdTreeView.Width, pictureBox_Title.Height);
-                m_ManualDebug.Width = pictureBox_Title.Width - CmdTreeView.Width - 2;
+                m_ManualDebug.Location = new Point(CmdTreeView.Width, pictureBoxTitle.Height);
+                m_ManualDebug.Width = pictureBoxTitle.Width - CmdTreeView.Width - 2;
                 m_ManualDebug.Height = CmdTreeView.Height - 2;
             }
         }

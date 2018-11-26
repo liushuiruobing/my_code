@@ -13,19 +13,26 @@ namespace RobotWorkstation
     public partial class ManualDebug : Form
     {
         private const int RobotGlobalPointsBefore = 30;  //先加载前30个点，其余的在定时器中加载，来解决刷新缓慢的问题
+
         public ManualDebug()
         {
             InitializeComponent();
+
+            //下面的三个页暂不使用
+            PageRobotTestUserFrame.Parent = null;
+            PageRobotTestToolFrame.Parent = null;
+            PageRobotTestWorkSpace.Parent = null;
         }
 
         private void ManualDebug_Load(object sender, EventArgs e)
         {
-            tabControl_ManualDebug.Width = this.Width;
-            tabControl_ManualDebug.Height = this.Height;
+            tabControlManualDebug.Width = this.Width;
+            tabControlManualDebug.Height = this.Height;
 
+            //加载机械臂全局点位
             DGV_RobotGlobalPoint.Rows.Clear();
             LoadRobotGlobalPoints(0, RobotGlobalPointsBefore);
-            timer_LoadRobotOtherGlobalPoints.Start();
+            TimerLoadRobotOtherGlobalPoints.Start();
         }
 
         public void InitFormSizeAndLoction(int Width, int Height)
@@ -46,7 +53,7 @@ namespace RobotWorkstation
 
         private void timer_LoadRobotOtherGlobalPoints_Tick(object sender, EventArgs e)
         {
-            timer_LoadRobotOtherGlobalPoints.Stop();
+            TimerLoadRobotOtherGlobalPoints.Stop();
             LoadRobotGlobalPoints(RobotGlobalPointsBefore, RobotBase.MAX_GLOBAL_POINTS);
         }
     }

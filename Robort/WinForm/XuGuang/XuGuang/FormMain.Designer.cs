@@ -36,23 +36,23 @@
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("系统设置", 3, 3);
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("权限管理", 4, 4);
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("退出", 5, 5);
-            this.pictureBox_Title = new System.Windows.Forms.PictureBox();
+            this.pictureBoxTitle = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.CmdTreeView = new System.Windows.Forms.TreeView();
             this.CmdIcoList = new System.Windows.Forms.ImageList(this.components);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Title)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTitle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox_Title
+            // pictureBoxTitle
             // 
-            this.pictureBox_Title.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_Title.Location = new System.Drawing.Point(1, 1);
-            this.pictureBox_Title.Name = "pictureBox_Title";
-            this.pictureBox_Title.Size = new System.Drawing.Size(1597, 70);
-            this.pictureBox_Title.TabIndex = 1;
-            this.pictureBox_Title.TabStop = false;
+            this.pictureBoxTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxTitle.Location = new System.Drawing.Point(1, 1);
+            this.pictureBoxTitle.Name = "pictureBoxTitle";
+            this.pictureBoxTitle.Size = new System.Drawing.Size(1597, 70);
+            this.pictureBoxTitle.TabIndex = 1;
+            this.pictureBoxTitle.TabStop = false;
             // 
             // pictureBox1
             // 
@@ -157,7 +157,7 @@
             this.Controls.Add(this.CmdTreeView);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.pictureBox_Title);
+            this.Controls.Add(this.pictureBoxTitle);
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -173,7 +173,7 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.MaximumSizeChanged += new System.EventHandler(this.FormMain_MaximumSizeChanged);
             this.Load += new System.EventHandler(this.FormMain_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Title)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTitle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -182,7 +182,7 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox_Title;
+        private System.Windows.Forms.PictureBox pictureBoxTitle;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TreeView CmdTreeView;
