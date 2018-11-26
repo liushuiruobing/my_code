@@ -13,13 +13,24 @@ using System.Windows.Forms;
 
 namespace RobotWorkstation
 {
-    public partial class ManualDebug : Form
+    public partial class ManualDebugForm : Form
     {
         public RobotDevice m_ManualRobot = new RobotDevice();
         private const int RobotGlobalPointsBefore = 30;  //先加载前30个点，其余的在定时器中加载，来解决刷新缓慢的问题
         private int m_ManualRobotGlobalPointIndex = 0;  //选中的全局点位索引
 
-        public ManualDebug()
+        //防止闪屏
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;
+                return cp;
+            }
+        }
+
+        public ManualDebugForm()
         {
             InitializeComponent();
 

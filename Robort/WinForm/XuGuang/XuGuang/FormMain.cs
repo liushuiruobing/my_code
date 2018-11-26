@@ -14,7 +14,8 @@ namespace RobotWorkstation
     public partial class FormMain : Form
     {
         CustomColor m_CustomColor;
-        ManualDebug m_ManualDebug = null;  //手动调试对话框
+        ManualDebugForm m_ManualDebugForm = null;  //手动调试对话框
+        SystemSetingForm m_SystemSetingForm = null;
 
         public FormMain()
         {
@@ -36,15 +37,25 @@ namespace RobotWorkstation
             int nScreenWidth = Screen.PrimaryScreen.WorkingArea.Width; 
             int nScreenHeight = Screen.PrimaryScreen.WorkingArea.Height;
 
+            //调整主窗体控件
             this.MaximumSize = new Size(nScreenWidth, nScreenHeight);
             this.Width = nScreenWidth;
             this.Height = nScreenHeight;
             CmdTreeView.Height = this.Height - pictureBoxTitle.Height - 2;
-            if (m_ManualDebug != null)
+
+            //调整其他窗体
+            if (m_ManualDebugForm != null)
             {
-                m_ManualDebug.Location = new Point(CmdTreeView.Width, pictureBoxTitle.Height);
-                m_ManualDebug.Width = pictureBoxTitle.Width - CmdTreeView.Width - 2;
-                m_ManualDebug.Height = CmdTreeView.Height - 2;
+                m_ManualDebugForm.Location = new Point(CmdTreeView.Width, pictureBoxTitle.Height);
+                m_ManualDebugForm.Width = pictureBoxTitle.Width - CmdTreeView.Width - 2;
+                m_ManualDebugForm.Height = CmdTreeView.Height - 2;
+            }
+
+            if (m_SystemSetingForm != null)
+            {
+                m_SystemSetingForm.Location = new Point(CmdTreeView.Width, pictureBoxTitle.Height);
+                m_SystemSetingForm.Width = pictureBoxTitle.Width - CmdTreeView.Width - 2;
+                m_SystemSetingForm.Height = CmdTreeView.Height - 2;
             }
         }
 
@@ -56,8 +67,11 @@ namespace RobotWorkstation
         //创建其他窗体的实例对象
         public void InitOtherForm()
         {
-            m_ManualDebug = new ManualDebug();
-            m_ManualDebug.MdiParent = this;
+            m_ManualDebugForm = new ManualDebugForm();
+            m_ManualDebugForm.MdiParent = this;
+
+            m_SystemSetingForm = new SystemSetingForm();
+            m_SystemSetingForm.MdiParent = this;
         }
 
         private void CmdTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -66,22 +80,52 @@ namespace RobotWorkstation
             {
                 case "Login":
                     {
-                        if (m_ManualDebug != null)
-                            m_ManualDebug.Hide();
+                        if (m_ManualDebugForm != null)
+                            m_ManualDebugForm.Hide();
                     }break;
                 case "Run":
                     {
-                    }break;
+                        if (m_ManualDebugForm != null)
+                            m_ManualDebugForm.Hide();
+                    }
+                    break;
                 case "Manual":
                     {
-                        if (m_ManualDebug != null)
-                            m_ManualDebug.Show();                       
+                        if (m_SystemSetingForm != null)
+                            m_SystemSetingForm.Hide();
+
+                        if (m_ManualDebugForm != null)
+                        {
+                            m_ManualDebugForm.Show();
+                        }
+                        else
+                        {
+                            m_ManualDebugForm = new ManualDebugForm();
+                            m_ManualDebugForm.MdiParent = this;
+                            m_ManualDebugForm.Show();
+                        }                     
                     }break;
                 case "SystemSeting":
                     {
-                    }break;
+                        if (m_ManualDebugForm != null)
+                            m_ManualDebugForm.Hide();
+
+                        if (m_SystemSetingForm != null)
+                        {
+                            m_SystemSetingForm.Show();
+                        }
+                        else
+                        {
+                            m_SystemSetingForm = new SystemSetingForm();
+                            m_SystemSetingForm.MdiParent = this;
+                            m_SystemSetingForm.Show();
+                        }
+                    }
+                    break;
                 case "UserLimits":
                     {
+                        if (m_ManualDebugForm != null)
+                            m_ManualDebugForm.Hide();
                     } break;
                 case "Exit":
                     {
