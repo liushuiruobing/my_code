@@ -37,6 +37,10 @@ namespace RobotWorkstation
             int nScreenWidth = Screen.PrimaryScreen.WorkingArea.Width; 
             int nScreenHeight = Screen.PrimaryScreen.WorkingArea.Height;
 
+            //这两行代码是避免手动控制等子窗体出来时，主窗体被加上滚动条
+            AutoScrollMinSize = new Size(nScreenWidth+100, nScreenHeight+100);
+            IsMdiContainer = true;
+
             //调整主窗体控件
             this.MaximumSize = new Size(nScreenWidth, nScreenHeight);
             this.Width = nScreenWidth;

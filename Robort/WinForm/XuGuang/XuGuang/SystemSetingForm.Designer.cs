@@ -38,11 +38,12 @@
             this.tabControlSystemSeting.Controls.Add(this.tabPage1);
             this.tabControlSystemSeting.Font = new System.Drawing.Font("微软雅黑", 12F);
             this.tabControlSystemSeting.ItemSize = new System.Drawing.Size(120, 26);
-            this.tabControlSystemSeting.Location = new System.Drawing.Point(12, 12);
+            this.tabControlSystemSeting.Location = new System.Drawing.Point(16, 15);
+            this.tabControlSystemSeting.Margin = new System.Windows.Forms.Padding(4);
             this.tabControlSystemSeting.Name = "tabControlSystemSeting";
             this.tabControlSystemSeting.Padding = new System.Drawing.Point(20, 3);
             this.tabControlSystemSeting.SelectedIndex = 0;
-            this.tabControlSystemSeting.Size = new System.Drawing.Size(1410, 790);
+            this.tabControlSystemSeting.Size = new System.Drawing.Size(1880, 988);
             this.tabControlSystemSeting.TabIndex = 0;
             // 
             // tabPage1
@@ -50,22 +51,24 @@
             this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.tabPage1.Font = new System.Drawing.Font("微软雅黑", 10.5F);
             this.tabPage1.Location = new System.Drawing.Point(0, 29);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1410, 761);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPage1.Size = new System.Drawing.Size(1880, 959);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "机械臂";
             // 
             // SystemSetingForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.ClientSize = new System.Drawing.Size(1410, 790);
+            this.ClientSize = new System.Drawing.Size(1880, 988);
             this.ControlBox = false;
             this.Controls.Add(this.tabControlSystemSeting);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Location = new System.Drawing.Point(180, 70);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SystemSetingForm";
