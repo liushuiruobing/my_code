@@ -28,11 +28,36 @@ namespace RobotWorkstation
 
     public class CustomLabel : Label
     {
-        protected override void OnPaint(PaintEventArgs e)
+        public CustomLabel()
         {
-            Font cFont = new Font("微软雅黑", 12.5F);
-            Color cFontColor = Color.FromArgb(210, 210, 210);
-            e.Graphics.DrawString(this.Text, cFont, new SolidBrush(cFontColor), 10, 1);
+            AutoSize = true;
+            Font = new Font("微软雅黑", 12.5F);
+            ForeColor = Color.FromArgb(210, 210, 210);
+        }
+    }
+
+    public class CustomTextBox : TextBox
+    {
+        public CustomTextBox()
+        {
+            BackColor = Color.FromArgb(33, 33, 33);
+            BorderStyle = BorderStyle.FixedSingle;
+            Font = new Font("微软雅黑", 12.5F);
+            ForeColor = Color.White;
+            Size = new Size(90, 29);
+        }
+    }
+
+    public class CustomButton : Button
+    {
+        public CustomButton()
+        {
+            FlatStyle = FlatStyle.Popup;
+            Font = new Font("微软雅黑", 12.5F);
+            ForeColor = Color.Transparent;
+            BackColor = Color.FromArgb(74, 74, 74);
+            UseVisualStyleBackColor = false;
+            Size = new Size(90, 30);
         }
     }
 
@@ -41,7 +66,7 @@ namespace RobotWorkstation
         protected override void OnPaint(PaintEventArgs e)
         {
             Color cLine, cFont;
-            if (this.Enabled)
+            if (Enabled)
             {
                 cLine = Color.FromArgb(100, 100, 100);
                 cFont = Color.FromArgb(230, 230, 230);
@@ -52,14 +77,14 @@ namespace RobotWorkstation
                 cFont = Color.FromArgb(100, 100, 100);
             }
 
-            e.Graphics.Clear(this.BackColor);
-            e.Graphics.DrawString(this.Text, this.Font, new SolidBrush(cFont), 10, 1);
-            var vSize = e.Graphics.MeasureString(this.Text, this.Font);
+            e.Graphics.Clear(BackColor);
+            e.Graphics.DrawString(Text, Font, new SolidBrush(cFont), 10, 1);
+            var vSize = e.Graphics.MeasureString(Text, Font);
             e.Graphics.DrawLine(new Pen(cLine, 1), 1, vSize.Height / 2, 8, vSize.Height / 2);
-            e.Graphics.DrawLine(new Pen(cLine, 1), vSize.Width + 8, vSize.Height / 2, this.Width - 2, vSize.Height / 2);
-            e.Graphics.DrawLine(new Pen(cLine, 1), 1, vSize.Height / 2, 1, this.Height - 2);
-            e.Graphics.DrawLine(new Pen(cLine, 1), 1, this.Height - 2, this.Width - 2, this.Height - 2);
-            e.Graphics.DrawLine(new Pen(cLine, 1), this.Width - 2, vSize.Height / 2, this.Width - 2, this.Height - 2);
+            e.Graphics.DrawLine(new Pen(cLine, 1), vSize.Width + 8, vSize.Height / 2, Width - 2, vSize.Height / 2);
+            e.Graphics.DrawLine(new Pen(cLine, 1), 1, vSize.Height / 2, 1, Height - 2);
+            e.Graphics.DrawLine(new Pen(cLine, 1), 1, Height - 2, Width - 2, Height - 2);
+            e.Graphics.DrawLine(new Pen(cLine, 1), Width - 2, vSize.Height / 2, Width - 2, Height - 2);
         }
     }
 

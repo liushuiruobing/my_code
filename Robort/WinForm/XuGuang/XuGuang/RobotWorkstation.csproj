@@ -115,6 +115,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="deviser.ico" />
+    <None Include="Resources\image\SmallRed.png" />
+    <None Include="Resources\image\SmallDarkRed.png" />
     <None Include="Resources\image\SmallDarkGreen.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

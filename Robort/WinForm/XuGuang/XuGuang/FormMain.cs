@@ -14,11 +14,12 @@ namespace RobotWorkstation
     public partial class FormMain : Form
     {
         CustomColor m_CustomColor;
-        ManualDebug m_ManualDebug = new ManualDebug();  //手动调试对话框
+        ManualDebug m_ManualDebug = null;  //手动调试对话框
 
         public FormMain()
         {
             InitializeComponent();
+            InitOtherForm();
             this.CenterToScreen();
         }
 
@@ -52,12 +53,21 @@ namespace RobotWorkstation
             CmdTreeView.BackColor = m_CustomColor.TreeViewColor;
         }
 
+        //创建其他窗体的实例对象
+        public void InitOtherForm()
+        {
+            m_ManualDebug = new ManualDebug();
+            m_ManualDebug.MdiParent = this;
+        }
+
         private void CmdTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             switch (e.Node.Name)
             {
                 case "Login":
                     {
+                        if (m_ManualDebug != null)
+                            m_ManualDebug.Hide();
                     }break;
                 case "Run":
                     {
@@ -65,12 +75,7 @@ namespace RobotWorkstation
                 case "Manual":
                     {
                         if (m_ManualDebug != null)
-                        {
-                            m_ManualDebug.MdiParent = this;
-                            //m_ManualDebug.Width = pictureBox_Title.Width - CmdTreeView.Width - 1;
-                            //m_ManualDebug.Height = this.Height - pictureBox_Title.Height - 2;
-                            m_ManualDebug.Show();
-                        }                        
+                            m_ManualDebug.Show();                       
                     }break;
                 case "SystemSeting":
                     {
