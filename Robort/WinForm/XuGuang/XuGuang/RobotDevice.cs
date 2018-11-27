@@ -8,6 +8,6 @@ namespace RobotWorkstation
 {
     public class RobotDevice : RobotBase
     {
-        public bool m_IsStep = true;
+        public bool m_IsStep = true;  //默认是Jog模式
     }
 }

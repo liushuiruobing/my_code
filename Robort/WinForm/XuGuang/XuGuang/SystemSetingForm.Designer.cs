@@ -29,46 +29,62 @@
         private void InitializeComponent()
         {
             this.tabControlSystemSeting = new RobotWorkstation.CustomTabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.SystemSetPageRobot = new System.Windows.Forms.TabPage();
+            this.SystemSetPageCamera = new System.Windows.Forms.TabPage();
             this.tabControlSystemSeting.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlSystemSeting
             // 
-            this.tabControlSystemSeting.Controls.Add(this.tabPage1);
+            this.tabControlSystemSeting.Controls.Add(this.SystemSetPageRobot);
+            this.tabControlSystemSeting.Controls.Add(this.SystemSetPageCamera);
             this.tabControlSystemSeting.Font = new System.Drawing.Font("微软雅黑", 12F);
             this.tabControlSystemSeting.ItemSize = new System.Drawing.Size(120, 26);
-            this.tabControlSystemSeting.Location = new System.Drawing.Point(16, 15);
-            this.tabControlSystemSeting.Margin = new System.Windows.Forms.Padding(4);
+            this.tabControlSystemSeting.Location = new System.Drawing.Point(12, 12);
+            this.tabControlSystemSeting.Margin = new System.Windows.Forms.Padding(1);
             this.tabControlSystemSeting.Name = "tabControlSystemSeting";
             this.tabControlSystemSeting.Padding = new System.Drawing.Point(20, 3);
             this.tabControlSystemSeting.SelectedIndex = 0;
-            this.tabControlSystemSeting.Size = new System.Drawing.Size(1880, 988);
+            this.tabControlSystemSeting.Size = new System.Drawing.Size(777, 576);
             this.tabControlSystemSeting.TabIndex = 0;
             // 
-            // tabPage1
+            // SystemSetPageRobot
             // 
-            this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.tabPage1.Font = new System.Drawing.Font("微软雅黑", 10.5F);
-            this.tabPage1.Location = new System.Drawing.Point(0, 29);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(1880, 959);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "机械臂";
+            this.SystemSetPageRobot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.SystemSetPageRobot.Font = new System.Drawing.Font("微软雅黑", 10.5F);
+            this.SystemSetPageRobot.ForeColor = System.Drawing.Color.White;
+            this.SystemSetPageRobot.Location = new System.Drawing.Point(0, 29);
+            this.SystemSetPageRobot.Margin = new System.Windows.Forms.Padding(0);
+            this.SystemSetPageRobot.Name = "SystemSetPageRobot";
+            this.SystemSetPageRobot.Padding = new System.Windows.Forms.Padding(2);
+            this.SystemSetPageRobot.Size = new System.Drawing.Size(777, 547);
+            this.SystemSetPageRobot.TabIndex = 0;
+            this.SystemSetPageRobot.Text = "机械臂";
+            // 
+            // SystemSetPageCamera
+            // 
+            this.SystemSetPageCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.SystemSetPageCamera.Font = new System.Drawing.Font("微软雅黑", 10.5F);
+            this.SystemSetPageCamera.ForeColor = System.Drawing.Color.White;
+            this.SystemSetPageCamera.Location = new System.Drawing.Point(0, 29);
+            this.SystemSetPageCamera.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.SystemSetPageCamera.Name = "SystemSetPageCamera";
+            this.SystemSetPageCamera.Size = new System.Drawing.Size(777, 547);
+            this.SystemSetPageCamera.TabIndex = 1;
+            this.SystemSetPageCamera.Text = "相机";
             // 
             // SystemSetingForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.ClientSize = new System.Drawing.Size(1880, 988);
+            this.ClientSize = new System.Drawing.Size(800, 600);
             this.ControlBox = false;
             this.Controls.Add(this.tabControlSystemSeting);
+            this.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Location = new System.Drawing.Point(180, 70);
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SystemSetingForm";
@@ -83,6 +99,7 @@
         #endregion
 
         private CustomTabControl tabControlSystemSeting;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage SystemSetPageRobot;
+        private System.Windows.Forms.TabPage SystemSetPageCamera;
     }
 }

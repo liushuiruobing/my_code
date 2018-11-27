@@ -51,16 +51,12 @@ namespace RobotWorkstation
             tabControlManualDebug.Width = this.Width;
             tabControlManualDebug.Height = this.Height;
 
+            radioButtonRobotDeviceJog.Checked = true;  //默认是Jog模式
+
             //加载机械臂全局点位
             DGV_RobotGlobalPoint.Rows.Clear();
             LoadRobotGlobalPoints(0, RobotGlobalPointsBefore);
             TimerLoadRobotOtherGlobalPoints.Start();
-        }
-
-        public void InitFormSizeAndLoction(int Width, int Height)
-        {
-            this.Width = Width;
-            this.Height = Height;
         }
 
         //加载机械臂的全局点位信息
