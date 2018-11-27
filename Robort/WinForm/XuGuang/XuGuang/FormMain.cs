@@ -11,8 +11,9 @@ using System.Windows.Forms;
 
 namespace RobotWorkstation
 {
+    
     public partial class FormMain : Form
-    {
+    {      
         CustomColor m_CustomColor;
         ManualDebugForm m_ManualDebugForm = null;  //手动调试对话框
         SystemSetingForm m_SystemSetingForm = null;

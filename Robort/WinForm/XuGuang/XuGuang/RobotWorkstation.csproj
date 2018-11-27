@@ -130,6 +130,7 @@
     <Compile Include="Communication\NetCommu.cs" />
     <Compile Include="Communication\SerialPortCommu.cs" />
     <Compile Include="Communication\USBCommu.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="CustomUI.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -15,6 +15,8 @@ namespace RobotWorkstation
 {
     public partial class ManualDebugForm : Form
     {
+        private Profile m_Profile;
+
         public RobotDevice m_ManualRobot = new RobotDevice();
         private const int RobotGlobalPointsBefore = 30;  //先加载前30个点，其余的在定时器中加载，来解决刷新缓慢的问题
         private int m_ManualRobotGlobalPointIndex = 0;  //选中的全局点位索引
