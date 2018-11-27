@@ -56,7 +56,7 @@ namespace RobotWorkstation
             //加载机械臂全局点位
             DGV_RobotGlobalPoint.Rows.Clear();
             LoadRobotGlobalPoints(0, RobotGlobalPointsBefore);
-            TimerLoadRobotOtherGlobalPoints.Start();
+            TimerInitRobotGlobalPointDGV.Start();
         }
 
         //加载机械臂的全局点位信息
@@ -69,10 +69,30 @@ namespace RobotWorkstation
             }
         }
 
-        private void timer_LoadRobotOtherGlobalPoints_Tick(object sender, EventArgs e)
+        public void ReadRobotGlobalPoints(int StartIndex, int EndIndex)
         {
-            TimerLoadRobotOtherGlobalPoints.Stop();
-            LoadRobotGlobalPoints(RobotGlobalPointsBefore, RobotBase.MAX_GLOBAL_POINTS);
+            if (m_ManualRobot.m_PointList != null && DGV_RobotGlobalPoint.RowCount >= (EndIndex - StartIndex))
+            {
+                for (int i = StartIndex; i < EndIndex; i++)
+                {
+                    DGV_RobotGlobalPoint[0, i].Value = m_ManualRobot.m_PointList[i].Name;
+                    DGV_RobotGlobalPoint[1, i].Value = m_ManualRobot.m_PointList[i][eAxisName.X] / 1000;
+                    DGV_RobotGlobalPoint[2, i].Value = m_ManualRobot.m_PointList[i][eAxisName.Y] / 1000;
+                    DGV_RobotGlobalPoint[3, i].Value = m_ManualRobot.m_PointList[i][eAxisName.Z] / 1000;
+                    DGV_RobotGlobalPoint[4, i].Value = m_ManualRobot.m_PointList[i][eAxisName.RZ] / 1000;
+                    DGV_RobotGlobalPoint[5, i].Value = m_ManualRobot.m_PointList[i].Info.Hand;
+                    DGV_RobotGlobalPoint[6, i].Value = m_ManualRobot.m_PointList[i].Info.UserFrame;
+                    DGV_RobotGlobalPoint[7, i].Value = m_ManualRobot.m_PointList[i].Info.ToolFrame;
+
+                    DGV_RobotGlobalPoint.Rows[i].HeaderCell.Value = String.Format("{0}", i + 1);
+                }
+            }
+        }
+
+        private void timer_InitRobotGlobalPointDGV_Tick(object sender, EventArgs e)
+        {
+            TimerInitRobotGlobalPointDGV.Stop();
+            LoadRobotGlobalPoints(RobotGlobalPointsBefore, RobotBase.MAX_GLOBAL_POINTS);    
         }
 
         private void CBttonServoOn_Click(object sender, EventArgs e)
@@ -374,37 +394,34 @@ namespace RobotWorkstation
             m_ManualRobot.Stop(eAxisName.RZ);
         }
 
-        private void CBtnRobotTestReadPoint_Click(object sender, EventArgs e)
+        private void UpdateRobotCurentMeas()
         {
-            LoadRobotGlobalPoint(m_ManualRobot, DGV_RobotGlobalPoint);
+            if (m_ManualRobot != null && m_ManualRobot.IsConnected())
+            {
+                cPoint pos = m_ManualRobot.GetPos();
+                CTextBoxRobotDistanceJ1.Text = (pos[eAxisName.J1] / 1000).ToString("0.000");
+                CTextBoxRobotDistanceJ2.Text = (pos[eAxisName.J2] / 1000).ToString("0.000");
+                CTextBoxRobotDistanceJ3.Text = (pos[eAxisName.J3] / 1000).ToString("0.000");
+                CTextBoxRobotDistanceJ4.Text = (pos[eAxisName.J4] / 1000).ToString("0.000");
+
+                CTextBoxRobotDistanceX.Text = (pos[eAxisName.X] / 1000).ToString("0.000");
+                CTextBoxRobotDistanceY.Text = (pos[eAxisName.Y] / 1000).ToString("0.000");
+                CTextBoxRobotDistanceZ.Text = (pos[eAxisName.Z] / 1000).ToString("0.000");
+                CTextBoxRobotDistanceRZ.Text = (pos[eAxisName.RZ] / 1000).ToString("0.000");
+            }
         }
 
-        /*加载并显示全部全局点位*/
-        private void LoadRobotGlobalPoint(RobotBase robot, DataGridView dgv)
+        private void CBtnRobotTestReadPoint_Click(object sender, EventArgs e)
         {
-            if (m_ManualRobot.IsConnected())
+            if (m_ManualRobot.IsConnected() && m_ManualRobot.m_PointList != null)
             {
-                List<cPoint> pointList = robot.GetGlobalPointData();
-                if (pointList == null)
-                    return;
+                DGV_RobotGlobalPoint.DataSource = m_ManualRobot.m_PointList;
 
-                for (int i = 0; i < RobotBase.MAX_GLOBAL_POINTS; i++)
-                {
-                    dgv[0, i].Value = pointList[i].Name;
-                    dgv[1, i].Value = pointList[i][eAxisName.X] / 1000;
-                    dgv[2, i].Value = pointList[i][eAxisName.Y] / 1000;
-                    dgv[3, i].Value = pointList[i][eAxisName.Z] / 1000;
-                    dgv[4, i].Value = pointList[i][eAxisName.RZ] / 1000;
-                    dgv[5, i].Value = pointList[i].Info.Hand;
-                    dgv[6, i].Value = pointList[i].Info.UserFrame;
-                    dgv[7, i].Value = pointList[i].Info.ToolFrame;
-
-                    dgv.Rows[i].HeaderCell.Value = String.Format("{0}", i + 1);
-                }
+                ReadRobotGlobalPoints(0, RobotGlobalPointsBefore);
             }
             else
             {
-                MessageBox.Show("机械臂未连接！", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("机械臂未连接或未获取到点位信息！", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -422,6 +439,7 @@ namespace RobotWorkstation
                 dgv[5, index].Value = pointData.Info.Hand;
                 dgv[6, index].Value = pointData.Info.UserFrame;
                 dgv[7, index].Value = pointData.Info.ToolFrame;
+                dgv.Rows[index].HeaderCell.Value = String.Format("{0}", index + 1);
             }
             catch { };
         }
@@ -470,7 +488,28 @@ namespace RobotWorkstation
             pictureBoxTemperature.Image = (m_ManualRobot.GetTemperatureStateString() == "过载") ? bmpRed : bmpDarkGreen;
             pictureBoxRobotMove.Image = m_ManualRobot.GetMovingState() ? bmpGreen : bmpDarkGreen;
             DisplayRobotState(m_ManualRobot.GetExecutorStateString(), pictureBoxRobotExecut);
+            RefreshRobotServoPic(m_ManualRobot, pictureBoxServo);
 
+            UpdateRobotCurentMeas();
+
+            //读取全局点位信息，只读一次
+            if (m_ManualRobot.IsConnected() && m_ManualRobot.m_PointList == null)
+            {
+                m_ManualRobot.m_PointList = m_ManualRobot.GetGlobalPointData();
+            }
+        }
+
+        private void ManualDebugForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            CloseRobot();
+        }
+
+        public void CloseRobot()
+        {
+            if (m_ManualRobot != null)
+            {
+                m_ManualRobot.Close();
+            }
         }
     }
 }

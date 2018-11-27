@@ -34,7 +34,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.TimerLoadRobotOtherGlobalPoints = new System.Windows.Forms.Timer(this.components);
+            this.TimerInitRobotGlobalPointDGV = new System.Windows.Forms.Timer(this.components);
             this.RefreshTimer = new System.Windows.Forms.Timer(this.components);
             this.tabControlManualDebug = new RobotWorkstation.CustomTabControl();
             this.tabPage_Robot = new System.Windows.Forms.TabPage();
@@ -129,9 +129,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxServo)).BeginInit();
             this.SuspendLayout();
             // 
-            // TimerLoadRobotOtherGlobalPoints
+            // TimerInitRobotGlobalPointDGV
             // 
-            this.TimerLoadRobotOtherGlobalPoints.Tick += new System.EventHandler(this.timer_LoadRobotOtherGlobalPoints_Tick);
+            this.TimerInitRobotGlobalPointDGV.Tick += new System.EventHandler(this.timer_InitRobotGlobalPointDGV_Tick);
             // 
             // RefreshTimer
             // 
@@ -1222,6 +1222,7 @@
             this.MinimizeBox = false;
             this.Name = "ManualDebugForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ManualDebugForm_FormClosing);
             this.Load += new System.EventHandler(this.ManualDebug_Load);
             this.tabControlManualDebug.ResumeLayout(false);
             this.tabPage_Robot.ResumeLayout(false);
@@ -1317,7 +1318,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn RobotTestHand;
         private System.Windows.Forms.DataGridViewTextBoxColumn RobotTestUserID;
         private System.Windows.Forms.DataGridViewTextBoxColumn RobotTestToolID;
-        private System.Windows.Forms.Timer TimerLoadRobotOtherGlobalPoints;
+        private System.Windows.Forms.Timer TimerInitRobotGlobalPointDGV;
         private CustomButton CBtnRobotTestReadPoint;
         private CustomLabel customLabel19;
         private CustomButton CBtnRobotTestMoveToPoint;

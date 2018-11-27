@@ -32,5 +32,10 @@ namespace RobotWorkstation
         {
 
         }
+
+        private void CTextBoxSysSetRobotIP_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

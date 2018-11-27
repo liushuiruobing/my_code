@@ -133,7 +133,7 @@ namespace RobotWorkstation
                     } break;
                 case "Exit":
                     {
-                        this.Close();
+                        CloseForm();                     
                     }break;
                 default:
                     break;
@@ -143,6 +143,14 @@ namespace RobotWorkstation
         private void FormMain_MaximumSizeChanged(object sender, EventArgs e)
         {
             InitWindowSize();
+        }
+
+        public void CloseForm()
+        {
+            if (m_ManualDebugForm != null)
+                m_ManualDebugForm.CloseRobot();
+
+            this.Close();
         }
     }
 }

@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RobotWorkstation</RootNamespace>
-    <AssemblyName>定位装盘码垛工作站</AssemblyName>
+    <AssemblyName>视觉分拣工作站</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -36,11 +36,65 @@
     <ApplicationIcon>deviser.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="bbv.Common, Version=7.1.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\bbv.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="bbv.Common.StateMachine, Version=7.4.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\bbv.Common.StateMachine.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.Communication, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Delta.Communication.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.General">
+      <HintPath>lib\Delta.General.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.Interpreter">
+      <HintPath>lib\Delta.Interpreter.dll</HintPath>
+    </Reference>
+    <Reference Include="FTPLib">
+      <HintPath>lib\FTPLib.dll</HintPath>
+    </Reference>
     <Reference Include="LibUsbDotNet">
       <HintPath>.\LibUsbDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="RABD.DROE.ControllerManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\RABD.DROE.ControllerManager.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.DROE.FTP">
+      <HintPath>lib\RABD.DROE.FTP.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.DROE.MSRobot, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\RABD.DROE.MSRobot.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.DROE.ParaEditor">
+      <HintPath>lib\RABD.DROE.ParaEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.DROE.ParaEditor.Define">
+      <HintPath>lib\RABD.DROE.ParaEditor.Define.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.DROE.PlugInInterface">
+      <HintPath>lib\RABD.DROE.PlugInInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.DROE.ProjectManager">
+      <HintPath>lib\RABD.DROE.ProjectManager.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.DROE.Solution">
+      <HintPath>lib\RABD.DROE.Solution.dll</HintPath>
+    </Reference>
     <Reference Include="RABD.DROE.SystemDefine">
       <HintPath>lib\RABD.DROE.SystemDefine.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.DROE.VRRobot">
+      <HintPath>lib\RABD.DROE.VRRobot.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.FTP, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\RABD.FTP.dll</HintPath>
     </Reference>
     <Reference Include="RABD.Lib">
       <HintPath>lib\RABD.Lib.dll</HintPath>
@@ -50,6 +104,14 @@
     </Reference>
     <Reference Include="RABD.Modbus.Define">
       <HintPath>lib\RABD.Modbus.Define.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.Project, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\RABD.Project.dll</HintPath>
+    </Reference>
+    <Reference Include="RABD.Tool, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\RABD.Tool.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
