@@ -36,7 +36,13 @@ namespace RobotWorkstation
 
         private void CTextBoxSysSetRobotIP_TextChanged(object sender, EventArgs e)
         {
+            Profile.m_Config.RobotIp = CTextBoxSysSetRobotIP.Text;
+        }
 
+        public void HideFormAndSaveConfigFile()
+        {
+            this.Hide();
+            Profile.SaveConfigFile();
         }
     }
 }

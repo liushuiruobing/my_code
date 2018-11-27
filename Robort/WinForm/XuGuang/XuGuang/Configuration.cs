@@ -15,7 +15,7 @@ namespace RobotWorkstation
         public int RobotMoveSpeed;
         public int RobotMoveDistance;
         public int RobotMoveDistanceUm;
-        
+
         public Configuration()
         {
             RobotIp = "192.168.1.124";
@@ -25,60 +25,12 @@ namespace RobotWorkstation
         }
     }
 
-    public class Profile
+    public static class Profile
     {
-        private const string m_FileName = "config.xml";  //配置文件名
-        private Configuration m_Config = new Configuration();
+        private static readonly string m_FileName = "config.xml";  //配置文件名
+        public static Configuration m_Config = new Configuration();
 
-        public string RobotIp
-        {
-            get
-            {
-                return m_Config.RobotIp;
-            }
-            set
-            {
-                m_Config.RobotIp = value;
-            }
-        }
-
-        public int RobotMoveSpeed
-        {
-            get
-            {
-                return m_Config.RobotMoveSpeed;
-            }
-            set
-            {
-                m_Config.RobotMoveSpeed = value;
-            }
-        }
-
-        public int RobotMoveDistance
-        {
-            get
-            {
-                return m_Config.RobotMoveDistance;
-            }
-            set
-            {
-                m_Config.RobotMoveDistance = value;
-            }
-        }
-
-        public int RobotMoveDistanceUm
-        {
-            get
-            {
-                return m_Config.RobotMoveDistanceUm;
-            }
-            set
-            {
-                m_Config.RobotMoveDistanceUm = value;
-            }
-        }
-
-        public void LoadConfigFile()
+        public static void LoadConfigFile()
         {
             string strFile = AppDomain.CurrentDomain.BaseDirectory + m_FileName;
             if (!File.Exists(strFile))
@@ -99,7 +51,7 @@ namespace RobotWorkstation
             }
         }
 
-        public void SaveConfigFile()
+        public static void SaveConfigFile()
         {
             string strFile = AppDomain.CurrentDomain.BaseDirectory + m_FileName;
             if (!File.Exists(strFile))

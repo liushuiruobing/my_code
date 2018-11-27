@@ -15,8 +15,6 @@ namespace RobotWorkstation
 {
     public partial class ManualDebugForm : Form
     {
-        private Profile m_Profile;
-
         public RobotDevice m_ManualRobot = new RobotDevice();
         private const int RobotGlobalPointsBefore = 30;  //先加载前30个点，其余的在定时器中加载，来解决刷新缓慢的问题
         private int m_ManualRobotGlobalPointIndex = 0;  //选中的全局点位索引
@@ -203,6 +201,7 @@ namespace RobotWorkstation
                     CTextBoxRobotMoveSpeed.Text = speed.ToString();
                 }
                 m_ManualRobot.SetSpeed(speed);
+                Profile.m_Config.RobotMoveSpeed = speed;
             }
             catch (System.Exception ex)
             {
@@ -216,6 +215,8 @@ namespace RobotWorkstation
             {
                 int distance = Convert.ToInt32(CTextBoxJogDistance.Text);
                 m_ManualRobot.SetJointDistance(distance);
+
+                Profile.m_Config.RobotMoveDistance = distance;
             }
             catch
             {
@@ -229,6 +230,7 @@ namespace RobotWorkstation
             {
                 int um = Convert.ToInt32(CTextBoxJogDistanceUm.Text);
                 m_ManualRobot.SetCartesianDistance(um);
+                Profile.m_Config.RobotMoveDistanceUm = um;
             }
             catch
             {
@@ -512,6 +514,12 @@ namespace RobotWorkstation
             {
                 m_ManualRobot.Close();
             }
+        }
+
+        public void HideFormAndSaveConfigFile()
+        {
+            this.Hide();
+            Profile.SaveConfigFile();
         }
     }
 }

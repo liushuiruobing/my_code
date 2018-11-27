@@ -13,7 +13,7 @@ namespace RobotWorkstation
 {
     
     public partial class FormMain : Form
-    {      
+    {
         CustomColor m_CustomColor;
         ManualDebugForm m_ManualDebugForm = null;  //手动调试对话框
         SystemSetingForm m_SystemSetingForm = null;
@@ -86,18 +86,18 @@ namespace RobotWorkstation
                 case "Login":
                     {
                         if (m_ManualDebugForm != null)
-                            m_ManualDebugForm.Hide();
+                            m_ManualDebugForm.HideFormAndSaveConfigFile();
                     }break;
                 case "Run":
                     {
                         if (m_ManualDebugForm != null)
-                            m_ManualDebugForm.Hide();
+                            m_ManualDebugForm.HideFormAndSaveConfigFile();
                     }
                     break;
                 case "Manual":
                     {
                         if (m_SystemSetingForm != null)
-                            m_SystemSetingForm.Hide();
+                            m_SystemSetingForm.HideFormAndSaveConfigFile();
 
                         if (m_ManualDebugForm != null)
                         {
@@ -113,7 +113,7 @@ namespace RobotWorkstation
                 case "SystemSeting":
                     {
                         if (m_ManualDebugForm != null)
-                            m_ManualDebugForm.Hide();
+                            m_ManualDebugForm.HideFormAndSaveConfigFile();
 
                         if (m_SystemSetingForm != null)
                         {
@@ -130,7 +130,7 @@ namespace RobotWorkstation
                 case "UserLimits":
                     {
                         if (m_ManualDebugForm != null)
-                            m_ManualDebugForm.Hide();
+                            m_ManualDebugForm.HideFormAndSaveConfigFile();
                     } break;
                 case "Exit":
                     {
