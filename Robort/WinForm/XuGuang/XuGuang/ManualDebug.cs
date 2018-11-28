@@ -412,6 +412,16 @@ namespace RobotWorkstation
                 CTextBoxRobotDistanceY.Text = (pos[eAxisName.Y] / 1000).ToString("0.000");
                 CTextBoxRobotDistanceZ.Text = (pos[eAxisName.Z] / 1000).ToString("0.000");
                 CTextBoxRobotDistanceRZ.Text = (pos[eAxisName.RZ] / 1000).ToString("0.000");
+
+                //警报信息
+                listBoxRobotWarnMeas.Items.Clear();
+                string [,] WarnStr = m_ManualRobot.GetRobotWarnString(eLanguage.TW);
+                for (int i = 0; i < (WarnStr.Length) / 3; i++)
+                {
+                    listBoxRobotWarnMeas.Items.Add(WarnStr[i, 0]);
+                    listBoxRobotWarnMeas.Items.Add(WarnStr[i, 1]);
+                    listBoxRobotWarnMeas.Items.Add(WarnStr[i, 2]);
+                }
             }
         }
 
@@ -419,8 +429,6 @@ namespace RobotWorkstation
         {
             if (m_ManualRobot.IsConnected() && m_ManualRobot.m_PointList != null)
             {
-                DGV_RobotGlobalPoint.DataSource = m_ManualRobot.m_PointList;
-
                 ReadRobotGlobalPoints(0, RobotGlobalPointsBefore);
             }
             else
@@ -489,6 +497,7 @@ namespace RobotWorkstation
             Bitmap bmpDarkRed = Properties.Resources.SmallDarkRed;
 
             pictureBoxRobotAlarm.Image = m_ManualRobot.HasAlarm() ? bmpRed : bmpDarkRed;
+            pictureBoxRobotAlarm.Image = m_ManualRobot.HasWarning() ? bmpRed : bmpDarkRed;
             pictureBoxTemperature.Image = (m_ManualRobot.GetTemperatureStateString() == "过载") ? bmpRed : bmpDarkGreen;
             pictureBoxRobotMove.Image = m_ManualRobot.GetMovingState() ? bmpGreen : bmpDarkGreen;
             DisplayRobotState(m_ManualRobot.GetExecutorStateString(), pictureBoxRobotExecut);
@@ -520,6 +529,13 @@ namespace RobotWorkstation
         {
             this.Hide();
             Profile.SaveConfigFile();
+            RefreshTimer.Stop();
+        }
+
+        //当窗体第一次显示时发生
+        private void ManualDebugForm_Shown(object sender, EventArgs e)
+        {
+            RefreshTimer.Start();
         }
     }
 }

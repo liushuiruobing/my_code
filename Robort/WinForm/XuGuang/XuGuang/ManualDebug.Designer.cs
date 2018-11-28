@@ -39,6 +39,8 @@
             this.tabControlManualDebug = new RobotWorkstation.CustomTabControl();
             this.tabPage_Robot = new System.Windows.Forms.TabPage();
             this.groupBoxRobot = new RobotWorkstation.CustomGroupBox();
+            this.listBoxRobotWarnMeas = new System.Windows.Forms.ListBox();
+            this.customLabel20 = new RobotWorkstation.CustomLabel();
             this.CBtnRobotTestTeachPoint = new RobotWorkstation.CustomButton();
             this.CBtnRobotTestMoveToPoint = new RobotWorkstation.CustomButton();
             this.customLabel19 = new RobotWorkstation.CustomLabel();
@@ -131,11 +133,11 @@
             // 
             // TimerInitRobotGlobalPointDGV
             // 
+            this.TimerInitRobotGlobalPointDGV.Interval = 10;
             this.TimerInitRobotGlobalPointDGV.Tick += new System.EventHandler(this.timer_InitRobotGlobalPointDGV_Tick);
             // 
             // RefreshTimer
             // 
-            this.RefreshTimer.Enabled = true;
             this.RefreshTimer.Interval = 200;
             this.RefreshTimer.Tick += new System.EventHandler(this.RefreshTimer_Tick);
             // 
@@ -167,6 +169,8 @@
             // 
             // groupBoxRobot
             // 
+            this.groupBoxRobot.Controls.Add(this.listBoxRobotWarnMeas);
+            this.groupBoxRobot.Controls.Add(this.customLabel20);
             this.groupBoxRobot.Controls.Add(this.CBtnRobotTestTeachPoint);
             this.groupBoxRobot.Controls.Add(this.CBtnRobotTestMoveToPoint);
             this.groupBoxRobot.Controls.Add(this.customLabel19);
@@ -234,10 +238,34 @@
             this.groupBoxRobot.ForeColor = System.Drawing.Color.White;
             this.groupBoxRobot.Location = new System.Drawing.Point(10, 10);
             this.groupBoxRobot.Name = "groupBoxRobot";
-            this.groupBoxRobot.Size = new System.Drawing.Size(1200, 727);
+            this.groupBoxRobot.Size = new System.Drawing.Size(1322, 727);
             this.groupBoxRobot.TabIndex = 0;
             this.groupBoxRobot.TabStop = false;
             this.groupBoxRobot.Text = "机械臂";
+            // 
+            // listBoxRobotWarnMeas
+            // 
+            this.listBoxRobotWarnMeas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.listBoxRobotWarnMeas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listBoxRobotWarnMeas.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.listBoxRobotWarnMeas.ForeColor = System.Drawing.Color.White;
+            this.listBoxRobotWarnMeas.FormattingEnabled = true;
+            this.listBoxRobotWarnMeas.ItemHeight = 23;
+            this.listBoxRobotWarnMeas.Location = new System.Drawing.Point(1141, 76);
+            this.listBoxRobotWarnMeas.Name = "listBoxRobotWarnMeas";
+            this.listBoxRobotWarnMeas.Size = new System.Drawing.Size(164, 209);
+            this.listBoxRobotWarnMeas.TabIndex = 65;
+            // 
+            // customLabel20
+            // 
+            this.customLabel20.AutoSize = true;
+            this.customLabel20.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel20.Location = new System.Drawing.Point(1140, 52);
+            this.customLabel20.Name = "customLabel20";
+            this.customLabel20.Size = new System.Drawing.Size(95, 23);
+            this.customLabel20.TabIndex = 64;
+            this.customLabel20.Text = "警告信息：";
             // 
             // CBtnRobotTestTeachPoint
             // 
@@ -303,7 +331,7 @@
             this.CTabControlBorderRobotTestPoints.Margin = new System.Windows.Forms.Padding(1);
             this.CTabControlBorderRobotTestPoints.Name = "CTabControlBorderRobotTestPoints";
             this.CTabControlBorderRobotTestPoints.SelectedIndex = 0;
-            this.CTabControlBorderRobotTestPoints.Size = new System.Drawing.Size(780, 577);
+            this.CTabControlBorderRobotTestPoints.Size = new System.Drawing.Size(720, 577);
             this.CTabControlBorderRobotTestPoints.TabIndex = 59;
             // 
             // PageRobotTestGlobalPoint
@@ -314,7 +342,7 @@
             this.PageRobotTestGlobalPoint.Margin = new System.Windows.Forms.Padding(1);
             this.PageRobotTestGlobalPoint.Name = "PageRobotTestGlobalPoint";
             this.PageRobotTestGlobalPoint.Padding = new System.Windows.Forms.Padding(1);
-            this.PageRobotTestGlobalPoint.Size = new System.Drawing.Size(778, 547);
+            this.PageRobotTestGlobalPoint.Size = new System.Drawing.Size(718, 547);
             this.PageRobotTestGlobalPoint.TabIndex = 0;
             this.PageRobotTestGlobalPoint.Text = "全局点位";
             // 
@@ -375,7 +403,7 @@
             dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             this.DGV_RobotGlobalPoint.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.DGV_RobotGlobalPoint.RowTemplate.Height = 23;
-            this.DGV_RobotGlobalPoint.Size = new System.Drawing.Size(778, 546);
+            this.DGV_RobotGlobalPoint.Size = new System.Drawing.Size(719, 547);
             this.DGV_RobotGlobalPoint.TabIndex = 0;
             this.DGV_RobotGlobalPoint.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DGV_RobotGlobalPoint_CellClick);
             // 
@@ -437,7 +465,7 @@
             this.PageRobotTestUserFrame.Margin = new System.Windows.Forms.Padding(1);
             this.PageRobotTestUserFrame.Name = "PageRobotTestUserFrame";
             this.PageRobotTestUserFrame.Padding = new System.Windows.Forms.Padding(1);
-            this.PageRobotTestUserFrame.Size = new System.Drawing.Size(778, 547);
+            this.PageRobotTestUserFrame.Size = new System.Drawing.Size(718, 547);
             this.PageRobotTestUserFrame.TabIndex = 1;
             this.PageRobotTestUserFrame.Text = "使用者坐标";
             // 
@@ -448,7 +476,7 @@
             this.PageRobotTestToolFrame.Margin = new System.Windows.Forms.Padding(1);
             this.PageRobotTestToolFrame.Name = "PageRobotTestToolFrame";
             this.PageRobotTestToolFrame.Padding = new System.Windows.Forms.Padding(1);
-            this.PageRobotTestToolFrame.Size = new System.Drawing.Size(778, 547);
+            this.PageRobotTestToolFrame.Size = new System.Drawing.Size(718, 547);
             this.PageRobotTestToolFrame.TabIndex = 2;
             this.PageRobotTestToolFrame.Text = "工具坐标";
             // 
@@ -459,7 +487,7 @@
             this.PageRobotTestWorkSpace.Margin = new System.Windows.Forms.Padding(1);
             this.PageRobotTestWorkSpace.Name = "PageRobotTestWorkSpace";
             this.PageRobotTestWorkSpace.Padding = new System.Windows.Forms.Padding(1);
-            this.PageRobotTestWorkSpace.Size = new System.Drawing.Size(778, 547);
+            this.PageRobotTestWorkSpace.Size = new System.Drawing.Size(718, 547);
             this.PageRobotTestWorkSpace.TabIndex = 3;
             this.PageRobotTestWorkSpace.Text = "工作空间";
             // 
@@ -944,7 +972,7 @@
             this.CTextBoxRobotMoveSpeed.Name = "CTextBoxRobotMoveSpeed";
             this.CTextBoxRobotMoveSpeed.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotMoveSpeed.TabIndex = 22;
-            this.CTextBoxRobotMoveSpeed.Text = "20";
+            this.CTextBoxRobotMoveSpeed.Text = "30";
             this.CTextBoxRobotMoveSpeed.TextChanged += new System.EventHandler(this.CTextBoxRobotMoveSpeed_TextChanged);
             // 
             // customLabel8
@@ -1224,6 +1252,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ManualDebugForm_FormClosing);
             this.Load += new System.EventHandler(this.ManualDebug_Load);
+            this.Shown += new System.EventHandler(this.ManualDebugForm_Shown);
             this.tabControlManualDebug.ResumeLayout(false);
             this.tabPage_Robot.ResumeLayout(false);
             this.groupBoxRobot.ResumeLayout(false);
@@ -1324,5 +1353,7 @@
         private CustomButton CBtnRobotTestMoveToPoint;
         private CustomButton CBtnRobotTestTeachPoint;
         private System.Windows.Forms.Timer RefreshTimer;
+        private System.Windows.Forms.ListBox listBoxRobotWarnMeas;
+        private CustomLabel customLabel20;
     }
 }

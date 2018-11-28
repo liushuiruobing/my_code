@@ -34,7 +34,9 @@ namespace RobotWorkstation
         {
             string strFile = AppDomain.CurrentDomain.BaseDirectory + m_FileName;
             if (!File.Exists(strFile))
+            {
                 return;
+            }
             
             using (FileStream fStream = new FileStream(strFile, FileMode.Open))
             {
@@ -55,7 +57,9 @@ namespace RobotWorkstation
         {
             string strFile = AppDomain.CurrentDomain.BaseDirectory + m_FileName;
             if (!File.Exists(strFile))
+            {
                 return;
+            }
 
             using(FileStream fStream = new FileStream(strFile, FileMode.OpenOrCreate))
             {

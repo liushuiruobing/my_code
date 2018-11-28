@@ -207,6 +207,16 @@ namespace RobotWorkstation
             return m_Robot.HasAlarm();
         }
 
+        public bool HasWarning()
+        {
+            if (!m_IsConnected)
+            {
+                return false;
+            }
+
+            return m_Robot.HasWarning();
+        }
+
         public void SetJointDistance(int Dist)
         {
             if (!m_IsConnected)
@@ -364,6 +374,20 @@ namespace RobotWorkstation
             }
 
             return m_Robot.GetInputState(index);
+        }
+
+        public string[,] GetRobotAlarmString(eLanguage lang = eLanguage.TW)
+        {
+            string[,] AlarmStr = { { "" } };
+            AlarmStr = m_Robot.GetAlarmCodes(lang);
+            return AlarmStr;
+        }
+
+        public string[,] GetRobotWarnString(eLanguage lang = eLanguage.TW)
+        {
+            string[,] WarnStr = { { "" } };
+            WarnStr = m_Robot.GetWarnCodes(lang);
+            return WarnStr;
         }
 
         //设置机器人动作
