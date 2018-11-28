@@ -23,6 +23,8 @@ namespace RobotWorkstation
             InitializeComponent();
             InitOtherForm();
             this.CenterToScreen();
+
+            Profile.LoadConfigFile();
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -151,6 +153,7 @@ namespace RobotWorkstation
             if (m_ManualDebugForm != null)
                 m_ManualDebugForm.CloseRobot();
 
+            Profile.SaveConfigFile();
             this.Close();
         }
     }

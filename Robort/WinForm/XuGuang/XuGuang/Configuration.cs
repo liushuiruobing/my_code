@@ -11,10 +11,16 @@ namespace RobotWorkstation
     //配置类
     public class Configuration
     {
+        //机械臂
         public string RobotIp;
         public int RobotMoveSpeed;
         public int RobotMoveDistance;
         public int RobotMoveDistanceUm;
+
+        //相机
+        public float CameraExposure;
+        public float CameraGain;
+        public float CameraFramRate;
 
         public Configuration()
         {
@@ -22,9 +28,14 @@ namespace RobotWorkstation
             RobotMoveSpeed = 20;
             RobotMoveDistance = 1000;
             RobotMoveDistanceUm = 1000;
+
+            CameraExposure = 1000;
+            CameraGain = 1000;
+            CameraFramRate = 1000;
         }
     }
 
+    //配置文件
     public static class Profile
     {
         private static readonly string m_FileName = "config.xml";  //配置文件名
@@ -37,18 +48,18 @@ namespace RobotWorkstation
             {
                 return;
             }
-            
+
             using (FileStream fStream = new FileStream(strFile, FileMode.Open))
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Configuration));
                 try
                 {
-                    m_Config = xmlSerializer.Deserialize(fStream) as Configuration;
+                    m_Config = (Configuration)xmlSerializer.Deserialize(fStream);
                 }
-                catch
+                catch //(InvalidOperationException)
                 {
                     System.Windows.Forms.MessageBox.Show("加载配置文件失败！", "警告");
-                    return;
+                    //return;
                 }
             }
         }
@@ -71,7 +82,7 @@ namespace RobotWorkstation
                 catch
                 {
                     System.Windows.Forms.MessageBox.Show("保存配置文件失败！", "警告");
-                    return;
+                    //return;
                 }
             }
         }

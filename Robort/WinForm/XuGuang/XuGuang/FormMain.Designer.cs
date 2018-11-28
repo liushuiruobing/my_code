@@ -30,12 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("登录");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("运行", 1, 1);
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("手动控制", 2, 2);
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("系统设置", 3, 3);
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("权限管理", 4, 4);
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("退出", 5, 5);
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("登录");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("运行", 1, 1);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("手动控制", 2, 2);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("系统设置", 3, 3);
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("权限管理", 4, 4);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("退出", 5, 5);
             this.pictureBoxTitle = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -90,41 +90,41 @@
             this.CmdTreeView.ItemHeight = 48;
             this.CmdTreeView.Location = new System.Drawing.Point(1, 70);
             this.CmdTreeView.Name = "CmdTreeView";
-            treeNode7.Name = "Login";
-            treeNode7.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode7.Text = "登录";
-            treeNode8.ImageIndex = 1;
-            treeNode8.Name = "Run";
-            treeNode8.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode8.SelectedImageIndex = 1;
-            treeNode8.Text = "运行";
-            treeNode9.ImageIndex = 2;
-            treeNode9.Name = "Manual";
-            treeNode9.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode9.SelectedImageIndex = 2;
-            treeNode9.Text = "手动控制";
-            treeNode10.ImageIndex = 3;
-            treeNode10.Name = "SystemSeting";
-            treeNode10.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode10.SelectedImageIndex = 3;
-            treeNode10.Text = "系统设置";
-            treeNode11.ImageIndex = 4;
-            treeNode11.Name = "UserLimits";
-            treeNode11.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode11.SelectedImageIndex = 4;
-            treeNode11.Text = "权限管理";
-            treeNode12.ImageIndex = 5;
-            treeNode12.Name = "Exit";
-            treeNode12.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode12.SelectedImageIndex = 5;
-            treeNode12.Text = "退出";
+            treeNode1.Name = "Login";
+            treeNode1.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            treeNode1.Text = "登录";
+            treeNode2.ImageIndex = 1;
+            treeNode2.Name = "Run";
+            treeNode2.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            treeNode2.SelectedImageIndex = 1;
+            treeNode2.Text = "运行";
+            treeNode3.ImageIndex = 2;
+            treeNode3.Name = "Manual";
+            treeNode3.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            treeNode3.SelectedImageIndex = 2;
+            treeNode3.Text = "手动控制";
+            treeNode4.ImageIndex = 3;
+            treeNode4.Name = "SystemSeting";
+            treeNode4.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            treeNode4.SelectedImageIndex = 3;
+            treeNode4.Text = "系统设置";
+            treeNode5.ImageIndex = 4;
+            treeNode5.Name = "UserLimits";
+            treeNode5.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            treeNode5.SelectedImageIndex = 4;
+            treeNode5.Text = "权限管理";
+            treeNode6.ImageIndex = 5;
+            treeNode6.Name = "Exit";
+            treeNode6.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            treeNode6.SelectedImageIndex = 5;
+            treeNode6.Text = "退出";
             this.CmdTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode7,
-            treeNode8,
-            treeNode9,
-            treeNode10,
-            treeNode11,
-            treeNode12});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4,
+            treeNode5,
+            treeNode6});
             this.CmdTreeView.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.CmdTreeView.Scrollable = false;
             this.CmdTreeView.SelectedImageIndex = 0;

@@ -31,7 +31,7 @@ namespace RobotWorkstation
 
         private void SystemSeting_Load(object sender, EventArgs e)
         {
-
+            CTextBoxSysSetRobotIP.Text = Profile.m_Config.RobotIp;
         }
 
         private void CTextBoxSysSetRobotIP_TextChanged(object sender, EventArgs e)

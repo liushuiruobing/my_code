@@ -55,6 +55,9 @@ namespace RobotWorkstation
             tabControlManualDebug.Height = this.Height;
 
             radioButtonRobotDeviceJog.Checked = true;  //默认是Jog模式
+            CTextBoxRobotMoveSpeed.Text = Profile.m_Config.RobotMoveSpeed.ToString();
+            CTextBoxJogDistance.Text = Profile.m_Config.RobotMoveDistance.ToString();
+            CTextBoxJogDistanceUm.Text = Profile.m_Config.RobotMoveDistanceUm.ToString();
 
             //加载机械臂全局点位
             DGV_RobotGlobalPoint.Rows.Clear();
@@ -605,6 +608,34 @@ namespace RobotWorkstation
                 CTextBoxCameraExposure.Text = param.Exposure.ToString("F1");
                 CTextBoxCameraGain.Text = param.Gain.ToString("F1");
                 CTextBoxCameraFrameRate.Text = param.FramRate.ToString("F1");
+            }
+        }
+
+        private void tabControlManualDebug_Selected(object sender, TabControlEventArgs e)
+        {
+            switch (tabControlManualDebug.SelectedIndex)
+            {
+                case 0:  //台达机械臂
+                    {
+                        radioButtonRobotDeviceJog.Checked = true;  //默认是Jog模式
+                        CTextBoxRobotMoveSpeed.Text = Profile.m_Config.RobotMoveSpeed.ToString();
+                        CTextBoxJogDistance.Text = Profile.m_Config.RobotMoveDistance.ToString();
+                        CTextBoxJogDistanceUm.Text = Profile.m_Config.RobotMoveDistanceUm.ToString();
+                    }
+                    break;
+                case 1:  //三轴机械臂
+                    {
+
+                    }
+                    break;
+                case 2:  //相机
+                    {
+                        CTextBoxCameraExposure.Text = Profile.m_Config.CameraExposure.ToString("F1");
+                        CTextBoxCameraGain.Text = Profile.m_Config.CameraGain.ToString("F1");
+                        CTextBoxCameraFrameRate.Text = Profile.m_Config.CameraFramRate.ToString("F1");
+                    }
+                    break;
+                default: break;
             }
         }
     }

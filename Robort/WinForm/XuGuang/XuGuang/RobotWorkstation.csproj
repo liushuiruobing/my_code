@@ -58,7 +58,7 @@
       <HintPath>lib\FTPLib.dll</HintPath>
     </Reference>
     <Reference Include="LibUsbDotNet">
-      <HintPath>.\LibUsbDotNet.dll</HintPath>
+      <HintPath>lib\LibUsbDotNet.dll</HintPath>
     </Reference>
     <Reference Include="MvCameraControl.Net">
       <HintPath>lib\MvCameraControl.Net.dll</HintPath>
