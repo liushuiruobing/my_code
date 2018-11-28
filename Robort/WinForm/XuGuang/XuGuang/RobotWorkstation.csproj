@@ -60,6 +60,9 @@
     <Reference Include="LibUsbDotNet">
       <HintPath>.\LibUsbDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="MvCameraControl.Net">
+      <HintPath>lib\MvCameraControl.Net.dll</HintPath>
+    </Reference>
     <Reference Include="RABD.DROE.ControllerManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\RABD.DROE.ControllerManager.dll</HintPath>
@@ -126,6 +129,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Camera\CameraOperator.cs" />
+    <Compile Include="Camera\VisionCamera.cs" />
     <Compile Include="Communication\AbstractCommunication.cs" />
     <Compile Include="Communication\NetCommu.cs" />
     <Compile Include="Communication\SerialPortCommu.cs" />
