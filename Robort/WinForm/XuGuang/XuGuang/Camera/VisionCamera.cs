@@ -19,7 +19,7 @@ namespace RobotWorkstation
     public class VisionCamera
     {
         /*摄像头驱动变量*/
-        private ComboBox m_CameraListComboBox = new ComboBox();
+        public ComboBox m_CameraListComboBox = new ComboBox();
         private MyCamera.MV_CC_DEVICE_INFO_LIST m_CameraList = new MyCamera.MV_CC_DEVICE_INFO_LIST();
         private CameraOperator m_CameraOperator = new CameraOperator();
 
@@ -85,7 +85,7 @@ namespace RobotWorkstation
         {
             if (m_CameraList.nDeviceNum == 0 || m_CameraListComboBox.SelectedIndex == -1)
             {
-                MessageBox.Show("无设备，请选择");
+                MessageBox.Show("无设备可选择！", "警告");
                 return;
             }
 
@@ -94,7 +94,7 @@ namespace RobotWorkstation
             int nRet = m_CameraOperator.Open(ref device);
             if (MyCamera.MV_OK != nRet)
             {
-                MessageBox.Show("设备打开失败!");
+                MessageBox.Show("设备打开失败！", "警告");
                 return;
             }
 
@@ -109,20 +109,20 @@ namespace RobotWorkstation
             int nRet = m_CameraOperator.SetFloatValue("ExposureTime", param.Exposure);
             if (nRet != CameraOperator.CO_OK)
             {
-                MessageBox.Show("设置曝光时间失败！");
+                MessageBox.Show("设置曝光时间失败！", "警告");
             }
 
             m_CameraOperator.SetEnumValue("GainAuto", 0);
             nRet = m_CameraOperator.SetFloatValue("Gain", param.Gain);
             if (nRet != CameraOperator.CO_OK)
             {
-                MessageBox.Show("设置增益失败！");
+                MessageBox.Show("设置增益失败！", "警告");
             }
 
             nRet = m_CameraOperator.SetFloatValue("AcquisitionFrameRate", param.FramRate);
             if (nRet != CameraOperator.CO_OK)
             {
-                MessageBox.Show("设置帧率失败！");
+                MessageBox.Show("设置帧率失败！", "警告");
             }
         }
 
@@ -150,7 +150,7 @@ namespace RobotWorkstation
             int nRet = m_CameraOperator.StartGrabbing();
             if (MyCamera.MV_OK != nRet)
             {
-                MessageBox.Show("开始取流失败！");
+                MessageBox.Show("开始取流失败！", "警告");
                 return;
             }
 
@@ -158,7 +158,7 @@ namespace RobotWorkstation
             nRet = m_CameraOperator.Display(pictureBox.Handle);
             if (MyCamera.MV_OK != nRet)
             {
-                MessageBox.Show("显示失败！");
+                MessageBox.Show("显示失败！", "警告");
             }
         }
 

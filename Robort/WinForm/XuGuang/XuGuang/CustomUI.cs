@@ -62,7 +62,12 @@ namespace RobotWorkstation
     }
 
     public class CustomGroupBox:GroupBox
-    {      
+    {
+        public CustomGroupBox()
+        {
+            Font = new Font("微软雅黑", 12F);
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             Color cLine, cFont;

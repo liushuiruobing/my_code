@@ -202,7 +202,6 @@ namespace VisionInspection
 
         public void InitRobot()
         {
-
             bool bRe = m_RobotDevice.Open("192.168.1.124");
             if (bRe)
             {

@@ -15,9 +15,13 @@ namespace RobotWorkstation
 {
     public partial class ManualDebugForm : Form
     {
+        //机械臂
         public RobotDevice m_ManualRobot = new RobotDevice();
         private const int RobotGlobalPointsBefore = 30;  //先加载前30个点，其余的在定时器中加载，来解决刷新缓慢的问题
         private int m_ManualRobotGlobalPointIndex = 0;  //选中的全局点位索引
+
+        //视觉相机
+        VisionCamera m_Camera = new VisionCamera();
 
         //防止闪屏
         protected override CreateParams CreateParams
@@ -39,11 +43,10 @@ namespace RobotWorkstation
             PageRobotTestToolFrame.Parent = null;
             PageRobotTestWorkSpace.Parent = null;
 
-            bool openRet = m_ManualRobot.Open("192.168.1.124");
-            if (!openRet)
-            {
-                Debug.WriteLine("The Robot Open Failed!");
-            }
+            
+            InitRobot();  //台达机械臂
+            InitCamera();  //视觉相机
+            
         }
 
         private void ManualDebug_Load(object sender, EventArgs e)
@@ -57,6 +60,22 @@ namespace RobotWorkstation
             DGV_RobotGlobalPoint.Rows.Clear();
             LoadRobotGlobalPoints(0, RobotGlobalPointsBefore);
             TimerInitRobotGlobalPointDGV.Start();
+        }
+
+        public void InitRobot()
+        {
+            bool openRet = m_ManualRobot.Open("192.168.1.124");
+            if (openRet)
+            {
+                //读取xml配置文件然后设置机械臂
+                //m_ManualRobot.SetSpeed(40);
+                //m_ManualRobot.SetJointDistance(1000);
+                //m_ManualRobot.SetCartesianDistance(1000);
+            }
+            else
+            {
+                Debug.WriteLine("The Robot Open Failed!");
+            }
         }
 
         //加载机械臂的全局点位信息
@@ -536,6 +555,57 @@ namespace RobotWorkstation
         private void ManualDebugForm_Shown(object sender, EventArgs e)
         {
             RefreshTimer.Start();
+        }
+
+        /*相机相关****************************************/
+
+        public void InitCamera()
+        {
+            if (m_Camera != null)
+            {
+                m_Camera.m_CameraPictureBox = PictureBoxCamera;
+                m_Camera.m_CameraListComboBox = ComBoxCameraDevList;
+            }        
+        }
+
+        private void CButtonFindCamera_Click(object sender, EventArgs e)
+        {
+            if (m_Camera != null)
+                m_Camera.FindCameraDevice();
+        }
+
+        private void CButtonOpenCamera_Click(object sender, EventArgs e)
+        {
+            if (m_Camera != null)
+                m_Camera.OpenCameraDevice();
+        }
+
+        private void CButtonCloseCamera_Click(object sender, EventArgs e)
+        {
+            if (m_Camera != null)
+                m_Camera.CloseCameraDevice();
+        }
+
+        private void CButtonCameraSetParam_Click(object sender, EventArgs e)
+        {
+            CameraParamStruct param;
+            param.Exposure = float.Parse(CTextBoxCameraExposure.Text);
+            param.Gain = float.Parse(CTextBoxCameraGain.Text);
+            param.FramRate = float.Parse(CTextBoxCameraFrameRate.Text);
+
+            if (m_Camera != null)
+                m_Camera.SetCameraParam(param);
+        }
+
+        private void CButtonCameraReadParam_Click(object sender, EventArgs e)
+        {
+            if (m_Camera != null)
+            {
+                CameraParamStruct param = m_Camera.GetCameraParam();
+                CTextBoxCameraExposure.Text = param.Exposure.ToString("F1");
+                CTextBoxCameraGain.Text = param.Gain.ToString("F1");
+                CTextBoxCameraFrameRate.Text = param.FramRate.ToString("F1");
+            }
         }
     }
 }
