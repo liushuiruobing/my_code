@@ -36,6 +36,9 @@
     <ApplicationIcon>deviser.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdvMotAPI">
+      <HintPath>lib\AdvMotAPI.dll</HintPath>
+    </Reference>
     <Reference Include="bbv.Common, Version=7.1.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\bbv.Common.dll</HintPath>
@@ -151,6 +154,7 @@
     <Compile Include="ManualDebug.Designer.cs">
       <DependentUpon>ManualDebug.cs</DependentUpon>
     </Compile>
+    <Compile Include="MotionControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RobotBase.cs" />

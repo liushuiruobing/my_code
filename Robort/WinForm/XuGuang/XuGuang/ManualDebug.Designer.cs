@@ -118,6 +118,19 @@
             this.CBttonServoOn = new RobotWorkstation.CustomButton();
             this.pictureBoxServo = new System.Windows.Forms.PictureBox();
             this.tabPageThreeAxisRobot = new System.Windows.Forms.TabPage();
+            this.customGroupBox3 = new RobotWorkstation.CustomGroupBox();
+            this.CButtonPress = new RobotWorkstation.CustomButton();
+            this.CButtonRight = new RobotWorkstation.CustomButton();
+            this.CButtonLift = new RobotWorkstation.CustomButton();
+            this.CButtonDown = new RobotWorkstation.CustomButton();
+            this.CButtonUp = new RobotWorkstation.CustomButton();
+            this.customGroupBox2 = new RobotWorkstation.CustomGroupBox();
+            this.CButtonFindMotionControlDevice = new RobotWorkstation.CustomButton();
+            this.CButtonCloseMotionControlDevice = new RobotWorkstation.CustomButton();
+            this.CButtonOpenMotionControlDevice = new RobotWorkstation.CustomButton();
+            this.customLabel27 = new RobotWorkstation.CustomLabel();
+            this.ComBoxMotionControlDevice = new System.Windows.Forms.ComboBox();
+            this.customLabel26 = new RobotWorkstation.CustomLabel();
             this.tabPageCamera = new System.Windows.Forms.TabPage();
             this.customGroupBox1 = new RobotWorkstation.CustomGroupBox();
             this.PictureBoxCamera = new System.Windows.Forms.PictureBox();
@@ -147,6 +160,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotExecut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotAlarm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxServo)).BeginInit();
+            this.tabPageThreeAxisRobot.SuspendLayout();
+            this.customGroupBox3.SuspendLayout();
+            this.customGroupBox2.SuspendLayout();
             this.tabPageCamera.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PictureBoxCamera)).BeginInit();
             this.CGroupBoxCameraSet.SuspendLayout();
@@ -1251,12 +1267,189 @@
             // tabPageThreeAxisRobot
             // 
             this.tabPageThreeAxisRobot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.tabPageThreeAxisRobot.Controls.Add(this.customGroupBox3);
+            this.tabPageThreeAxisRobot.Controls.Add(this.customGroupBox2);
             this.tabPageThreeAxisRobot.Font = new System.Drawing.Font("微软雅黑", 10.5F);
             this.tabPageThreeAxisRobot.Location = new System.Drawing.Point(0, 29);
             this.tabPageThreeAxisRobot.Name = "tabPageThreeAxisRobot";
             this.tabPageThreeAxisRobot.Size = new System.Drawing.Size(1360, 761);
             this.tabPageThreeAxisRobot.TabIndex = 2;
             this.tabPageThreeAxisRobot.Text = "三轴机械臂";
+            // 
+            // customGroupBox3
+            // 
+            this.customGroupBox3.Controls.Add(this.CButtonPress);
+            this.customGroupBox3.Controls.Add(this.CButtonRight);
+            this.customGroupBox3.Controls.Add(this.CButtonLift);
+            this.customGroupBox3.Controls.Add(this.CButtonDown);
+            this.customGroupBox3.Controls.Add(this.CButtonUp);
+            this.customGroupBox3.Font = new System.Drawing.Font("微软雅黑", 12F);
+            this.customGroupBox3.Location = new System.Drawing.Point(10, 217);
+            this.customGroupBox3.Name = "customGroupBox3";
+            this.customGroupBox3.Size = new System.Drawing.Size(445, 310);
+            this.customGroupBox3.TabIndex = 1;
+            this.customGroupBox3.TabStop = false;
+            this.customGroupBox3.Text = "手动控制";
+            // 
+            // CButtonPress
+            // 
+            this.CButtonPress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
+            this.CButtonPress.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CButtonPress.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CButtonPress.ForeColor = System.Drawing.Color.Transparent;
+            this.CButtonPress.Location = new System.Drawing.Point(172, 141);
+            this.CButtonPress.Name = "CButtonPress";
+            this.CButtonPress.Size = new System.Drawing.Size(90, 30);
+            this.CButtonPress.TabIndex = 5;
+            this.CButtonPress.Text = "按下";
+            this.CButtonPress.UseVisualStyleBackColor = false;
+            this.CButtonPress.Click += new System.EventHandler(this.CButtonPress_Click);
+            // 
+            // CButtonRight
+            // 
+            this.CButtonRight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
+            this.CButtonRight.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CButtonRight.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CButtonRight.ForeColor = System.Drawing.Color.Transparent;
+            this.CButtonRight.Location = new System.Drawing.Point(272, 141);
+            this.CButtonRight.Name = "CButtonRight";
+            this.CButtonRight.Size = new System.Drawing.Size(90, 30);
+            this.CButtonRight.TabIndex = 4;
+            this.CButtonRight.Text = "右移";
+            this.CButtonRight.UseVisualStyleBackColor = false;
+            this.CButtonRight.Click += new System.EventHandler(this.CButtonRight_Click);
+            // 
+            // CButtonLift
+            // 
+            this.CButtonLift.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
+            this.CButtonLift.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CButtonLift.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CButtonLift.ForeColor = System.Drawing.Color.Transparent;
+            this.CButtonLift.Location = new System.Drawing.Point(71, 141);
+            this.CButtonLift.Name = "CButtonLift";
+            this.CButtonLift.Size = new System.Drawing.Size(90, 30);
+            this.CButtonLift.TabIndex = 3;
+            this.CButtonLift.Text = "左移";
+            this.CButtonLift.UseVisualStyleBackColor = false;
+            this.CButtonLift.Click += new System.EventHandler(this.CButtonLift_Click);
+            // 
+            // CButtonDown
+            // 
+            this.CButtonDown.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
+            this.CButtonDown.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CButtonDown.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CButtonDown.ForeColor = System.Drawing.Color.Transparent;
+            this.CButtonDown.Location = new System.Drawing.Point(172, 201);
+            this.CButtonDown.Name = "CButtonDown";
+            this.CButtonDown.Size = new System.Drawing.Size(90, 30);
+            this.CButtonDown.TabIndex = 2;
+            this.CButtonDown.Text = "下移";
+            this.CButtonDown.UseVisualStyleBackColor = false;
+            this.CButtonDown.Click += new System.EventHandler(this.CButtonDown_Click);
+            // 
+            // CButtonUp
+            // 
+            this.CButtonUp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
+            this.CButtonUp.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CButtonUp.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CButtonUp.ForeColor = System.Drawing.Color.Transparent;
+            this.CButtonUp.Location = new System.Drawing.Point(172, 82);
+            this.CButtonUp.Name = "CButtonUp";
+            this.CButtonUp.Size = new System.Drawing.Size(90, 30);
+            this.CButtonUp.TabIndex = 1;
+            this.CButtonUp.Text = "上移";
+            this.CButtonUp.UseVisualStyleBackColor = false;
+            this.CButtonUp.Click += new System.EventHandler(this.CButtonUp_Click);
+            // 
+            // customGroupBox2
+            // 
+            this.customGroupBox2.Controls.Add(this.CButtonFindMotionControlDevice);
+            this.customGroupBox2.Controls.Add(this.CButtonCloseMotionControlDevice);
+            this.customGroupBox2.Controls.Add(this.CButtonOpenMotionControlDevice);
+            this.customGroupBox2.Controls.Add(this.customLabel27);
+            this.customGroupBox2.Controls.Add(this.ComBoxMotionControlDevice);
+            this.customGroupBox2.Controls.Add(this.customLabel26);
+            this.customGroupBox2.Font = new System.Drawing.Font("微软雅黑", 12F);
+            this.customGroupBox2.Location = new System.Drawing.Point(10, 10);
+            this.customGroupBox2.Name = "customGroupBox2";
+            this.customGroupBox2.Size = new System.Drawing.Size(445, 192);
+            this.customGroupBox2.TabIndex = 0;
+            this.customGroupBox2.TabStop = false;
+            this.customGroupBox2.Text = "运动控制卡";
+            // 
+            // CButtonFindMotionControlDevice
+            // 
+            this.CButtonFindMotionControlDevice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(148)))), ((int)(((byte)(8)))));
+            this.CButtonFindMotionControlDevice.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CButtonFindMotionControlDevice.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CButtonFindMotionControlDevice.ForeColor = System.Drawing.Color.Transparent;
+            this.CButtonFindMotionControlDevice.Location = new System.Drawing.Point(118, 84);
+            this.CButtonFindMotionControlDevice.Name = "CButtonFindMotionControlDevice";
+            this.CButtonFindMotionControlDevice.Size = new System.Drawing.Size(90, 30);
+            this.CButtonFindMotionControlDevice.TabIndex = 5;
+            this.CButtonFindMotionControlDevice.Text = "查找设备";
+            this.CButtonFindMotionControlDevice.UseVisualStyleBackColor = false;
+            this.CButtonFindMotionControlDevice.Click += new System.EventHandler(this.CButtonFindMotionControlDevice_Click);
+            // 
+            // CButtonCloseMotionControlDevice
+            // 
+            this.CButtonCloseMotionControlDevice.BackColor = System.Drawing.Color.Red;
+            this.CButtonCloseMotionControlDevice.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CButtonCloseMotionControlDevice.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CButtonCloseMotionControlDevice.ForeColor = System.Drawing.Color.Transparent;
+            this.CButtonCloseMotionControlDevice.Location = new System.Drawing.Point(314, 84);
+            this.CButtonCloseMotionControlDevice.Name = "CButtonCloseMotionControlDevice";
+            this.CButtonCloseMotionControlDevice.Size = new System.Drawing.Size(90, 30);
+            this.CButtonCloseMotionControlDevice.TabIndex = 4;
+            this.CButtonCloseMotionControlDevice.Text = "关闭设备";
+            this.CButtonCloseMotionControlDevice.UseVisualStyleBackColor = false;
+            this.CButtonCloseMotionControlDevice.Click += new System.EventHandler(this.CButtonCloseMotionControlDevice_Click);
+            // 
+            // CButtonOpenMotionControlDevice
+            // 
+            this.CButtonOpenMotionControlDevice.BackColor = System.Drawing.Color.Green;
+            this.CButtonOpenMotionControlDevice.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CButtonOpenMotionControlDevice.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CButtonOpenMotionControlDevice.ForeColor = System.Drawing.Color.Transparent;
+            this.CButtonOpenMotionControlDevice.Location = new System.Drawing.Point(216, 84);
+            this.CButtonOpenMotionControlDevice.Name = "CButtonOpenMotionControlDevice";
+            this.CButtonOpenMotionControlDevice.Size = new System.Drawing.Size(90, 30);
+            this.CButtonOpenMotionControlDevice.TabIndex = 3;
+            this.CButtonOpenMotionControlDevice.Text = "打开设备";
+            this.CButtonOpenMotionControlDevice.UseVisualStyleBackColor = false;
+            this.CButtonOpenMotionControlDevice.Click += new System.EventHandler(this.CButtonOpenMotionControlDevice_Click);
+            // 
+            // customLabel27
+            // 
+            this.customLabel27.AutoSize = true;
+            this.customLabel27.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel27.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel27.Location = new System.Drawing.Point(18, 88);
+            this.customLabel27.Name = "customLabel27";
+            this.customLabel27.Size = new System.Drawing.Size(95, 23);
+            this.customLabel27.TabIndex = 2;
+            this.customLabel27.Text = "设备操作：";
+            // 
+            // ComBoxMotionControlDevice
+            // 
+            this.ComBoxMotionControlDevice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.ComBoxMotionControlDevice.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.ComBoxMotionControlDevice.FormattingEnabled = true;
+            this.ComBoxMotionControlDevice.Location = new System.Drawing.Point(119, 40);
+            this.ComBoxMotionControlDevice.Name = "ComBoxMotionControlDevice";
+            this.ComBoxMotionControlDevice.Size = new System.Drawing.Size(284, 29);
+            this.ComBoxMotionControlDevice.TabIndex = 1;
+            // 
+            // customLabel26
+            // 
+            this.customLabel26.AutoSize = true;
+            this.customLabel26.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel26.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel26.Location = new System.Drawing.Point(18, 42);
+            this.customLabel26.Name = "customLabel26";
+            this.customLabel26.Size = new System.Drawing.Size(95, 23);
+            this.customLabel26.TabIndex = 0;
+            this.customLabel26.Text = "设备列表：";
             // 
             // tabPageCamera
             // 
@@ -1423,7 +1616,7 @@
             this.customLabel22.Name = "customLabel22";
             this.customLabel22.Size = new System.Drawing.Size(95, 23);
             this.customLabel22.TabIndex = 5;
-            this.customLabel22.Text = "设备操作：";
+            this.customLabel22.Text = "相机操作：";
             // 
             // CButtonCloseCamera
             // 
@@ -1435,7 +1628,7 @@
             this.CButtonCloseCamera.Name = "CButtonCloseCamera";
             this.CButtonCloseCamera.Size = new System.Drawing.Size(90, 30);
             this.CButtonCloseCamera.TabIndex = 4;
-            this.CButtonCloseCamera.Text = "关闭设备";
+            this.CButtonCloseCamera.Text = "关闭相机";
             this.CButtonCloseCamera.UseVisualStyleBackColor = false;
             this.CButtonCloseCamera.Click += new System.EventHandler(this.CButtonCloseCamera_Click);
             // 
@@ -1449,7 +1642,7 @@
             this.CButtonOpenCamera.Name = "CButtonOpenCamera";
             this.CButtonOpenCamera.Size = new System.Drawing.Size(90, 30);
             this.CButtonOpenCamera.TabIndex = 3;
-            this.CButtonOpenCamera.Text = "打开设备";
+            this.CButtonOpenCamera.Text = "打开相机";
             this.CButtonOpenCamera.UseVisualStyleBackColor = false;
             this.CButtonOpenCamera.Click += new System.EventHandler(this.CButtonOpenCamera_Click);
             // 
@@ -1463,7 +1656,7 @@
             this.CButtonFindCamera.Name = "CButtonFindCamera";
             this.CButtonFindCamera.Size = new System.Drawing.Size(90, 30);
             this.CButtonFindCamera.TabIndex = 2;
-            this.CButtonFindCamera.Text = "查找设备";
+            this.CButtonFindCamera.Text = "查找相机";
             this.CButtonFindCamera.UseVisualStyleBackColor = false;
             this.CButtonFindCamera.Click += new System.EventHandler(this.CButtonFindCamera_Click);
             // 
@@ -1476,7 +1669,7 @@
             this.customLabel21.Name = "customLabel21";
             this.customLabel21.Size = new System.Drawing.Size(95, 23);
             this.customLabel21.TabIndex = 1;
-            this.customLabel21.Text = "设备列表：";
+            this.customLabel21.Text = "相机列表：";
             // 
             // ComBoxCameraDevList
             // 
@@ -1517,6 +1710,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotExecut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxRobotAlarm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxServo)).EndInit();
+            this.tabPageThreeAxisRobot.ResumeLayout(false);
+            this.customGroupBox3.ResumeLayout(false);
+            this.customGroupBox2.ResumeLayout(false);
+            this.customGroupBox2.PerformLayout();
             this.tabPageCamera.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.PictureBoxCamera)).EndInit();
             this.CGroupBoxCameraSet.ResumeLayout(false);
@@ -1629,5 +1826,18 @@
         private System.Windows.Forms.PictureBox PictureBoxCamera;
         private CustomGroupBox customGroupBox1;
         private System.Windows.Forms.TabPage tabPageThreeAxisRobot;
+        private CustomGroupBox customGroupBox2;
+        private System.Windows.Forms.ComboBox ComBoxMotionControlDevice;
+        private CustomLabel customLabel26;
+        private CustomLabel customLabel27;
+        private CustomButton CButtonOpenMotionControlDevice;
+        private CustomGroupBox customGroupBox3;
+        private CustomButton CButtonFindMotionControlDevice;
+        private CustomButton CButtonCloseMotionControlDevice;
+        private CustomButton CButtonPress;
+        private CustomButton CButtonRight;
+        private CustomButton CButtonLift;
+        private CustomButton CButtonDown;
+        private CustomButton CButtonUp;
     }
 }

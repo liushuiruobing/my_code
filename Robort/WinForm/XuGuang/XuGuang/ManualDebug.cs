@@ -638,5 +638,47 @@ namespace RobotWorkstation
                 default: break;
             }
         }
+
+
+        //三轴机械臂
+        private void CButtonFindMotionControlDevice_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonOpenMotionControlDevice_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonCloseMotionControlDevice_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonUp_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonDown_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonLift_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonRight_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonPress_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
