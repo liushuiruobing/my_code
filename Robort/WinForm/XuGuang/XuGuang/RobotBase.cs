@@ -67,6 +67,17 @@ namespace RobotWorkstation
             }
         }
 
+        /*运行指定脚本*/
+        public void RunSelectedProgram(short SelectedIndex)
+        {
+            if (!m_IsConnected)
+            {
+                return;
+            }
+
+            m_Robot.RunSelectProgram(SelectedIndex);
+        }
+
         /*运行脚本*/
         public void RunProgram()
         {

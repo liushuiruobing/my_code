@@ -318,7 +318,7 @@
             this.groupBoxRobot.ForeColor = System.Drawing.Color.White;
             this.groupBoxRobot.Location = new System.Drawing.Point(10, 10);
             this.groupBoxRobot.Name = "groupBoxRobot";
-            this.groupBoxRobot.Size = new System.Drawing.Size(1322, 727);
+            this.groupBoxRobot.Size = new System.Drawing.Size(1322, 670);
             this.groupBoxRobot.TabIndex = 0;
             this.groupBoxRobot.TabStop = false;
             this.groupBoxRobot.Text = "机械臂";
@@ -331,9 +331,9 @@
             this.listBoxRobotWarnMeas.ForeColor = System.Drawing.Color.White;
             this.listBoxRobotWarnMeas.FormattingEnabled = true;
             this.listBoxRobotWarnMeas.ItemHeight = 23;
-            this.listBoxRobotWarnMeas.Location = new System.Drawing.Point(1141, 76);
+            this.listBoxRobotWarnMeas.Location = new System.Drawing.Point(1109, 64);
             this.listBoxRobotWarnMeas.Name = "listBoxRobotWarnMeas";
-            this.listBoxRobotWarnMeas.Size = new System.Drawing.Size(164, 209);
+            this.listBoxRobotWarnMeas.Size = new System.Drawing.Size(196, 209);
             this.listBoxRobotWarnMeas.TabIndex = 65;
             // 
             // customLabel20
@@ -341,7 +341,7 @@
             this.customLabel20.AutoSize = true;
             this.customLabel20.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel20.Location = new System.Drawing.Point(1140, 52);
+            this.customLabel20.Location = new System.Drawing.Point(1105, 40);
             this.customLabel20.Name = "customLabel20";
             this.customLabel20.Size = new System.Drawing.Size(95, 23);
             this.customLabel20.TabIndex = 64;
@@ -353,7 +353,7 @@
             this.CBtnRobotTestTeachPoint.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CBtnRobotTestTeachPoint.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CBtnRobotTestTeachPoint.ForeColor = System.Drawing.Color.Transparent;
-            this.CBtnRobotTestTeachPoint.Location = new System.Drawing.Point(596, 631);
+            this.CBtnRobotTestTeachPoint.Location = new System.Drawing.Point(565, 622);
             this.CBtnRobotTestTeachPoint.Name = "CBtnRobotTestTeachPoint";
             this.CBtnRobotTestTeachPoint.Size = new System.Drawing.Size(90, 30);
             this.CBtnRobotTestTeachPoint.TabIndex = 63;
@@ -367,7 +367,7 @@
             this.CBtnRobotTestMoveToPoint.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CBtnRobotTestMoveToPoint.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CBtnRobotTestMoveToPoint.ForeColor = System.Drawing.Color.Transparent;
-            this.CBtnRobotTestMoveToPoint.Location = new System.Drawing.Point(499, 631);
+            this.CBtnRobotTestMoveToPoint.Location = new System.Drawing.Point(468, 622);
             this.CBtnRobotTestMoveToPoint.Name = "CBtnRobotTestMoveToPoint";
             this.CBtnRobotTestMoveToPoint.Size = new System.Drawing.Size(90, 30);
             this.CBtnRobotTestMoveToPoint.TabIndex = 62;
@@ -381,7 +381,7 @@
             this.customLabel19.AutoSize = true;
             this.customLabel19.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel19.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel19.Location = new System.Drawing.Point(44, 52);
+            this.customLabel19.Location = new System.Drawing.Point(20, 39);
             this.customLabel19.Name = "customLabel19";
             this.customLabel19.Size = new System.Drawing.Size(61, 23);
             this.customLabel19.TabIndex = 61;
@@ -393,7 +393,7 @@
             this.CBtnRobotTestReadPoint.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CBtnRobotTestReadPoint.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CBtnRobotTestReadPoint.ForeColor = System.Drawing.Color.Transparent;
-            this.CBtnRobotTestReadPoint.Location = new System.Drawing.Point(402, 631);
+            this.CBtnRobotTestReadPoint.Location = new System.Drawing.Point(371, 622);
             this.CBtnRobotTestReadPoint.Name = "CBtnRobotTestReadPoint";
             this.CBtnRobotTestReadPoint.Size = new System.Drawing.Size(90, 30);
             this.CBtnRobotTestReadPoint.TabIndex = 60;
@@ -407,7 +407,7 @@
             this.CTabControlBorderRobotTestPoints.Controls.Add(this.PageRobotTestUserFrame);
             this.CTabControlBorderRobotTestPoints.Controls.Add(this.PageRobotTestToolFrame);
             this.CTabControlBorderRobotTestPoints.Controls.Add(this.PageRobotTestWorkSpace);
-            this.CTabControlBorderRobotTestPoints.Location = new System.Drawing.Point(404, 48);
+            this.CTabControlBorderRobotTestPoints.Location = new System.Drawing.Point(372, 36);
             this.CTabControlBorderRobotTestPoints.Margin = new System.Windows.Forms.Padding(1);
             this.CTabControlBorderRobotTestPoints.Name = "CTabControlBorderRobotTestPoints";
             this.CTabControlBorderRobotTestPoints.SelectedIndex = 0;
@@ -577,7 +577,7 @@
             this.CButtonRobotDistanceRZSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceRZSub.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceRZSub.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceRZSub.Location = new System.Drawing.Point(274, 596);
+            this.CButtonRobotDistanceRZSub.Location = new System.Drawing.Point(250, 585);
             this.CButtonRobotDistanceRZSub.Name = "CButtonRobotDistanceRZSub";
             this.CButtonRobotDistanceRZSub.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceRZSub.TabIndex = 58;
@@ -592,7 +592,7 @@
             this.CButtonRobotDistanceRZAdd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceRZAdd.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceRZAdd.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceRZAdd.Location = new System.Drawing.Point(178, 596);
+            this.CButtonRobotDistanceRZAdd.Location = new System.Drawing.Point(154, 585);
             this.CButtonRobotDistanceRZAdd.Name = "CButtonRobotDistanceRZAdd";
             this.CButtonRobotDistanceRZAdd.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceRZAdd.TabIndex = 57;
@@ -607,7 +607,7 @@
             this.CTextBoxRobotDistanceRZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxRobotDistanceRZ.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxRobotDistanceRZ.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxRobotDistanceRZ.Location = new System.Drawing.Point(83, 596);
+            this.CTextBoxRobotDistanceRZ.Location = new System.Drawing.Point(59, 585);
             this.CTextBoxRobotDistanceRZ.Name = "CTextBoxRobotDistanceRZ";
             this.CTextBoxRobotDistanceRZ.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotDistanceRZ.TabIndex = 56;
@@ -618,7 +618,7 @@
             this.customLabel15.AutoSize = true;
             this.customLabel15.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel15.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel15.Location = new System.Drawing.Point(44, 602);
+            this.customLabel15.Location = new System.Drawing.Point(20, 591);
             this.customLabel15.Name = "customLabel15";
             this.customLabel15.Size = new System.Drawing.Size(49, 23);
             this.customLabel15.TabIndex = 55;
@@ -630,7 +630,7 @@
             this.CButtonRobotDistanceZSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceZSub.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceZSub.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceZSub.Location = new System.Drawing.Point(274, 563);
+            this.CButtonRobotDistanceZSub.Location = new System.Drawing.Point(250, 552);
             this.CButtonRobotDistanceZSub.Name = "CButtonRobotDistanceZSub";
             this.CButtonRobotDistanceZSub.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceZSub.TabIndex = 54;
@@ -645,7 +645,7 @@
             this.CButtonRobotDistanceZAdd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceZAdd.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceZAdd.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceZAdd.Location = new System.Drawing.Point(178, 563);
+            this.CButtonRobotDistanceZAdd.Location = new System.Drawing.Point(154, 552);
             this.CButtonRobotDistanceZAdd.Name = "CButtonRobotDistanceZAdd";
             this.CButtonRobotDistanceZAdd.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceZAdd.TabIndex = 53;
@@ -660,7 +660,7 @@
             this.CTextBoxRobotDistanceZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxRobotDistanceZ.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxRobotDistanceZ.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxRobotDistanceZ.Location = new System.Drawing.Point(83, 563);
+            this.CTextBoxRobotDistanceZ.Location = new System.Drawing.Point(59, 552);
             this.CTextBoxRobotDistanceZ.Name = "CTextBoxRobotDistanceZ";
             this.CTextBoxRobotDistanceZ.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotDistanceZ.TabIndex = 52;
@@ -671,7 +671,7 @@
             this.customLabel16.AutoSize = true;
             this.customLabel16.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel16.Location = new System.Drawing.Point(44, 567);
+            this.customLabel16.Location = new System.Drawing.Point(20, 556);
             this.customLabel16.Name = "customLabel16";
             this.customLabel16.Size = new System.Drawing.Size(38, 23);
             this.customLabel16.TabIndex = 51;
@@ -683,7 +683,7 @@
             this.CButtonRobotDistanceYSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceYSub.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceYSub.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceYSub.Location = new System.Drawing.Point(274, 530);
+            this.CButtonRobotDistanceYSub.Location = new System.Drawing.Point(250, 519);
             this.CButtonRobotDistanceYSub.Name = "CButtonRobotDistanceYSub";
             this.CButtonRobotDistanceYSub.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceYSub.TabIndex = 50;
@@ -698,7 +698,7 @@
             this.CButtonRobotDistanceYAdd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceYAdd.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceYAdd.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceYAdd.Location = new System.Drawing.Point(178, 530);
+            this.CButtonRobotDistanceYAdd.Location = new System.Drawing.Point(154, 519);
             this.CButtonRobotDistanceYAdd.Name = "CButtonRobotDistanceYAdd";
             this.CButtonRobotDistanceYAdd.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceYAdd.TabIndex = 49;
@@ -713,7 +713,7 @@
             this.CTextBoxRobotDistanceY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxRobotDistanceY.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxRobotDistanceY.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxRobotDistanceY.Location = new System.Drawing.Point(83, 530);
+            this.CTextBoxRobotDistanceY.Location = new System.Drawing.Point(59, 519);
             this.CTextBoxRobotDistanceY.Name = "CTextBoxRobotDistanceY";
             this.CTextBoxRobotDistanceY.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotDistanceY.TabIndex = 48;
@@ -724,7 +724,7 @@
             this.customLabel17.AutoSize = true;
             this.customLabel17.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel17.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel17.Location = new System.Drawing.Point(44, 533);
+            this.customLabel17.Location = new System.Drawing.Point(20, 522);
             this.customLabel17.Name = "customLabel17";
             this.customLabel17.Size = new System.Drawing.Size(37, 23);
             this.customLabel17.TabIndex = 47;
@@ -736,7 +736,7 @@
             this.CButtonRobotDistanceXSub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceXSub.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceXSub.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceXSub.Location = new System.Drawing.Point(274, 497);
+            this.CButtonRobotDistanceXSub.Location = new System.Drawing.Point(250, 486);
             this.CButtonRobotDistanceXSub.Name = "CButtonRobotDistanceXSub";
             this.CButtonRobotDistanceXSub.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceXSub.TabIndex = 46;
@@ -751,7 +751,7 @@
             this.CButtonRobotDistanceXAdd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceXAdd.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceXAdd.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceXAdd.Location = new System.Drawing.Point(178, 497);
+            this.CButtonRobotDistanceXAdd.Location = new System.Drawing.Point(154, 486);
             this.CButtonRobotDistanceXAdd.Name = "CButtonRobotDistanceXAdd";
             this.CButtonRobotDistanceXAdd.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceXAdd.TabIndex = 45;
@@ -766,7 +766,7 @@
             this.CTextBoxRobotDistanceX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxRobotDistanceX.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxRobotDistanceX.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxRobotDistanceX.Location = new System.Drawing.Point(83, 497);
+            this.CTextBoxRobotDistanceX.Location = new System.Drawing.Point(59, 486);
             this.CTextBoxRobotDistanceX.Name = "CTextBoxRobotDistanceX";
             this.CTextBoxRobotDistanceX.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotDistanceX.TabIndex = 44;
@@ -777,7 +777,7 @@
             this.customLabel18.AutoSize = true;
             this.customLabel18.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel18.Location = new System.Drawing.Point(44, 500);
+            this.customLabel18.Location = new System.Drawing.Point(20, 489);
             this.customLabel18.Name = "customLabel18";
             this.customLabel18.Size = new System.Drawing.Size(38, 23);
             this.customLabel18.TabIndex = 43;
@@ -789,7 +789,7 @@
             this.CButtonRobotDistanceJ4Sub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceJ4Sub.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceJ4Sub.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceJ4Sub.Location = new System.Drawing.Point(274, 463);
+            this.CButtonRobotDistanceJ4Sub.Location = new System.Drawing.Point(250, 452);
             this.CButtonRobotDistanceJ4Sub.Name = "CButtonRobotDistanceJ4Sub";
             this.CButtonRobotDistanceJ4Sub.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceJ4Sub.TabIndex = 42;
@@ -804,7 +804,7 @@
             this.CButtonRobotDistanceJ4Add.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceJ4Add.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceJ4Add.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceJ4Add.Location = new System.Drawing.Point(178, 463);
+            this.CButtonRobotDistanceJ4Add.Location = new System.Drawing.Point(154, 452);
             this.CButtonRobotDistanceJ4Add.Name = "CButtonRobotDistanceJ4Add";
             this.CButtonRobotDistanceJ4Add.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceJ4Add.TabIndex = 41;
@@ -819,7 +819,7 @@
             this.CTextBoxRobotDistanceJ4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxRobotDistanceJ4.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxRobotDistanceJ4.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxRobotDistanceJ4.Location = new System.Drawing.Point(83, 464);
+            this.CTextBoxRobotDistanceJ4.Location = new System.Drawing.Point(59, 453);
             this.CTextBoxRobotDistanceJ4.Name = "CTextBoxRobotDistanceJ4";
             this.CTextBoxRobotDistanceJ4.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotDistanceJ4.TabIndex = 40;
@@ -830,7 +830,7 @@
             this.customLabel14.AutoSize = true;
             this.customLabel14.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel14.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel14.Location = new System.Drawing.Point(44, 467);
+            this.customLabel14.Location = new System.Drawing.Point(20, 456);
             this.customLabel14.Name = "customLabel14";
             this.customLabel14.Size = new System.Drawing.Size(44, 23);
             this.customLabel14.TabIndex = 39;
@@ -842,7 +842,7 @@
             this.CButtonRobotDistanceJ3Sub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceJ3Sub.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceJ3Sub.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceJ3Sub.Location = new System.Drawing.Point(274, 430);
+            this.CButtonRobotDistanceJ3Sub.Location = new System.Drawing.Point(250, 419);
             this.CButtonRobotDistanceJ3Sub.Name = "CButtonRobotDistanceJ3Sub";
             this.CButtonRobotDistanceJ3Sub.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceJ3Sub.TabIndex = 38;
@@ -857,7 +857,7 @@
             this.CButtonRobotDistanceJ3Add.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceJ3Add.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceJ3Add.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceJ3Add.Location = new System.Drawing.Point(178, 430);
+            this.CButtonRobotDistanceJ3Add.Location = new System.Drawing.Point(154, 419);
             this.CButtonRobotDistanceJ3Add.Name = "CButtonRobotDistanceJ3Add";
             this.CButtonRobotDistanceJ3Add.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceJ3Add.TabIndex = 37;
@@ -872,7 +872,7 @@
             this.CTextBoxRobotDistanceJ3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxRobotDistanceJ3.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxRobotDistanceJ3.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxRobotDistanceJ3.Location = new System.Drawing.Point(83, 431);
+            this.CTextBoxRobotDistanceJ3.Location = new System.Drawing.Point(59, 420);
             this.CTextBoxRobotDistanceJ3.Name = "CTextBoxRobotDistanceJ3";
             this.CTextBoxRobotDistanceJ3.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotDistanceJ3.TabIndex = 36;
@@ -883,7 +883,7 @@
             this.customLabel13.AutoSize = true;
             this.customLabel13.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel13.Location = new System.Drawing.Point(44, 432);
+            this.customLabel13.Location = new System.Drawing.Point(20, 421);
             this.customLabel13.Name = "customLabel13";
             this.customLabel13.Size = new System.Drawing.Size(44, 23);
             this.customLabel13.TabIndex = 35;
@@ -895,7 +895,7 @@
             this.CButtonRobotDistanceJ2Sub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceJ2Sub.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceJ2Sub.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceJ2Sub.Location = new System.Drawing.Point(274, 397);
+            this.CButtonRobotDistanceJ2Sub.Location = new System.Drawing.Point(250, 386);
             this.CButtonRobotDistanceJ2Sub.Name = "CButtonRobotDistanceJ2Sub";
             this.CButtonRobotDistanceJ2Sub.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceJ2Sub.TabIndex = 34;
@@ -910,7 +910,7 @@
             this.CButtonRobotDistanceJ2Add.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceJ2Add.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceJ2Add.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceJ2Add.Location = new System.Drawing.Point(178, 397);
+            this.CButtonRobotDistanceJ2Add.Location = new System.Drawing.Point(154, 386);
             this.CButtonRobotDistanceJ2Add.Name = "CButtonRobotDistanceJ2Add";
             this.CButtonRobotDistanceJ2Add.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceJ2Add.TabIndex = 33;
@@ -925,7 +925,7 @@
             this.CTextBoxRobotDistanceJ2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxRobotDistanceJ2.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxRobotDistanceJ2.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxRobotDistanceJ2.Location = new System.Drawing.Point(83, 398);
+            this.CTextBoxRobotDistanceJ2.Location = new System.Drawing.Point(59, 387);
             this.CTextBoxRobotDistanceJ2.Name = "CTextBoxRobotDistanceJ2";
             this.CTextBoxRobotDistanceJ2.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotDistanceJ2.TabIndex = 32;
@@ -936,7 +936,7 @@
             this.customLabel12.AutoSize = true;
             this.customLabel12.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel12.Location = new System.Drawing.Point(44, 398);
+            this.customLabel12.Location = new System.Drawing.Point(20, 387);
             this.customLabel12.Name = "customLabel12";
             this.customLabel12.Size = new System.Drawing.Size(44, 23);
             this.customLabel12.TabIndex = 31;
@@ -948,7 +948,7 @@
             this.CButtonRobotDistanceJ1Sub.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceJ1Sub.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceJ1Sub.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceJ1Sub.Location = new System.Drawing.Point(274, 364);
+            this.CButtonRobotDistanceJ1Sub.Location = new System.Drawing.Point(250, 353);
             this.CButtonRobotDistanceJ1Sub.Name = "CButtonRobotDistanceJ1Sub";
             this.CButtonRobotDistanceJ1Sub.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceJ1Sub.TabIndex = 30;
@@ -963,7 +963,7 @@
             this.CButtonRobotDistanceJ1Add.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotDistanceJ1Add.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotDistanceJ1Add.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotDistanceJ1Add.Location = new System.Drawing.Point(178, 364);
+            this.CButtonRobotDistanceJ1Add.Location = new System.Drawing.Point(154, 353);
             this.CButtonRobotDistanceJ1Add.Name = "CButtonRobotDistanceJ1Add";
             this.CButtonRobotDistanceJ1Add.Size = new System.Drawing.Size(90, 30);
             this.CButtonRobotDistanceJ1Add.TabIndex = 29;
@@ -978,7 +978,7 @@
             this.CTextBoxRobotDistanceJ1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxRobotDistanceJ1.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxRobotDistanceJ1.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxRobotDistanceJ1.Location = new System.Drawing.Point(83, 365);
+            this.CTextBoxRobotDistanceJ1.Location = new System.Drawing.Point(59, 354);
             this.CTextBoxRobotDistanceJ1.Name = "CTextBoxRobotDistanceJ1";
             this.CTextBoxRobotDistanceJ1.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotDistanceJ1.TabIndex = 28;
@@ -989,7 +989,7 @@
             this.customLabel11.AutoSize = true;
             this.customLabel11.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel11.Location = new System.Drawing.Point(44, 365);
+            this.customLabel11.Location = new System.Drawing.Point(20, 354);
             this.customLabel11.Name = "customLabel11";
             this.customLabel11.Size = new System.Drawing.Size(44, 23);
             this.customLabel11.TabIndex = 27;
@@ -998,7 +998,7 @@
             // radioButtonRobotDeviceContinuous
             // 
             this.radioButtonRobotDeviceContinuous.AutoSize = true;
-            this.radioButtonRobotDeviceContinuous.Location = new System.Drawing.Point(197, 216);
+            this.radioButtonRobotDeviceContinuous.Location = new System.Drawing.Point(173, 204);
             this.radioButtonRobotDeviceContinuous.Name = "radioButtonRobotDeviceContinuous";
             this.radioButtonRobotDeviceContinuous.Size = new System.Drawing.Size(60, 25);
             this.radioButtonRobotDeviceContinuous.TabIndex = 26;
@@ -1010,7 +1010,7 @@
             // radioButtonRobotDeviceJog
             // 
             this.radioButtonRobotDeviceJog.AutoSize = true;
-            this.radioButtonRobotDeviceJog.Location = new System.Drawing.Point(137, 216);
+            this.radioButtonRobotDeviceJog.Location = new System.Drawing.Point(113, 204);
             this.radioButtonRobotDeviceJog.Name = "radioButtonRobotDeviceJog";
             this.radioButtonRobotDeviceJog.Size = new System.Drawing.Size(54, 25);
             this.radioButtonRobotDeviceJog.TabIndex = 25;
@@ -1024,7 +1024,7 @@
             this.customLabel10.AutoSize = true;
             this.customLabel10.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel10.Location = new System.Drawing.Point(44, 215);
+            this.customLabel10.Location = new System.Drawing.Point(20, 203);
             this.customLabel10.Name = "customLabel10";
             this.customLabel10.Size = new System.Drawing.Size(61, 23);
             this.customLabel10.TabIndex = 24;
@@ -1035,7 +1035,7 @@
             this.customLabel9.AutoSize = true;
             this.customLabel9.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel9.Location = new System.Drawing.Point(229, 250);
+            this.customLabel9.Location = new System.Drawing.Point(205, 238);
             this.customLabel9.Name = "customLabel9";
             this.customLabel9.Size = new System.Drawing.Size(25, 23);
             this.customLabel9.TabIndex = 23;
@@ -1048,7 +1048,7 @@
             this.CTextBoxRobotMoveSpeed.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxRobotMoveSpeed.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxRobotMoveSpeed.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxRobotMoveSpeed.Location = new System.Drawing.Point(137, 248);
+            this.CTextBoxRobotMoveSpeed.Location = new System.Drawing.Point(113, 236);
             this.CTextBoxRobotMoveSpeed.Name = "CTextBoxRobotMoveSpeed";
             this.CTextBoxRobotMoveSpeed.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxRobotMoveSpeed.TabIndex = 22;
@@ -1060,7 +1060,7 @@
             this.customLabel8.AutoSize = true;
             this.customLabel8.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel8.Location = new System.Drawing.Point(44, 250);
+            this.customLabel8.Location = new System.Drawing.Point(20, 238);
             this.customLabel8.Name = "customLabel8";
             this.customLabel8.Size = new System.Drawing.Size(95, 23);
             this.customLabel8.TabIndex = 21;
@@ -1071,7 +1071,7 @@
             this.customLabel7.AutoSize = true;
             this.customLabel7.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel7.Location = new System.Drawing.Point(229, 320);
+            this.customLabel7.Location = new System.Drawing.Point(205, 308);
             this.customLabel7.Name = "customLabel7";
             this.customLabel7.Size = new System.Drawing.Size(36, 23);
             this.customLabel7.TabIndex = 20;
@@ -1084,7 +1084,7 @@
             this.CTextBoxJogDistanceUm.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxJogDistanceUm.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxJogDistanceUm.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxJogDistanceUm.Location = new System.Drawing.Point(137, 318);
+            this.CTextBoxJogDistanceUm.Location = new System.Drawing.Point(113, 306);
             this.CTextBoxJogDistanceUm.Name = "CTextBoxJogDistanceUm";
             this.CTextBoxJogDistanceUm.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxJogDistanceUm.TabIndex = 19;
@@ -1096,7 +1096,7 @@
             this.customLabel6.AutoSize = true;
             this.customLabel6.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel6.Location = new System.Drawing.Point(229, 286);
+            this.customLabel6.Location = new System.Drawing.Point(205, 274);
             this.customLabel6.Name = "customLabel6";
             this.customLabel6.Size = new System.Drawing.Size(43, 23);
             this.customLabel6.TabIndex = 18;
@@ -1109,7 +1109,7 @@
             this.CTextBoxJogDistance.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.CTextBoxJogDistance.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CTextBoxJogDistance.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxJogDistance.Location = new System.Drawing.Point(137, 283);
+            this.CTextBoxJogDistance.Location = new System.Drawing.Point(113, 271);
             this.CTextBoxJogDistance.Name = "CTextBoxJogDistance";
             this.CTextBoxJogDistance.Size = new System.Drawing.Size(90, 29);
             this.CTextBoxJogDistance.TabIndex = 17;
@@ -1121,7 +1121,7 @@
             this.customLabel5.AutoSize = true;
             this.customLabel5.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel5.Location = new System.Drawing.Point(44, 285);
+            this.customLabel5.Location = new System.Drawing.Point(20, 273);
             this.customLabel5.Name = "customLabel5";
             this.customLabel5.Size = new System.Drawing.Size(95, 23);
             this.customLabel5.TabIndex = 16;
@@ -1130,7 +1130,7 @@
             // pictureBoxRobotMove
             // 
             this.pictureBoxRobotMove.Image = global::RobotWorkstation.Properties.Resources.SmallDarkGreen;
-            this.pictureBoxRobotMove.Location = new System.Drawing.Point(110, 182);
+            this.pictureBoxRobotMove.Location = new System.Drawing.Point(86, 169);
             this.pictureBoxRobotMove.Name = "pictureBoxRobotMove";
             this.pictureBoxRobotMove.Size = new System.Drawing.Size(22, 22);
             this.pictureBoxRobotMove.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1142,7 +1142,7 @@
             this.customLabel4.AutoSize = true;
             this.customLabel4.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel4.Location = new System.Drawing.Point(44, 181);
+            this.customLabel4.Location = new System.Drawing.Point(20, 168);
             this.customLabel4.Name = "customLabel4";
             this.customLabel4.Size = new System.Drawing.Size(61, 23);
             this.customLabel4.TabIndex = 14;
@@ -1151,7 +1151,7 @@
             // pictureBoxTemperature
             // 
             this.pictureBoxTemperature.Image = global::RobotWorkstation.Properties.Resources.SmallDarkGreen;
-            this.pictureBoxTemperature.Location = new System.Drawing.Point(110, 150);
+            this.pictureBoxTemperature.Location = new System.Drawing.Point(86, 137);
             this.pictureBoxTemperature.Name = "pictureBoxTemperature";
             this.pictureBoxTemperature.Size = new System.Drawing.Size(22, 22);
             this.pictureBoxTemperature.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1163,7 +1163,7 @@
             this.customLabel3.AutoSize = true;
             this.customLabel3.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel3.Location = new System.Drawing.Point(44, 148);
+            this.customLabel3.Location = new System.Drawing.Point(20, 135);
             this.customLabel3.Name = "customLabel3";
             this.customLabel3.Size = new System.Drawing.Size(61, 23);
             this.customLabel3.TabIndex = 12;
@@ -1175,7 +1175,7 @@
             this.CButtonRobotExecStop.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotExecStop.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotExecStop.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotExecStop.Location = new System.Drawing.Point(282, 116);
+            this.CButtonRobotExecStop.Location = new System.Drawing.Point(258, 103);
             this.CButtonRobotExecStop.Name = "CButtonRobotExecStop";
             this.CButtonRobotExecStop.Size = new System.Drawing.Size(60, 30);
             this.CButtonRobotExecStop.TabIndex = 11;
@@ -1189,7 +1189,7 @@
             this.CButtonRobotExecPause.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotExecPause.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotExecPause.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotExecPause.Location = new System.Drawing.Point(216, 116);
+            this.CButtonRobotExecPause.Location = new System.Drawing.Point(192, 103);
             this.CButtonRobotExecPause.Name = "CButtonRobotExecPause";
             this.CButtonRobotExecPause.Size = new System.Drawing.Size(60, 30);
             this.CButtonRobotExecPause.TabIndex = 10;
@@ -1203,7 +1203,7 @@
             this.CButtonRobotExecRun.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonRobotExecRun.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonRobotExecRun.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonRobotExecRun.Location = new System.Drawing.Point(152, 116);
+            this.CButtonRobotExecRun.Location = new System.Drawing.Point(128, 103);
             this.CButtonRobotExecRun.Name = "CButtonRobotExecRun";
             this.CButtonRobotExecRun.Size = new System.Drawing.Size(60, 30);
             this.CButtonRobotExecRun.TabIndex = 9;
@@ -1214,7 +1214,7 @@
             // pictureBoxRobotExecut
             // 
             this.pictureBoxRobotExecut.Image = global::RobotWorkstation.Properties.Resources.SmallDarkGreen;
-            this.pictureBoxRobotExecut.Location = new System.Drawing.Point(110, 118);
+            this.pictureBoxRobotExecut.Location = new System.Drawing.Point(86, 105);
             this.pictureBoxRobotExecut.Name = "pictureBoxRobotExecut";
             this.pictureBoxRobotExecut.Size = new System.Drawing.Size(22, 22);
             this.pictureBoxRobotExecut.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1226,7 +1226,7 @@
             this.customLabel2.AutoSize = true;
             this.customLabel2.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel2.Location = new System.Drawing.Point(44, 116);
+            this.customLabel2.Location = new System.Drawing.Point(20, 103);
             this.customLabel2.Name = "customLabel2";
             this.customLabel2.Size = new System.Drawing.Size(61, 23);
             this.customLabel2.TabIndex = 7;
@@ -1238,7 +1238,7 @@
             this.CButtonReset.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonReset.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonReset.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonReset.Location = new System.Drawing.Point(152, 82);
+            this.CButtonReset.Location = new System.Drawing.Point(128, 69);
             this.CButtonReset.Name = "CButtonReset";
             this.CButtonReset.Size = new System.Drawing.Size(90, 30);
             this.CButtonReset.TabIndex = 6;
@@ -1249,7 +1249,7 @@
             // pictureBoxRobotAlarm
             // 
             this.pictureBoxRobotAlarm.Image = global::RobotWorkstation.Properties.Resources.SmallDarkRed;
-            this.pictureBoxRobotAlarm.Location = new System.Drawing.Point(110, 86);
+            this.pictureBoxRobotAlarm.Location = new System.Drawing.Point(86, 73);
             this.pictureBoxRobotAlarm.Name = "pictureBoxRobotAlarm";
             this.pictureBoxRobotAlarm.Size = new System.Drawing.Size(22, 22);
             this.pictureBoxRobotAlarm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1261,7 +1261,7 @@
             this.customLabel1.AutoSize = true;
             this.customLabel1.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel1.Location = new System.Drawing.Point(44, 83);
+            this.customLabel1.Location = new System.Drawing.Point(20, 70);
             this.customLabel1.Name = "customLabel1";
             this.customLabel1.Size = new System.Drawing.Size(61, 23);
             this.customLabel1.TabIndex = 4;
@@ -1273,7 +1273,7 @@
             this.CButtonServoOff.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonServoOff.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonServoOff.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonServoOff.Location = new System.Drawing.Point(252, 49);
+            this.CButtonServoOff.Location = new System.Drawing.Point(228, 36);
             this.CButtonServoOff.Name = "CButtonServoOff";
             this.CButtonServoOff.Size = new System.Drawing.Size(90, 30);
             this.CButtonServoOff.TabIndex = 3;
@@ -1287,7 +1287,7 @@
             this.CBttonServoOn.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CBttonServoOn.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CBttonServoOn.ForeColor = System.Drawing.Color.Transparent;
-            this.CBttonServoOn.Location = new System.Drawing.Point(152, 48);
+            this.CBttonServoOn.Location = new System.Drawing.Point(128, 35);
             this.CBttonServoOn.Name = "CBttonServoOn";
             this.CBttonServoOn.Size = new System.Drawing.Size(90, 30);
             this.CBttonServoOn.TabIndex = 2;
@@ -1298,7 +1298,7 @@
             // pictureBoxServo
             // 
             this.pictureBoxServo.Image = global::RobotWorkstation.Properties.Resources.SmallDarkGreen;
-            this.pictureBoxServo.Location = new System.Drawing.Point(110, 54);
+            this.pictureBoxServo.Location = new System.Drawing.Point(86, 41);
             this.pictureBoxServo.Name = "pictureBoxServo";
             this.pictureBoxServo.Size = new System.Drawing.Size(22, 22);
             this.pictureBoxServo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -1868,9 +1868,9 @@
             // customGroupBox1
             // 
             this.customGroupBox1.Font = new System.Drawing.Font("微软雅黑", 12F);
-            this.customGroupBox1.Location = new System.Drawing.Point(830, 273);
+            this.customGroupBox1.Location = new System.Drawing.Point(680, 273);
             this.customGroupBox1.Name = "customGroupBox1";
-            this.customGroupBox1.Size = new System.Drawing.Size(424, 349);
+            this.customGroupBox1.Size = new System.Drawing.Size(424, 229);
             this.customGroupBox1.TabIndex = 2;
             this.customGroupBox1.TabStop = false;
             this.customGroupBox1.Text = "视觉测试";
@@ -1881,7 +1881,7 @@
             this.PictureBoxCamera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PictureBoxCamera.Location = new System.Drawing.Point(11, 22);
             this.PictureBoxCamera.Name = "PictureBoxCamera";
-            this.PictureBoxCamera.Size = new System.Drawing.Size(800, 600);
+            this.PictureBoxCamera.Size = new System.Drawing.Size(640, 480);
             this.PictureBoxCamera.TabIndex = 1;
             this.PictureBoxCamera.TabStop = false;
             // 
@@ -1903,7 +1903,7 @@
             this.CGroupBoxCameraSet.Controls.Add(this.customLabel21);
             this.CGroupBoxCameraSet.Controls.Add(this.ComBoxCameraDevList);
             this.CGroupBoxCameraSet.Font = new System.Drawing.Font("微软雅黑", 12F);
-            this.CGroupBoxCameraSet.Location = new System.Drawing.Point(830, 10);
+            this.CGroupBoxCameraSet.Location = new System.Drawing.Point(680, 10);
             this.CGroupBoxCameraSet.Name = "CGroupBoxCameraSet";
             this.CGroupBoxCameraSet.Size = new System.Drawing.Size(424, 242);
             this.CGroupBoxCameraSet.TabIndex = 0;

@@ -306,12 +306,13 @@ namespace RobotWorkstation
             }
         }
 
+        //获取运动控制卡的状态
         public void GetMotionControlState(ref uint IOStatus,  ref string AxisXState, ref string AxisYState, ref string AxisCurState)
         {
             double CurCmdX = new double();
             double CurCmdY = new double();
 
-            double ActCmd = new double();
+            //double ActCmd = new double();
             UInt16 AxState = new UInt16();
             if (m_bInitBoard)
             {
