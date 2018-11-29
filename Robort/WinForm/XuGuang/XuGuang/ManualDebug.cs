@@ -1,4 +1,5 @@
-﻿using RABD.DROE.SystemDefine;
+﻿using Advantech.Motion;
+using RABD.DROE.SystemDefine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +20,9 @@ namespace RobotWorkstation
         public RobotDevice m_ManualRobot = new RobotDevice();
         private const int RobotGlobalPointsBefore = 30;  //先加载前30个点，其余的在定时器中加载，来解决刷新缓慢的问题
         private int m_ManualRobotGlobalPointIndex = 0;  //选中的全局点位索引
+
+        //三轴机械手
+        MotionControl m_MotionControl = new MotionControl();
 
         //视觉相机
         VisionCamera m_Camera = new VisionCamera();
@@ -643,42 +647,134 @@ namespace RobotWorkstation
         //三轴机械臂
         private void CButtonFindMotionControlDevice_Click(object sender, EventArgs e)
         {
-
+            if (m_MotionControl != null)
+            {
+                m_MotionControl.InitMotionControl();
+            }
         }
 
         private void CButtonOpenMotionControlDevice_Click(object sender, EventArgs e)
         {
-
+            if (m_MotionControl != null)
+            {
+                m_MotionControl.OpenDevice();
+            }
         }
 
         private void CButtonCloseMotionControlDevice_Click(object sender, EventArgs e)
         {
-
+            if (m_MotionControl != null)
+            {
+                m_MotionControl.CloseDevice();
+            }
         }
 
-        private void CButtonUp_Click(object sender, EventArgs e)
+        private void CButtonMotionControlResetError_Click(object sender, EventArgs e)
         {
-
+            if (m_MotionControl != null)
+            {
+                for (uint i = 0; i < m_MotionControl.m_AxisCount; i++)
+                {
+                    m_MotionControl.ResetErr(i);
+                }
+            }           
         }
 
-        private void CButtonDown_Click(object sender, EventArgs e)
+        private void CButtonSetMotionControlSpeedParam_Click(object sender, EventArgs e)
         {
+            double AxVelLow = double.Parse(CTextBoxMotionControLowSpeed.Text);
+            double AxVelHigh = double.Parse(CTextBoxMotionControHighSpeed.Text);
+            double AxVelAcc = double.Parse(CTextBoxMotionControAccSpeed.Text);
+            double AxVelDec = double.Parse(CTextBoxMotionControDecSpeed.Text);
 
+            if (m_MotionControl.m_bInitBoard)
+            {
+                m_MotionControl.SetMotionAxisSpeedParam(m_MotionControl.m_CurAxis, AxVelLow, AxVelHigh, AxVelAcc, AxVelDec);
+            }             
         }
 
-        private void CButtonLift_Click(object sender, EventArgs e)
+        private void CButtonMotionControlUp_Click(object sender, EventArgs e)
         {
-
+            if (m_MotionControl.m_bInitBoard)
+            {
+                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Y, false);
+            }
         }
 
-        private void CButtonRight_Click(object sender, EventArgs e)
+        private void CButtonMotionControlDown_Click(object sender, EventArgs e)
         {
-
+            if (m_MotionControl.m_bInitBoard)
+            {
+                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Y, true);
+            }
         }
 
-        private void CButtonPress_Click(object sender, EventArgs e)
+        private void CButtonMotionControlLift_Click(object sender, EventArgs e)
         {
+            if (m_MotionControl.m_bInitBoard)
+            {
+                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_X, false);
+            }
+        }
 
+        private void CButtonMotionControlRight_Click(object sender, EventArgs e)
+        {
+            if (m_MotionControl.m_bInitBoard)
+            {
+                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_X, true);
+            }
+        }
+
+        private void CButtonMotionControlGrasp_Click(object sender, EventArgs e)
+        {
+            if (m_MotionControl.m_bInitBoard)
+            {
+                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Z, false);
+
+                //启动吸嘴
+                Thread.Sleep(500);
+
+                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Z, true);
+            }
+        }
+
+        private void GetMotionControlIOStatus(uint IOStatus)
+        {
+            if (m_MotionControl != null)
+            {
+                if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_EZ) > 0)//ALM
+                    picBoxMotionControlIoEZ.Image = Properties.Resources.SmallRed;
+                else
+                    picBoxMotionControlIoEZ.Image = Properties.Resources.SmallDarkGreen;
+
+                if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_ORG) > 0)//ORG
+                    picBoxMotionControlIoORG.Image = Properties.Resources.SmallRed;
+                else
+                    picBoxMotionControlIoORG.Image = Properties.Resources.SmallDarkGreen;
+
+                if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_LMTP) > 0)//+EL
+                    picBoxMotionControlIoPosHEL.Image = Properties.Resources.SmallRed;
+                else
+                    picBoxMotionControlIoPosHEL.Image = Properties.Resources.SmallDarkGreen;
+
+                if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_LMTN) > 0)//-EL
+                    picBoxMotionControlIoNegHEL.Image = Properties.Resources.SmallRed;
+                else
+                    picBoxMotionControlIoNegHEL.Image = Properties.Resources.SmallDarkGreen;
+            }
+        }
+
+        //监控状态定时器
+        private void TimerMotionControlGetState_Tick(object sender, EventArgs e)
+        {
+            uint IOStatus = 0;
+            string AxisXState = "";
+            string AxisYState = "";
+            string AxisCurState = "";
+            m_MotionControl.GetMotionControlState(ref IOStatus, ref AxisXState, ref AxisYState, ref AxisCurState);
+            GetMotionControlIOStatus(IOStatus);
+
+            CTextBoxMotionControlState.Text = AxisCurState;
         }
     }
 }

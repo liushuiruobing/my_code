@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -11,21 +12,45 @@ namespace RobotWorkstation
     //运动控制卡
     class MotionControl
     {
+        public enum HomeMode
+        {
+            MODE1_Abs = 0,
+            MODE2_Lmt,
+            MODE3_Ref,
+            MODE4_Abs_Ref,
+            MODE5_Abs_NegRef,
+            MODE6_Lmt_Ref,
+            MODE7_AbsSearch,
+            MODE8_LmtSearch,
+            MODE9_AbsSearch_Ref,
+            MODE10_AbsSearch_NegRef,
+            MODE11_LmtSearch_Ref,
+            MODE12_AbsSearchReFind,
+            MODE13_LmtSearchReFind,
+            MODE14_AbsSearchReFind_Ref,
+            MODE15_AbsSearchReFind_NegRef,
+            MODE16_LmtSearchReFind_Ref
+        }
+
         private DEV_LIST[] m_CurAvailableDevs = new DEV_LIST[Motion.MAX_DEVICES];
         private IntPtr m_DeviceHandle = IntPtr.Zero;  //运动卡设备句柄
         private IntPtr[] m_AxisHandle = new IntPtr[32];  //轴句柄 
-        private bool m_bInitBoard = false;  //是否初始化了运动卡
-        private uint m_DeviceNum = 0;       //设备编号
-        private uint m_AxisCount = 0;       //运动卡支持的轴数量
+        public bool m_bInitBoard = false;  //是否初始化了运动卡
+        public uint m_DeviceNum = 0;       //设备编号
+        public uint m_AxisCount = 0;       //运动卡支持的轴数量
+        public uint m_CurAxis = 0;
+        public HomeMode m_HomeMode = HomeMode.MODE8_LmtSearch;
+        public int m_Distance = 1000;  //跨越距离
 
-        private const int AXIS_NO_X = 3;    //X轴编号
-        private const int AXIS_NO_Y = 0;    //Y轴编号
-        private const int AXIS_NO_Z = 2;    //Z轴编号
+        public const int AXIS_NO_X = 3;    //X轴编号
+        public const int AXIS_NO_Y = 0;    //Y轴编号
+        public const int AXIS_NO_Z = 2;    //Z轴编号
         private const int AXIS_NO_MIN = 0;  //轴最小编号
         private const int AXIS_NO_MAX = 3;  //轴最大编号
 
-        public void InitMotionControl()
+        public void InitMotionControl()  
         {
+            //加载设备
             //Get the list of available device numbers and names of devices, of which driver has been loaded successfully 
             //If you have two/more board,the device list(m_avaDevs) may be changed when the slot of the boards changed,for example:m_avaDevs[0].szDeviceName to PCI-1245
             //m_avaDevs[1].szDeviceName to PCI-1245L,changing the slot，Perhaps the opposite 
@@ -101,7 +126,7 @@ namespace RobotWorkstation
             SetMotionAxisSpeedParam(3, 10000, 100000, 20000, 20000);
         }
 
-        private void SetMotionAxisSpeedParam(int axis, double AxVelLow, double AxVelHigh, double AxAcc, double AxDec)
+        public void SetMotionAxisSpeedParam(uint axis, double AxVelLow, double AxVelHigh, double AxAcc, double AxDec)
         {
             if (!m_bInitBoard || axis < AXIS_NO_MIN || axis > AXIS_NO_MAX)
             {
@@ -165,5 +190,169 @@ namespace RobotWorkstation
             //GetAxisVelParam();
         }
 
+        public void CloseDevice()
+        {
+            UInt16[] usAxisState = new UInt16[32];
+            uint AxisNum = 0;
+            
+            if (m_bInitBoard == true) //Stop Every Axes
+            {
+                for (AxisNum = 0; AxisNum < m_AxisCount; AxisNum++)
+                {
+                    //Get the axis's current state
+                    Motion.mAcm_AxGetState(m_AxisHandle[AxisNum], ref usAxisState[AxisNum]);
+                    if (usAxisState[AxisNum] == (uint)AxisState.STA_AX_ERROR_STOP)
+                    {
+                        // Reset the axis' state. If the axis is in ErrorStop state, the state will be changed to Ready after calling this function
+                        Motion.mAcm_AxResetError(m_AxisHandle[AxisNum]);
+                    }
+                    
+                    Motion.mAcm_AxStopDec(m_AxisHandle[AxisNum]); //To command axis to decelerate to stop.
+                }
+                for (AxisNum = 0; AxisNum < m_AxisCount; AxisNum++)
+                {                   
+                    Motion.mAcm_AxClose(ref m_AxisHandle[AxisNum]);  //Close Axes
+                }
+                m_AxisCount = 0;              
+                Motion.mAcm_DevClose(ref m_DeviceHandle); //Close Device
+                m_DeviceHandle = IntPtr.Zero;
+                m_bInitBoard = false;
+            }
+        }
+
+        //XY
+        public void GoHome()
+        {
+            string strTemp;
+            uint result;
+            uint propertyVal = (uint)m_HomeMode;
+            double crossDistance = (double)m_Distance;
+
+            for (int i = 0; i < 3; i++)
+            {
+                //Setting the stopping condition of Acm_AxHomeEx
+                //You can also use the old API: Motion.mAcm_SetProperty(m_AxisHandle[CmbAxes.SelectedIndex], (uint)PropertyID.PAR_AxHomeExSwitchMode, ref PropertyVal, (uint)Marshal.SizeOf(typeof(UInt32)));
+                result = Motion.mAcm_SetU32Property(m_AxisHandle[i], (uint)PropertyID.PAR_AxHomeExSwitchMode, propertyVal);
+                if (result != (uint)ErrorCode.SUCCESS)
+                {
+                    strTemp = "Set Property-PAR_AxHomeExSwitchMode Failed With Error Code: [0x" + Convert.ToString(result, 16) + "]";
+                    MessageBox.Show(strTemp);
+                    return;
+                }
+                //Set the home cross distance (Unit: PPU). This property must be greater than 0. The default value is 10000
+                //You can also use the old API: Motion.mAcm_SetProperty(m_AxisHandle[CmbAxes.SelectedIndex], (uint)PropertyID.PAR_AxHomeCrossDistance, ref CrossDistance, (uint)Marshal.SizeOf(typeof(double)));
+                result = Motion.mAcm_SetF64Property(m_AxisHandle[i], (uint)PropertyID.PAR_AxHomeCrossDistance, crossDistance);
+                if (result != (uint)ErrorCode.SUCCESS)
+                {
+                    strTemp = "Set Property-AxHomeCrossDistance Failed With Error Code: [0x" + Convert.ToString(result, 16) + "]";
+                    MessageBox.Show(strTemp);
+                    return;
+                }
+            }
+
+            //To command axis to start typical home motion. The 15 types of typical
+            //home motion are composed of extended home
+            result = Motion.mAcm_AxHome(m_AxisHandle[0], 7, 0);
+            if (result != (uint)ErrorCode.SUCCESS)
+            {
+                strTemp = "AxHome Failed With Error Code: [0x" + Convert.ToString(result, 16) + "]";
+                MessageBox.Show(strTemp);
+            }
+
+            result = Motion.mAcm_AxHome(m_AxisHandle[3], 7, 1);
+            if (result != (uint)ErrorCode.SUCCESS)
+            {
+                strTemp = "AxHome Failed With Error Code: [0x" + Convert.ToString(result, 16) + "]";
+                MessageBox.Show(strTemp);
+            }
+
+            WaitXYFinish();
+        }
+
+        /*等待X Y执行完毕*/
+        private void WaitXYFinish()
+        {
+            UInt16 axStateX = new UInt16();
+            UInt16 axStateY = new UInt16();
+            int cnt = 0;
+            while ((++cnt) < 80)  //等待X Y轴运行完成
+            {
+                Motion.mAcm_AxGetState(m_AxisHandle[AXIS_NO_X], ref axStateX);
+                Motion.mAcm_AxGetState(m_AxisHandle[AXIS_NO_Y], ref axStateY);
+                if (axStateX == (UInt16)(AxisState.STA_AX_READY) && axStateY == (UInt16)(AxisState.STA_AX_READY))
+                {
+                    break;
+                }
+
+                Thread.Sleep(100);
+            }
+        }
+
+        public void ResetErr(uint CurAxis)
+        {
+            if (!m_bInitBoard || CurAxis < AXIS_NO_MIN || CurAxis > AXIS_NO_MAX)
+            {
+                return;
+            }
+
+            //Reset the axis' state. If the axis is in ErrorStop state, the state will
+            //be changed to Ready after calling this function.
+            UInt32 Result = Motion.mAcm_AxResetError(m_AxisHandle[CurAxis]);
+            if (Result != (uint)ErrorCode.SUCCESS)
+            {
+                string strTemp = "Reset axis's error failed With Error Code: [0x" + Convert.ToString(Result, 16) + "]";
+                MessageBox.Show(strTemp);
+                return;
+            }
+        }
+
+        public void GetMotionControlState(ref uint IOStatus,  ref string AxisXState, ref string AxisYState, ref string AxisCurState)
+        {
+            double CurCmdX = new double();
+            double CurCmdY = new double();
+
+            double ActCmd = new double();
+            UInt16 AxState = new UInt16();
+            if (m_bInitBoard)
+            {
+                //Get the motion I/ O status of the axis.
+                Motion.mAcm_AxGetMotionIO(m_AxisHandle[m_CurAxis], ref IOStatus);
+
+                //Get current command position of the specified axis
+                Motion.mAcm_AxGetCmdPosition(m_AxisHandle[AXIS_NO_X], ref CurCmdX);
+                AxisXState = Convert.ToString(CurCmdX);
+
+                Motion.mAcm_AxGetCmdPosition(m_AxisHandle[AXIS_NO_Y], ref CurCmdY);
+                AxisYState = Convert.ToString(CurCmdY);
+
+                //Get actual position of the specified axis
+                //Motion.mAcm_AxGetActualPosition(m_AxisHandle[m_CurAxis], ref ActCmd);
+                //TxtBoxAct.Text = Convert.ToString(ActCmd);
+
+                //Get the Axis's current state		
+                Motion.mAcm_AxGetState(m_AxisHandle[m_CurAxis], ref AxState);
+                AxisCurState = ((AxisState)AxState).ToString();
+            }
+        }
+
+        //移动机械臂  axis是轴的编号， PositiveDirection ，true为正方向，false反方向
+        public void MoveMotion(uint CurAxis, bool PositiveDirection)
+        {
+            if (!m_bInitBoard || CurAxis < AXIS_NO_MIN || CurAxis > AXIS_NO_MAX)
+                return;
+
+            ResetErr(CurAxis);
+
+            double Distance = m_Distance;
+            if (PositiveDirection)
+                Distance = -Distance;
+
+            uint result = Motion.mAcm_AxMoveRel(m_AxisHandle[CurAxis], Distance);
+            if (result != (uint)ErrorCode.SUCCESS)
+            {
+                string strTemp = "PTP Move Failed With Error Code: [0x" + Convert.ToString(result, 16) + "]";
+                MessageBox.Show(strTemp);
+            }
+        }
     }
 }

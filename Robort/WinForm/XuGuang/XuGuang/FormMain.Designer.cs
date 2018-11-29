@@ -50,7 +50,7 @@
             this.pictureBoxTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxTitle.Location = new System.Drawing.Point(1, 1);
             this.pictureBoxTitle.Name = "pictureBoxTitle";
-            this.pictureBoxTitle.Size = new System.Drawing.Size(1597, 70);
+            this.pictureBoxTitle.Size = new System.Drawing.Size(1600, 70);
             this.pictureBoxTitle.TabIndex = 1;
             this.pictureBoxTitle.TabStop = false;
             // 
@@ -166,8 +166,6 @@
             this.MaximumSize = new System.Drawing.Size(1600, 900);
             this.MinimizeBox = false;
             this.Name = "FormMain";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.TransparencyKey = System.Drawing.Color.White;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
