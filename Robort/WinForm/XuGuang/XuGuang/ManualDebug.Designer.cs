@@ -37,6 +37,7 @@
             this.TimerInitRobotGlobalPointDGV = new System.Windows.Forms.Timer(this.components);
             this.RefreshTimer = new System.Windows.Forms.Timer(this.components);
             this.TimerMotionControlGetState = new System.Windows.Forms.Timer(this.components);
+            this.ManualTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.tabControlManualDebug = new RobotWorkstation.CustomTabControl();
             this.tabPageRobot = new System.Windows.Forms.TabPage();
             this.groupBoxRobot = new RobotWorkstation.CustomGroupBox();
@@ -179,6 +180,7 @@
             this.customLabel21 = new RobotWorkstation.CustomLabel();
             this.ComBoxCameraDevList = new System.Windows.Forms.ComboBox();
             this.PictureBoxCamera = new System.Windows.Forms.PictureBox();
+            this.ManualTableLayoutPanel.SuspendLayout();
             this.tabControlManualDebug.SuspendLayout();
             this.tabPageRobot.SuspendLayout();
             this.groupBoxRobot.SuspendLayout();
@@ -219,19 +221,35 @@
             this.TimerMotionControlGetState.Interval = 200;
             this.TimerMotionControlGetState.Tick += new System.EventHandler(this.TimerMotionControlGetState_Tick);
             // 
+            // ManualTableLayoutPanel
+            // 
+            this.ManualTableLayoutPanel.ColumnCount = 2;
+            this.ManualTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 1.000601F));
+            this.ManualTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 98.9994F));
+            this.ManualTableLayoutPanel.Controls.Add(this.tabControlManualDebug, 1, 1);
+            this.ManualTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ManualTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
+            this.ManualTableLayoutPanel.Name = "ManualTableLayoutPanel";
+            this.ManualTableLayoutPanel.RowCount = 2;
+            this.ManualTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 2.003043F));
+            this.ManualTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 97.99696F));
+            this.ManualTableLayoutPanel.Size = new System.Drawing.Size(1415, 790);
+            this.ManualTableLayoutPanel.TabIndex = 1;
+            // 
             // tabControlManualDebug
             // 
             this.tabControlManualDebug.Controls.Add(this.tabPageRobot);
             this.tabControlManualDebug.Controls.Add(this.tabPageThreeAxisRobot);
             this.tabControlManualDebug.Controls.Add(this.tabPageCamera);
+            this.tabControlManualDebug.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlManualDebug.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tabControlManualDebug.ItemSize = new System.Drawing.Size(120, 26);
-            this.tabControlManualDebug.Location = new System.Drawing.Point(12, 12);
+            this.tabControlManualDebug.Location = new System.Drawing.Point(14, 15);
             this.tabControlManualDebug.Margin = new System.Windows.Forms.Padding(0);
             this.tabControlManualDebug.Name = "tabControlManualDebug";
             this.tabControlManualDebug.Padding = new System.Drawing.Point(20, 3);
             this.tabControlManualDebug.SelectedIndex = 0;
-            this.tabControlManualDebug.Size = new System.Drawing.Size(1360, 790);
+            this.tabControlManualDebug.Size = new System.Drawing.Size(1401, 775);
             this.tabControlManualDebug.TabIndex = 0;
             this.tabControlManualDebug.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControlManualDebug_Selected);
             // 
@@ -243,7 +261,7 @@
             this.tabPageRobot.Location = new System.Drawing.Point(0, 29);
             this.tabPageRobot.Name = "tabPageRobot";
             this.tabPageRobot.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRobot.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageRobot.Size = new System.Drawing.Size(1401, 746);
             this.tabPageRobot.TabIndex = 0;
             this.tabPageRobot.Text = "机械臂";
             // 
@@ -1315,7 +1333,7 @@
             this.tabPageThreeAxisRobot.Font = new System.Drawing.Font("微软雅黑", 10.5F);
             this.tabPageThreeAxisRobot.Location = new System.Drawing.Point(0, 29);
             this.tabPageThreeAxisRobot.Name = "tabPageThreeAxisRobot";
-            this.tabPageThreeAxisRobot.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageThreeAxisRobot.Size = new System.Drawing.Size(1401, 745);
             this.tabPageThreeAxisRobot.TabIndex = 2;
             this.tabPageThreeAxisRobot.Text = "三轴机械臂";
             // 
@@ -1861,7 +1879,7 @@
             this.tabPageCamera.Location = new System.Drawing.Point(0, 29);
             this.tabPageCamera.Name = "tabPageCamera";
             this.tabPageCamera.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCamera.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageCamera.Size = new System.Drawing.Size(1401, 745);
             this.tabPageCamera.TabIndex = 1;
             this.tabPageCamera.Text = "相机";
             // 
@@ -2088,7 +2106,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.ClientSize = new System.Drawing.Size(1415, 790);
             this.ControlBox = false;
-            this.Controls.Add(this.tabControlManualDebug);
+            this.Controls.Add(this.ManualTableLayoutPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Location = new System.Drawing.Point(180, 70);
             this.MaximizeBox = false;
@@ -2100,6 +2118,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ManualDebugForm_FormClosing);
             this.Load += new System.EventHandler(this.ManualDebug_Load);
             this.Shown += new System.EventHandler(this.ManualDebugForm_Shown);
+            this.ManualTableLayoutPanel.ResumeLayout(false);
             this.tabControlManualDebug.ResumeLayout(false);
             this.tabPageRobot.ResumeLayout(false);
             this.groupBoxRobot.ResumeLayout(false);
@@ -2279,5 +2298,6 @@
         private CustomTextBox CTextBoxMotionControlYDistance;
         private CustomLabel customLabel40;
         private CustomLabel customLabel39;
+        private System.Windows.Forms.TableLayoutPanel ManualTableLayoutPanel;
     }
 }
