@@ -163,7 +163,6 @@
             this.customLabel26 = new RobotWorkstation.CustomLabel();
             this.tabPageCamera = new System.Windows.Forms.TabPage();
             this.customGroupBox1 = new RobotWorkstation.CustomGroupBox();
-            this.PictureBoxCamera = new System.Windows.Forms.PictureBox();
             this.CGroupBoxCameraSet = new RobotWorkstation.CustomGroupBox();
             this.CButtonCameraReadParam = new RobotWorkstation.CustomButton();
             this.CButtonCameraSetParam = new RobotWorkstation.CustomButton();
@@ -179,6 +178,7 @@
             this.CButtonFindCamera = new RobotWorkstation.CustomButton();
             this.customLabel21 = new RobotWorkstation.CustomLabel();
             this.ComBoxCameraDevList = new System.Windows.Forms.ComboBox();
+            this.PictureBoxCamera = new System.Windows.Forms.PictureBox();
             this.tabControlManualDebug.SuspendLayout();
             this.tabPageRobot.SuspendLayout();
             this.groupBoxRobot.SuspendLayout();
@@ -200,8 +200,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picBoxMotionControlIoORG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBoxMotionControlIoEZ)).BeginInit();
             this.tabPageCamera.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxCamera)).BeginInit();
             this.CGroupBoxCameraSet.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxCamera)).BeginInit();
             this.SuspendLayout();
             // 
             // TimerInitRobotGlobalPointDGV
@@ -483,7 +483,7 @@
             dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             this.DGV_RobotGlobalPoint.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.DGV_RobotGlobalPoint.RowTemplate.Height = 23;
-            this.DGV_RobotGlobalPoint.Size = new System.Drawing.Size(719, 547);
+            this.DGV_RobotGlobalPoint.Size = new System.Drawing.Size(719, 539);
             this.DGV_RobotGlobalPoint.TabIndex = 0;
             this.DGV_RobotGlobalPoint.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DGV_RobotGlobalPoint_CellClick);
             // 
@@ -1855,8 +1855,8 @@
             // 
             this.tabPageCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.tabPageCamera.Controls.Add(this.customGroupBox1);
-            this.tabPageCamera.Controls.Add(this.PictureBoxCamera);
             this.tabPageCamera.Controls.Add(this.CGroupBoxCameraSet);
+            this.tabPageCamera.Controls.Add(this.PictureBoxCamera);
             this.tabPageCamera.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tabPageCamera.Location = new System.Drawing.Point(0, 29);
             this.tabPageCamera.Name = "tabPageCamera";
@@ -1874,16 +1874,6 @@
             this.customGroupBox1.TabIndex = 2;
             this.customGroupBox1.TabStop = false;
             this.customGroupBox1.Text = "视觉测试";
-            // 
-            // PictureBoxCamera
-            // 
-            this.PictureBoxCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.PictureBoxCamera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PictureBoxCamera.Location = new System.Drawing.Point(11, 22);
-            this.PictureBoxCamera.Name = "PictureBoxCamera";
-            this.PictureBoxCamera.Size = new System.Drawing.Size(640, 480);
-            this.PictureBoxCamera.TabIndex = 1;
-            this.PictureBoxCamera.TabStop = false;
             // 
             // CGroupBoxCameraSet
             // 
@@ -2081,6 +2071,16 @@
             this.ComBoxCameraDevList.Size = new System.Drawing.Size(284, 29);
             this.ComBoxCameraDevList.TabIndex = 0;
             // 
+            // PictureBoxCamera
+            // 
+            this.PictureBoxCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.PictureBoxCamera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PictureBoxCamera.Location = new System.Drawing.Point(11, 22);
+            this.PictureBoxCamera.Name = "PictureBoxCamera";
+            this.PictureBoxCamera.Size = new System.Drawing.Size(640, 480);
+            this.PictureBoxCamera.TabIndex = 1;
+            this.PictureBoxCamera.TabStop = false;
+            // 
             // ManualDebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -2094,6 +2094,8 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ManualDebugForm";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ManualDebugForm_FormClosing);
             this.Load += new System.EventHandler(this.ManualDebug_Load);
@@ -2123,9 +2125,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.picBoxMotionControlIoORG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBoxMotionControlIoEZ)).EndInit();
             this.tabPageCamera.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxCamera)).EndInit();
             this.CGroupBoxCameraSet.ResumeLayout(false);
             this.CGroupBoxCameraSet.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxCamera)).EndInit();
             this.ResumeLayout(false);
 
         }

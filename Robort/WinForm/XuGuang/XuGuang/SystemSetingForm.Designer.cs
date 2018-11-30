@@ -30,9 +30,9 @@
         {
             this.tabControlSystemSeting = new RobotWorkstation.CustomTabControl();
             this.SystemSetPageRobot = new System.Windows.Forms.TabPage();
-            this.SystemSetPageCamera = new System.Windows.Forms.TabPage();
-            this.customLabel1 = new RobotWorkstation.CustomLabel();
             this.CTextBoxSysSetRobotIP = new RobotWorkstation.CustomTextBox();
+            this.customLabel1 = new RobotWorkstation.CustomLabel();
+            this.SystemSetPageCamera = new System.Windows.Forms.TabPage();
             this.tabControlSystemSeting.SuspendLayout();
             this.SystemSetPageRobot.SuspendLayout();
             this.SuspendLayout();
@@ -66,29 +66,6 @@
             this.SystemSetPageRobot.TabIndex = 0;
             this.SystemSetPageRobot.Text = "机械臂";
             // 
-            // SystemSetPageCamera
-            // 
-            this.SystemSetPageCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.SystemSetPageCamera.Font = new System.Drawing.Font("微软雅黑", 10.5F);
-            this.SystemSetPageCamera.ForeColor = System.Drawing.Color.White;
-            this.SystemSetPageCamera.Location = new System.Drawing.Point(0, 29);
-            this.SystemSetPageCamera.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.SystemSetPageCamera.Name = "SystemSetPageCamera";
-            this.SystemSetPageCamera.Size = new System.Drawing.Size(777, 547);
-            this.SystemSetPageCamera.TabIndex = 1;
-            this.SystemSetPageCamera.Text = "相机";
-            // 
-            // customLabel1
-            // 
-            this.customLabel1.AutoSize = true;
-            this.customLabel1.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.customLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel1.Location = new System.Drawing.Point(52, 45);
-            this.customLabel1.Name = "customLabel1";
-            this.customLabel1.Size = new System.Drawing.Size(81, 23);
-            this.customLabel1.TabIndex = 0;
-            this.customLabel1.Text = "IP 地址：";
-            // 
             // CTextBoxSysSetRobotIP
             // 
             this.CTextBoxSysSetRobotIP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
@@ -101,6 +78,29 @@
             this.CTextBoxSysSetRobotIP.TabIndex = 1;
             this.CTextBoxSysSetRobotIP.Text = "192.168.1.124";
             this.CTextBoxSysSetRobotIP.TextChanged += new System.EventHandler(this.CTextBoxSysSetRobotIP_TextChanged);
+            // 
+            // customLabel1
+            // 
+            this.customLabel1.AutoSize = true;
+            this.customLabel1.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel1.Location = new System.Drawing.Point(52, 45);
+            this.customLabel1.Name = "customLabel1";
+            this.customLabel1.Size = new System.Drawing.Size(81, 23);
+            this.customLabel1.TabIndex = 0;
+            this.customLabel1.Text = "IP 地址：";
+            // 
+            // SystemSetPageCamera
+            // 
+            this.SystemSetPageCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.SystemSetPageCamera.Font = new System.Drawing.Font("微软雅黑", 10.5F);
+            this.SystemSetPageCamera.ForeColor = System.Drawing.Color.White;
+            this.SystemSetPageCamera.Location = new System.Drawing.Point(0, 29);
+            this.SystemSetPageCamera.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.SystemSetPageCamera.Name = "SystemSetPageCamera";
+            this.SystemSetPageCamera.Size = new System.Drawing.Size(777, 547);
+            this.SystemSetPageCamera.TabIndex = 1;
+            this.SystemSetPageCamera.Text = "相机";
             // 
             // SystemSetingForm
             // 
@@ -117,6 +117,8 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SystemSetingForm";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "SystemSeting";
             this.Load += new System.EventHandler(this.SystemSeting_Load);

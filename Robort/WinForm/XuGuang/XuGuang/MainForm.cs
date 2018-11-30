@@ -12,13 +12,16 @@ using System.Windows.Forms;
 namespace RobotWorkstation
 {
     
-    public partial class FormMain : Form
+    public partial class MainForm : Form
     {
         CustomColor m_CustomColor;
+        LoginForm m_LoginForm = null;
+        RunForm m_RunForm = null;
         ManualDebugForm m_ManualDebugForm = null;  //手动调试对话框
         SystemSetingForm m_SystemSetingForm = null;
+        UserLimitsForm m_UserLimitsForm = null;
 
-        public FormMain()
+        public MainForm()
         {
             InitializeComponent();
             InitOtherForm();
@@ -40,30 +43,10 @@ namespace RobotWorkstation
             int nScreenWidth = Screen.PrimaryScreen.WorkingArea.Width; 
             int nScreenHeight = Screen.PrimaryScreen.WorkingArea.Height;
 
-            //这两行代码是避免手动控制等子窗体出来时，主窗体被加上滚动条
-            AutoScrollMinSize = new Size(nScreenWidth+100, nScreenHeight+100);
-            IsMdiContainer = true;
-
             //调整主窗体控件
             this.MaximumSize = new Size(nScreenWidth, nScreenHeight);
             this.Width = nScreenWidth;
             this.Height = nScreenHeight;
-            CmdTreeView.Height = this.Height - pictureBoxTitle.Height - 2;
-
-            //调整其他窗体
-            if (m_ManualDebugForm != null)
-            {
-                m_ManualDebugForm.Location = new Point(CmdTreeView.Width, pictureBoxTitle.Height);
-                m_ManualDebugForm.Width = pictureBoxTitle.Width - CmdTreeView.Width - 2;
-                m_ManualDebugForm.Height = CmdTreeView.Height - 2;
-            }
-
-            if (m_SystemSetingForm != null)
-            {
-                m_SystemSetingForm.Location = new Point(CmdTreeView.Width, pictureBoxTitle.Height);
-                m_SystemSetingForm.Width = pictureBoxTitle.Width - CmdTreeView.Width - 2;
-                m_SystemSetingForm.Height = CmdTreeView.Height - 2;
-            }
         }
 
         public void InitCtrlColor()
@@ -74,11 +57,25 @@ namespace RobotWorkstation
         //创建其他窗体的实例对象
         public void InitOtherForm()
         {
+            m_LoginForm = new LoginForm();
+            m_LoginForm.MdiParent = this;
+            m_LoginForm.Dock = DockStyle.Fill;
+
+            m_RunForm = new RunForm();
+            m_RunForm.MdiParent = this;
+            m_RunForm.Dock = DockStyle.Fill;
+
             m_ManualDebugForm = new ManualDebugForm();
             m_ManualDebugForm.MdiParent = this;
+            m_ManualDebugForm.Dock = DockStyle.Fill;
 
             m_SystemSetingForm = new SystemSetingForm();
             m_SystemSetingForm.MdiParent = this;
+            m_SystemSetingForm.Dock = DockStyle.Fill;
+
+            m_UserLimitsForm = new UserLimitsForm();
+            m_UserLimitsForm.MdiParent = this;
+            m_UserLimitsForm.Dock = DockStyle.Fill;
         }
 
         private void CmdTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -87,52 +84,92 @@ namespace RobotWorkstation
             {
                 case "Login":
                     {
+                        if (m_RunForm != null)
+                            m_RunForm.Hide();
+
                         if (m_ManualDebugForm != null)
                             m_ManualDebugForm.HideFormAndSaveConfigFile();
-                    }break;
+
+                        if (m_SystemSetingForm != null)
+                            m_SystemSetingForm.HideFormAndSaveConfigFile();
+
+                        if (m_UserLimitsForm != null)
+                            m_UserLimitsForm.Hide();
+
+                        if (m_LoginForm != null)
+                            m_LoginForm.Show();
+                    }
+                    break;
                 case "Run":
                     {
+                        if (m_LoginForm != null)
+                            m_LoginForm.Hide();
+
                         if (m_ManualDebugForm != null)
                             m_ManualDebugForm.HideFormAndSaveConfigFile();
+
+                        if (m_SystemSetingForm != null)
+                            m_SystemSetingForm.HideFormAndSaveConfigFile();
+
+                        if (m_UserLimitsForm != null)
+                            m_UserLimitsForm.Hide();
+
+                        if (m_RunForm != null)
+                            m_RunForm.Show();
                     }
                     break;
                 case "Manual":
                     {
+                        if (m_LoginForm != null)
+                            m_LoginForm.Hide();
+
+                        if (m_RunForm != null)
+                            m_RunForm.Hide();
+
                         if (m_SystemSetingForm != null)
                             m_SystemSetingForm.HideFormAndSaveConfigFile();
 
+                        if (m_UserLimitsForm != null)
+                            m_UserLimitsForm.Hide();
+
                         if (m_ManualDebugForm != null)
-                        {
                             m_ManualDebugForm.Show();
-                        }
-                        else
-                        {
-                            m_ManualDebugForm = new ManualDebugForm();
-                            m_ManualDebugForm.MdiParent = this;
-                            m_ManualDebugForm.Show();
-                        }                     
+                                          
                     }break;
                 case "SystemSeting":
                     {
+                        if (m_LoginForm != null)
+                            m_LoginForm.Hide();
+
+                        if (m_RunForm != null)
+                            m_RunForm.Hide();
+
                         if (m_ManualDebugForm != null)
                             m_ManualDebugForm.HideFormAndSaveConfigFile();
 
                         if (m_SystemSetingForm != null)
-                        {
                             m_SystemSetingForm.Show();
-                        }
-                        else
-                        {
-                            m_SystemSetingForm = new SystemSetingForm();
-                            m_SystemSetingForm.MdiParent = this;
-                            m_SystemSetingForm.Show();
-                        }
+
+                        if (m_UserLimitsForm != null)
+                            m_UserLimitsForm.Hide();
                     }
                     break;
                 case "UserLimits":
                     {
+                        if (m_LoginForm != null)
+                            m_LoginForm.Hide();
+
+                        if (m_RunForm != null)
+                            m_RunForm.Hide();
+
                         if (m_ManualDebugForm != null)
                             m_ManualDebugForm.HideFormAndSaveConfigFile();
+
+                        if (m_SystemSetingForm != null)
+                            m_SystemSetingForm.HideFormAndSaveConfigFile();
+
+                        if (m_UserLimitsForm != null)
+                            m_UserLimitsForm.Show();
                     } break;
                 case "Exit":
                     {
