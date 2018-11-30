@@ -41,16 +41,20 @@
             this.label1 = new System.Windows.Forms.Label();
             this.CmdTreeView = new System.Windows.Forms.TreeView();
             this.CmdIcoList = new System.Windows.Forms.ImageList(this.components);
+            this.SplitContainerFromMain = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTitle)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SplitContainerFromMain)).BeginInit();
+            this.SplitContainerFromMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBoxTitle
             // 
             this.pictureBoxTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxTitle.Location = new System.Drawing.Point(1, 1);
+            this.pictureBoxTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pictureBoxTitle.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxTitle.Name = "pictureBoxTitle";
-            this.pictureBoxTitle.Size = new System.Drawing.Size(1600, 70);
+            this.pictureBoxTitle.Size = new System.Drawing.Size(1452, 70);
             this.pictureBoxTitle.TabIndex = 1;
             this.pictureBoxTitle.TabStop = false;
             // 
@@ -80,6 +84,7 @@
             // 
             this.CmdTreeView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
             this.CmdTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.CmdTreeView.Dock = System.Windows.Forms.DockStyle.Left;
             this.CmdTreeView.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.CmdTreeView.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(207)))), ((int)(((byte)(215)))));
             this.CmdTreeView.FullRowSelect = true;
@@ -88,7 +93,7 @@
             this.CmdTreeView.ImageList = this.CmdIcoList;
             this.CmdTreeView.Indent = 20;
             this.CmdTreeView.ItemHeight = 48;
-            this.CmdTreeView.Location = new System.Drawing.Point(1, 70);
+            this.CmdTreeView.Location = new System.Drawing.Point(0, 70);
             this.CmdTreeView.Name = "CmdTreeView";
             treeNode1.Name = "Login";
             treeNode1.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -145,6 +150,20 @@
             this.CmdIcoList.Images.SetKeyName(4, "User.png");
             this.CmdIcoList.Images.SetKeyName(5, "Exit.png");
             // 
+            // SplitContainerFromMain
+            // 
+            this.SplitContainerFromMain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.SplitContainerFromMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SplitContainerFromMain.Location = new System.Drawing.Point(180, 70);
+            this.SplitContainerFromMain.Name = "SplitContainerFromMain";
+            // 
+            // SplitContainerFromMain.Panel1
+            // 
+            this.SplitContainerFromMain.Panel1.BackColor = System.Drawing.Color.Transparent;
+            this.SplitContainerFromMain.Panel2Collapsed = true;
+            this.SplitContainerFromMain.Size = new System.Drawing.Size(1272, 790);
+            this.SplitContainerFromMain.TabIndex = 6;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -152,8 +171,9 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.BackgroundImage = global::RobotWorkstation.Properties.Resources.Backcolor;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(1600, 860);
+            this.ClientSize = new System.Drawing.Size(1452, 860);
             this.ControlBox = false;
+            this.Controls.Add(this.SplitContainerFromMain);
             this.Controls.Add(this.CmdTreeView);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
@@ -165,6 +185,7 @@
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(1600, 900);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(1400, 858);
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.TransparencyKey = System.Drawing.Color.White;
@@ -173,6 +194,8 @@
             this.Load += new System.EventHandler(this.FormMain_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxTitle)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SplitContainerFromMain)).EndInit();
+            this.SplitContainerFromMain.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -185,6 +208,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TreeView CmdTreeView;
         private System.Windows.Forms.ImageList CmdIcoList;
+        private System.Windows.Forms.SplitContainer SplitContainerFromMain;
     }
 }
 
