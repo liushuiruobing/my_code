@@ -2089,8 +2089,8 @@
             this.ClientSize = new System.Drawing.Size(1415, 790);
             this.ControlBox = false;
             this.Controls.Add(this.tabControlManualDebug);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Location = new System.Drawing.Point(180, 70);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ManualDebugForm";
