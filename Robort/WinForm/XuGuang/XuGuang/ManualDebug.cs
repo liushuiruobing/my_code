@@ -625,11 +625,26 @@ namespace RobotWorkstation
                         CTextBoxRobotMoveSpeed.Text = Profile.m_Config.RobotMoveSpeed.ToString();
                         CTextBoxJogDistance.Text = Profile.m_Config.RobotMoveDistance.ToString();
                         CTextBoxJogDistanceUm.Text = Profile.m_Config.RobotMoveDistanceUm.ToString();
+
+                        TimerMotionControlGetState.Stop();
                     }
                     break;
                 case 1:  //三轴机械臂
                     {
+                        if (!m_MotionControl.m_bInitBoard)
+                            m_MotionControl.InitMotionControl();
 
+                        if (m_MotionControl.m_DeviceCount > 0)
+                        {
+                            ComBoxMotionControlDevice.Items.Clear();
+                            for (int i = 0; i < m_MotionControl.m_DeviceCount; i++)
+                            {
+                                ComBoxMotionControlDevice.Items.Add(m_MotionControl.m_CurAvailableDevs[i].DeviceName);
+                                ComBoxMotionControlDevice.SelectedIndex = 0;
+                            }
+                        }
+
+                        TimerMotionControlGetState.Start();
                     }
                     break;
                 case 2:  //相机
@@ -637,6 +652,8 @@ namespace RobotWorkstation
                         CTextBoxCameraExposure.Text = Profile.m_Config.CameraExposure.ToString("F1");
                         CTextBoxCameraGain.Text = Profile.m_Config.CameraGain.ToString("F1");
                         CTextBoxCameraFrameRate.Text = Profile.m_Config.CameraFramRate.ToString("F1");
+
+                        TimerMotionControlGetState.Stop();
                     }
                     break;
                 default: break;
@@ -645,19 +662,31 @@ namespace RobotWorkstation
 
 
         //三轴机械臂
-        private void CButtonFindMotionControlDevice_Click(object sender, EventArgs e)
+        private void CButtonMotionControlDeviceLoadCfg_Click(object sender, EventArgs e)
         {
-            if (m_MotionControl != null)
+            if (m_MotionControl.m_bInitBoard)
             {
-                m_MotionControl.InitMotionControl();
+                this.OpenFileDialogMotionControlLoadCfg.FileName = ".cfg";
+                if (OpenFileDialogMotionControlLoadCfg.ShowDialog() != DialogResult.OK)
+                    return;
+
+                m_MotionControl.LoadConfig(OpenFileDialogMotionControlLoadCfg.FileName);
             }
         }
 
         private void CButtonOpenMotionControlDevice_Click(object sender, EventArgs e)
         {
-            if (m_MotionControl != null)
-            {
+            if (!m_MotionControl.m_bInitBoard)
+            {              
                 m_MotionControl.OpenDevice();
+
+                ComBoxMotionControlAxis.Items.Clear();
+                for (int i = 0; i < m_MotionControl.m_AxisCount; i++)
+                {
+                    ComBoxMotionControlAxis.Items.Add(String.Format("{0:d}-Axis", i));
+                }
+                ComBoxMotionControlAxis.SelectedIndex = 0;
+                ComBoxMotionHomeMode.SelectedIndex = 0;
             }
         }
 
@@ -686,9 +715,11 @@ namespace RobotWorkstation
             double AxVelHigh = double.Parse(CTextBoxMotionControHighSpeed.Text);
             double AxVelAcc = double.Parse(CTextBoxMotionControAccSpeed.Text);
             double AxVelDec = double.Parse(CTextBoxMotionControDecSpeed.Text);
+            int AxDistance = int.Parse(CTextBoxMotionControlDistance.Text);
 
             if (m_MotionControl.m_bInitBoard)
             {
+                m_MotionControl.m_Distance = AxDistance;
                 m_MotionControl.SetMotionAxisSpeedParam(m_MotionControl.m_CurAxis, AxVelLow, AxVelHigh, AxVelAcc, AxVelDec);
             }             
         }
@@ -697,6 +728,7 @@ namespace RobotWorkstation
         {
             if (m_MotionControl.m_bInitBoard)
             {
+                m_MotionControl.m_CurAxis = MotionControl.AXIS_NO_Y;
                 m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Y, false);
             }
         }
@@ -705,6 +737,7 @@ namespace RobotWorkstation
         {
             if (m_MotionControl.m_bInitBoard)
             {
+                m_MotionControl.m_CurAxis = MotionControl.AXIS_NO_Y;
                 m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Y, true);
             }
         }
@@ -713,6 +746,7 @@ namespace RobotWorkstation
         {
             if (m_MotionControl.m_bInitBoard)
             {
+                m_MotionControl.m_CurAxis = MotionControl.AXIS_NO_X;
                 m_MotionControl.MoveMotion(MotionControl.AXIS_NO_X, false);
             }
         }
@@ -721,10 +755,12 @@ namespace RobotWorkstation
         {
             if (m_MotionControl.m_bInitBoard)
             {
+                m_MotionControl.m_CurAxis = MotionControl.AXIS_NO_X;
                 m_MotionControl.MoveMotion(MotionControl.AXIS_NO_X, true);
             }
         }
 
+        //抓取
         private void CButtonMotionControlGrasp_Click(object sender, EventArgs e)
         {
             if (m_MotionControl.m_bInitBoard)
@@ -753,14 +789,14 @@ namespace RobotWorkstation
                     picBoxMotionControlIoORG.Image = Properties.Resources.SmallDarkGreen;
 
                 if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_LMTP) > 0)//+EL
-                    picBoxMotionControlIoPosHEL.Image = Properties.Resources.SmallRed;
+                    picBoxMotionControlIoPosLmit.Image = Properties.Resources.SmallRed;
                 else
-                    picBoxMotionControlIoPosHEL.Image = Properties.Resources.SmallDarkGreen;
+                    picBoxMotionControlIoPosLmit.Image = Properties.Resources.SmallDarkGreen;
 
                 if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_LMTN) > 0)//-EL
-                    picBoxMotionControlIoNegHEL.Image = Properties.Resources.SmallRed;
+                    picBoxMotionControlIoNegLmit.Image = Properties.Resources.SmallRed;
                 else
-                    picBoxMotionControlIoNegHEL.Image = Properties.Resources.SmallDarkGreen;
+                    picBoxMotionControlIoNegLmit.Image = Properties.Resources.SmallDarkGreen;
             }
         }
 
@@ -770,11 +806,40 @@ namespace RobotWorkstation
             uint IOStatus = 0;
             string AxisXState = "";
             string AxisYState = "";
+            string AxisZState = "";
             string AxisCurState = "";
-            m_MotionControl.GetMotionControlState(ref IOStatus, ref AxisXState, ref AxisYState, ref AxisCurState);
+            m_MotionControl.GetMotionControlState(ref IOStatus, ref AxisXState, ref AxisYState, ref AxisZState, ref AxisCurState);
             GetMotionControlIOStatus(IOStatus);
 
             CTextBoxMotionControlState.Text = AxisCurState;
+            CTextBoxMotionControlXDistance.Text = AxisXState;
+            CTextBoxMotionControlYDistance.Text = AxisYState;
+            CTextBoxMotionControlZDistance.Text = AxisZState;
+        }
+
+        private void CButtonMotionAxisRunNeg_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonMotionAxisRunPos_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonMotionAxisStop_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonMotionAxisHome_Click(object sender, EventArgs e)
+        {
+            if (m_MotionControl.m_bInitBoard)
+            {
+                m_MotionControl.m_HomeMode = (uint)ComBoxMotionHomeMode.SelectedIndex;
+                m_MotionControl.GoHome();
+            }
+                
         }
     }
 }

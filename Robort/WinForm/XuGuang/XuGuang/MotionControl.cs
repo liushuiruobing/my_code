@@ -32,14 +32,15 @@ namespace RobotWorkstation
             MODE16_LmtSearchReFind_Ref
         }
 
-        private DEV_LIST[] m_CurAvailableDevs = new DEV_LIST[Motion.MAX_DEVICES];
-        private IntPtr m_DeviceHandle = IntPtr.Zero;  //运动卡设备句柄
-        private IntPtr[] m_AxisHandle = new IntPtr[32];  //轴句柄 
+        public DEV_LIST[] m_CurAvailableDevs = new DEV_LIST[Motion.MAX_DEVICES];
+        public IntPtr m_DeviceHandle = IntPtr.Zero;  //运动卡设备句柄
+        public IntPtr[] m_AxisHandle = new IntPtr[32];  //轴句柄 
         public bool m_bInitBoard = false;  //是否初始化了运动卡
+        public uint m_DeviceCount = 0;
         public uint m_DeviceNum = 0;       //设备编号
         public uint m_AxisCount = 0;       //运动卡支持的轴数量
         public uint m_CurAxis = 0;
-        public HomeMode m_HomeMode = HomeMode.MODE8_LmtSearch;
+        public uint m_HomeMode = (uint)HomeMode.MODE8_LmtSearch;
         public int m_Distance = 1000;  //跨越距离
 
         public const int AXIS_NO_X = 3;    //X轴编号
@@ -54,8 +55,8 @@ namespace RobotWorkstation
             //Get the list of available device numbers and names of devices, of which driver has been loaded successfully 
             //If you have two/more board,the device list(m_avaDevs) may be changed when the slot of the boards changed,for example:m_avaDevs[0].szDeviceName to PCI-1245
             //m_avaDevs[1].szDeviceName to PCI-1245L,changing the slot，Perhaps the opposite 
-            uint m_deviceCount = 0;
-            int Result = Motion.mAcm_GetAvailableDevs(m_CurAvailableDevs, Motion.MAX_DEVICES, ref m_deviceCount);
+            
+            int Result = Motion.mAcm_GetAvailableDevs(m_CurAvailableDevs, Motion.MAX_DEVICES, ref m_DeviceCount);
             if (Result != (int)ErrorCode.SUCCESS)
             {
                 string strTemp = "Get Device Numbers Failed With Error Code: [0x" + Convert.ToString(Result, 16) + "]";
@@ -63,10 +64,26 @@ namespace RobotWorkstation
                 return;
             }
 
-            if (m_deviceCount > 0)
+            if (m_DeviceCount > 0)
             {
                 m_DeviceNum = m_CurAvailableDevs[0].DeviceNum;
             }
+        }
+
+        public void LoadConfig(string FileName)
+        {
+            //Set all configurations for the device according to the loaded file
+            uint Result = Motion.mAcm_DevLoadConfig(m_DeviceHandle, FileName);
+            if (Result != (uint)ErrorCode.SUCCESS)
+            {
+                string strTemp = "Load Config Failed With Error Code: [0x" + Convert.ToString(Result, 16) + "]";
+                MessageBox.Show(strTemp);
+                return;
+            }
+
+            SetMotionAxisSpeedParam(0, 10000, 100000, 20000, 20000);
+            SetMotionAxisSpeedParam(2, 30000, 300000, 30000, 30000);
+            SetMotionAxisSpeedParam(3, 10000, 100000, 20000, 20000);
         }
 
         public void OpenDevice()
@@ -225,7 +242,7 @@ namespace RobotWorkstation
         {
             string strTemp;
             uint result;
-            uint propertyVal = (uint)m_HomeMode;
+            uint propertyVal = m_HomeMode;
             double crossDistance = (double)m_Distance;
 
             for (int i = 0; i < 3; i++)
@@ -252,14 +269,14 @@ namespace RobotWorkstation
 
             //To command axis to start typical home motion. The 15 types of typical
             //home motion are composed of extended home
-            result = Motion.mAcm_AxHome(m_AxisHandle[0], 7, 0);
+            result = Motion.mAcm_AxHome(m_AxisHandle[0], m_HomeMode, 0);
             if (result != (uint)ErrorCode.SUCCESS)
             {
                 strTemp = "AxHome Failed With Error Code: [0x" + Convert.ToString(result, 16) + "]";
                 MessageBox.Show(strTemp);
             }
 
-            result = Motion.mAcm_AxHome(m_AxisHandle[3], 7, 1);
+            result = Motion.mAcm_AxHome(m_AxisHandle[3], m_HomeMode, 1);
             if (result != (uint)ErrorCode.SUCCESS)
             {
                 strTemp = "AxHome Failed With Error Code: [0x" + Convert.ToString(result, 16) + "]";
@@ -307,10 +324,11 @@ namespace RobotWorkstation
         }
 
         //获取运动控制卡的状态
-        public void GetMotionControlState(ref uint IOStatus,  ref string AxisXState, ref string AxisYState, ref string AxisCurState)
+        public void GetMotionControlState(ref uint IOStatus,  ref string AxisXState, ref string AxisYState, ref string AxisZState, ref string AxisCurState)
         {
             double CurCmdX = new double();
             double CurCmdY = new double();
+            double CurCmdZ = new double();
 
             //double ActCmd = new double();
             UInt16 AxState = new UInt16();
@@ -327,8 +345,8 @@ namespace RobotWorkstation
                 AxisYState = Convert.ToString(CurCmdY);
 
                 //Get actual position of the specified axis
-                //Motion.mAcm_AxGetActualPosition(m_AxisHandle[m_CurAxis], ref ActCmd);
-                //TxtBoxAct.Text = Convert.ToString(ActCmd);
+                Motion.mAcm_AxGetActualPosition(m_AxisHandle[AXIS_NO_Z], ref CurCmdZ);
+                AxisZState = Convert.ToString(CurCmdZ);
 
                 //Get the Axis's current state		
                 Motion.mAcm_AxGetState(m_AxisHandle[m_CurAxis], ref AxState);
@@ -353,6 +371,18 @@ namespace RobotWorkstation
             {
                 string strTemp = "PTP Move Failed With Error Code: [0x" + Convert.ToString(result, 16) + "]";
                 MessageBox.Show(strTemp);
+            }
+        }
+
+        public void StopMotion(uint CurAxis)
+        {
+            //To command axis to decelerate to stop.
+            uint Result = Motion.mAcm_AxStopDec(m_AxisHandle[CurAxis]);
+            if (Result != (uint)ErrorCode.SUCCESS)
+            {
+                string strTemp = "Axis To decelerate Stop Failed With Error Code: [0x" + Convert.ToString(Result, 16) + "]";
+                MessageBox.Show(strTemp);
+                return;
             }
         }
     }
