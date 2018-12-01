@@ -21,12 +21,23 @@ namespace RobotWorkstation
         SystemSetingForm m_SystemSetingForm = null;
         UserLimitsForm m_UserLimitsForm = null;
 
+        //防止闪屏
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED，将一个窗体的所有子窗口使用双缓冲按照从低到高方式绘制出来。
+                return cp;
+            }
+        }
+
         public MainForm()
         {
             InitializeComponent();
             InitOtherForm();
             this.CenterToScreen();
-
+            
             Profile.LoadConfigFile();
         }
 
@@ -59,23 +70,18 @@ namespace RobotWorkstation
         {
             m_LoginForm = new LoginForm();
             m_LoginForm.MdiParent = this;
-            m_LoginForm.Dock = DockStyle.Fill;
 
             m_RunForm = new RunForm();
             m_RunForm.MdiParent = this;
-            m_RunForm.Dock = DockStyle.Fill;
 
             m_ManualDebugForm = new ManualDebugForm();
             m_ManualDebugForm.MdiParent = this;
-            m_ManualDebugForm.Dock = DockStyle.Fill;
 
             m_SystemSetingForm = new SystemSetingForm();
             m_SystemSetingForm.MdiParent = this;
-            m_SystemSetingForm.Dock = DockStyle.Fill;
 
             m_UserLimitsForm = new UserLimitsForm();
             m_UserLimitsForm.MdiParent = this;
-            m_UserLimitsForm.Dock = DockStyle.Fill;
         }
 
         private void CmdTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -97,7 +103,11 @@ namespace RobotWorkstation
                             m_UserLimitsForm.Hide();
 
                         if (m_LoginForm != null)
+                        {
+                            SplitContainerFromMain.Panel1.Controls.Add(m_LoginForm);
+                            m_LoginForm.Dock = DockStyle.Fill;
                             m_LoginForm.Show();
+                        }
                     }
                     break;
                 case "Run":
@@ -115,7 +125,11 @@ namespace RobotWorkstation
                             m_UserLimitsForm.Hide();
 
                         if (m_RunForm != null)
+                        {
+                            SplitContainerFromMain.Panel1.Controls.Add(m_RunForm);
+                            m_RunForm.Dock = DockStyle.Fill;
                             m_RunForm.Show();
+                        }
                     }
                     break;
                 case "Manual":
@@ -133,9 +147,13 @@ namespace RobotWorkstation
                             m_UserLimitsForm.Hide();
 
                         if (m_ManualDebugForm != null)
+                        {
+                            SplitContainerFromMain.Panel1.Controls.Add(m_ManualDebugForm);
+                            m_ManualDebugForm.Dock = DockStyle.Fill;
                             m_ManualDebugForm.Show();
-                                          
-                    }break;
+                        }
+                    }
+                    break;
                 case "SystemSeting":
                     {
                         if (m_LoginForm != null)
@@ -147,11 +165,15 @@ namespace RobotWorkstation
                         if (m_ManualDebugForm != null)
                             m_ManualDebugForm.HideFormAndSaveConfigFile();
 
-                        if (m_SystemSetingForm != null)
-                            m_SystemSetingForm.Show();
-
                         if (m_UserLimitsForm != null)
                             m_UserLimitsForm.Hide();
+
+                        if (m_SystemSetingForm != null)
+                        {
+                            SplitContainerFromMain.Panel1.Controls.Add(m_SystemSetingForm);
+                            m_SystemSetingForm.Dock = DockStyle.Fill;
+                            m_SystemSetingForm.Show();
+                        }
                     }
                     break;
                 case "UserLimits":
@@ -169,12 +191,18 @@ namespace RobotWorkstation
                             m_SystemSetingForm.HideFormAndSaveConfigFile();
 
                         if (m_UserLimitsForm != null)
+                        {
+                            SplitContainerFromMain.Panel1.Controls.Add(m_UserLimitsForm);
+                            m_UserLimitsForm.Dock = DockStyle.Fill;
                             m_UserLimitsForm.Show();
-                    } break;
+                        }
+                    }
+                    break;
                 case "Exit":
                     {
-                        CloseForm();                     
-                    }break;
+                        CloseForm();
+                    }
+                    break;
                 default:
                     break;
             }

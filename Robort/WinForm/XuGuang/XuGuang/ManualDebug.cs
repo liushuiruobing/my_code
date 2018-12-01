@@ -440,14 +440,14 @@ namespace RobotWorkstation
                 CTextBoxRobotDistanceRZ.Text = (pos[eAxisName.RZ] / 1000).ToString("0.000");
 
                 //警报信息
-                listBoxRobotWarnMeas.Items.Clear();
-                string [,] WarnStr = m_ManualRobot.GetRobotWarnString(eLanguage.TW);
-                for (int i = 0; i < (WarnStr.Length) / 3; i++)
-                {
-                    listBoxRobotWarnMeas.Items.Add(WarnStr[i, 0]);
-                    listBoxRobotWarnMeas.Items.Add(WarnStr[i, 1]);
-                    listBoxRobotWarnMeas.Items.Add(WarnStr[i, 2]);
-                }
+                //listBoxRobotWarnMeas.Items.Clear();
+                //string [,] WarnStr = m_ManualRobot.GetRobotWarnString(eLanguage.TW);
+                //for (int i = 0; i < (WarnStr.Length) / 3; i++)
+                //{
+                //    listBoxRobotWarnMeas.Items.Add(WarnStr[i, 0]);
+                //    listBoxRobotWarnMeas.Items.Add(WarnStr[i, 1]);
+                //    listBoxRobotWarnMeas.Items.Add(WarnStr[i, 2]);
+                //}
             }
         }
 

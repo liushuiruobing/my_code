@@ -37,12 +37,9 @@
             this.TimerInitRobotGlobalPointDGV = new System.Windows.Forms.Timer(this.components);
             this.RefreshTimer = new System.Windows.Forms.Timer(this.components);
             this.TimerMotionControlGetState = new System.Windows.Forms.Timer(this.components);
-            this.ManualTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.tabControlManualDebug = new RobotWorkstation.CustomTabControl();
             this.tabPageRobot = new System.Windows.Forms.TabPage();
             this.groupBoxRobot = new RobotWorkstation.CustomGroupBox();
-            this.listBoxRobotWarnMeas = new System.Windows.Forms.ListBox();
-            this.customLabel20 = new RobotWorkstation.CustomLabel();
             this.CBtnRobotTestTeachPoint = new RobotWorkstation.CustomButton();
             this.CBtnRobotTestMoveToPoint = new RobotWorkstation.CustomButton();
             this.customLabel19 = new RobotWorkstation.CustomLabel();
@@ -164,6 +161,7 @@
             this.customLabel26 = new RobotWorkstation.CustomLabel();
             this.tabPageCamera = new System.Windows.Forms.TabPage();
             this.customGroupBox1 = new RobotWorkstation.CustomGroupBox();
+            this.PictureBoxCamera = new System.Windows.Forms.PictureBox();
             this.CGroupBoxCameraSet = new RobotWorkstation.CustomGroupBox();
             this.CButtonCameraReadParam = new RobotWorkstation.CustomButton();
             this.CButtonCameraSetParam = new RobotWorkstation.CustomButton();
@@ -179,8 +177,6 @@
             this.CButtonFindCamera = new RobotWorkstation.CustomButton();
             this.customLabel21 = new RobotWorkstation.CustomLabel();
             this.ComBoxCameraDevList = new System.Windows.Forms.ComboBox();
-            this.PictureBoxCamera = new System.Windows.Forms.PictureBox();
-            this.ManualTableLayoutPanel.SuspendLayout();
             this.tabControlManualDebug.SuspendLayout();
             this.tabPageRobot.SuspendLayout();
             this.groupBoxRobot.SuspendLayout();
@@ -202,8 +198,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picBoxMotionControlIoORG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBoxMotionControlIoEZ)).BeginInit();
             this.tabPageCamera.SuspendLayout();
-            this.CGroupBoxCameraSet.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PictureBoxCamera)).BeginInit();
+            this.CGroupBoxCameraSet.SuspendLayout();
             this.SuspendLayout();
             // 
             // TimerInitRobotGlobalPointDGV
@@ -221,35 +217,19 @@
             this.TimerMotionControlGetState.Interval = 200;
             this.TimerMotionControlGetState.Tick += new System.EventHandler(this.TimerMotionControlGetState_Tick);
             // 
-            // ManualTableLayoutPanel
-            // 
-            this.ManualTableLayoutPanel.ColumnCount = 2;
-            this.ManualTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 1.000601F));
-            this.ManualTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 98.9994F));
-            this.ManualTableLayoutPanel.Controls.Add(this.tabControlManualDebug, 1, 1);
-            this.ManualTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ManualTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
-            this.ManualTableLayoutPanel.Name = "ManualTableLayoutPanel";
-            this.ManualTableLayoutPanel.RowCount = 2;
-            this.ManualTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 2.003043F));
-            this.ManualTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 97.99696F));
-            this.ManualTableLayoutPanel.Size = new System.Drawing.Size(1415, 790);
-            this.ManualTableLayoutPanel.TabIndex = 1;
-            // 
             // tabControlManualDebug
             // 
             this.tabControlManualDebug.Controls.Add(this.tabPageRobot);
             this.tabControlManualDebug.Controls.Add(this.tabPageThreeAxisRobot);
             this.tabControlManualDebug.Controls.Add(this.tabPageCamera);
-            this.tabControlManualDebug.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlManualDebug.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tabControlManualDebug.ItemSize = new System.Drawing.Size(120, 26);
-            this.tabControlManualDebug.Location = new System.Drawing.Point(14, 15);
+            this.tabControlManualDebug.Location = new System.Drawing.Point(12, 12);
             this.tabControlManualDebug.Margin = new System.Windows.Forms.Padding(0);
             this.tabControlManualDebug.Name = "tabControlManualDebug";
             this.tabControlManualDebug.Padding = new System.Drawing.Point(20, 3);
             this.tabControlManualDebug.SelectedIndex = 0;
-            this.tabControlManualDebug.Size = new System.Drawing.Size(1401, 775);
+            this.tabControlManualDebug.Size = new System.Drawing.Size(1360, 790);
             this.tabControlManualDebug.TabIndex = 0;
             this.tabControlManualDebug.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControlManualDebug_Selected);
             // 
@@ -261,14 +241,12 @@
             this.tabPageRobot.Location = new System.Drawing.Point(0, 29);
             this.tabPageRobot.Name = "tabPageRobot";
             this.tabPageRobot.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRobot.Size = new System.Drawing.Size(1401, 746);
+            this.tabPageRobot.Size = new System.Drawing.Size(1360, 761);
             this.tabPageRobot.TabIndex = 0;
             this.tabPageRobot.Text = "机械臂";
             // 
             // groupBoxRobot
             // 
-            this.groupBoxRobot.Controls.Add(this.listBoxRobotWarnMeas);
-            this.groupBoxRobot.Controls.Add(this.customLabel20);
             this.groupBoxRobot.Controls.Add(this.CBtnRobotTestTeachPoint);
             this.groupBoxRobot.Controls.Add(this.CBtnRobotTestMoveToPoint);
             this.groupBoxRobot.Controls.Add(this.customLabel19);
@@ -340,30 +318,6 @@
             this.groupBoxRobot.TabIndex = 0;
             this.groupBoxRobot.TabStop = false;
             this.groupBoxRobot.Text = "机械臂";
-            // 
-            // listBoxRobotWarnMeas
-            // 
-            this.listBoxRobotWarnMeas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.listBoxRobotWarnMeas.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listBoxRobotWarnMeas.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.listBoxRobotWarnMeas.ForeColor = System.Drawing.Color.White;
-            this.listBoxRobotWarnMeas.FormattingEnabled = true;
-            this.listBoxRobotWarnMeas.ItemHeight = 23;
-            this.listBoxRobotWarnMeas.Location = new System.Drawing.Point(1109, 64);
-            this.listBoxRobotWarnMeas.Name = "listBoxRobotWarnMeas";
-            this.listBoxRobotWarnMeas.Size = new System.Drawing.Size(196, 209);
-            this.listBoxRobotWarnMeas.TabIndex = 65;
-            // 
-            // customLabel20
-            // 
-            this.customLabel20.AutoSize = true;
-            this.customLabel20.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.customLabel20.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel20.Location = new System.Drawing.Point(1105, 40);
-            this.customLabel20.Name = "customLabel20";
-            this.customLabel20.Size = new System.Drawing.Size(95, 23);
-            this.customLabel20.TabIndex = 64;
-            this.customLabel20.Text = "警告信息：";
             // 
             // CBtnRobotTestTeachPoint
             // 
@@ -484,6 +438,7 @@
             this.DGV_RobotGlobalPoint.EnableHeadersVisualStyles = false;
             this.DGV_RobotGlobalPoint.GridColor = System.Drawing.Color.DarkGray;
             this.DGV_RobotGlobalPoint.Location = new System.Drawing.Point(0, 0);
+            this.DGV_RobotGlobalPoint.Margin = new System.Windows.Forms.Padding(1);
             this.DGV_RobotGlobalPoint.Name = "DGV_RobotGlobalPoint";
             this.DGV_RobotGlobalPoint.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -501,7 +456,7 @@
             dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             this.DGV_RobotGlobalPoint.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.DGV_RobotGlobalPoint.RowTemplate.Height = 23;
-            this.DGV_RobotGlobalPoint.Size = new System.Drawing.Size(719, 539);
+            this.DGV_RobotGlobalPoint.Size = new System.Drawing.Size(719, 547);
             this.DGV_RobotGlobalPoint.TabIndex = 0;
             this.DGV_RobotGlobalPoint.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DGV_RobotGlobalPoint_CellClick);
             // 
@@ -1333,7 +1288,7 @@
             this.tabPageThreeAxisRobot.Font = new System.Drawing.Font("微软雅黑", 10.5F);
             this.tabPageThreeAxisRobot.Location = new System.Drawing.Point(0, 29);
             this.tabPageThreeAxisRobot.Name = "tabPageThreeAxisRobot";
-            this.tabPageThreeAxisRobot.Size = new System.Drawing.Size(1401, 745);
+            this.tabPageThreeAxisRobot.Size = new System.Drawing.Size(1360, 761);
             this.tabPageThreeAxisRobot.TabIndex = 2;
             this.tabPageThreeAxisRobot.Text = "三轴机械臂";
             // 
@@ -1873,13 +1828,13 @@
             // 
             this.tabPageCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.tabPageCamera.Controls.Add(this.customGroupBox1);
-            this.tabPageCamera.Controls.Add(this.CGroupBoxCameraSet);
             this.tabPageCamera.Controls.Add(this.PictureBoxCamera);
+            this.tabPageCamera.Controls.Add(this.CGroupBoxCameraSet);
             this.tabPageCamera.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tabPageCamera.Location = new System.Drawing.Point(0, 29);
             this.tabPageCamera.Name = "tabPageCamera";
             this.tabPageCamera.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCamera.Size = new System.Drawing.Size(1401, 745);
+            this.tabPageCamera.Size = new System.Drawing.Size(1360, 761);
             this.tabPageCamera.TabIndex = 1;
             this.tabPageCamera.Text = "相机";
             // 
@@ -1892,6 +1847,16 @@
             this.customGroupBox1.TabIndex = 2;
             this.customGroupBox1.TabStop = false;
             this.customGroupBox1.Text = "视觉测试";
+            // 
+            // PictureBoxCamera
+            // 
+            this.PictureBoxCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.PictureBoxCamera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PictureBoxCamera.Location = new System.Drawing.Point(11, 22);
+            this.PictureBoxCamera.Name = "PictureBoxCamera";
+            this.PictureBoxCamera.Size = new System.Drawing.Size(640, 480);
+            this.PictureBoxCamera.TabIndex = 1;
+            this.PictureBoxCamera.TabStop = false;
             // 
             // CGroupBoxCameraSet
             // 
@@ -2089,16 +2054,6 @@
             this.ComBoxCameraDevList.Size = new System.Drawing.Size(284, 29);
             this.ComBoxCameraDevList.TabIndex = 0;
             // 
-            // PictureBoxCamera
-            // 
-            this.PictureBoxCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.PictureBoxCamera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PictureBoxCamera.Location = new System.Drawing.Point(11, 22);
-            this.PictureBoxCamera.Name = "PictureBoxCamera";
-            this.PictureBoxCamera.Size = new System.Drawing.Size(640, 480);
-            this.PictureBoxCamera.TabIndex = 1;
-            this.PictureBoxCamera.TabStop = false;
-            // 
             // ManualDebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -2106,19 +2061,16 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.ClientSize = new System.Drawing.Size(1415, 790);
             this.ControlBox = false;
-            this.Controls.Add(this.ManualTableLayoutPanel);
+            this.Controls.Add(this.tabControlManualDebug);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Location = new System.Drawing.Point(180, 70);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ManualDebugForm";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ManualDebugForm_FormClosing);
             this.Load += new System.EventHandler(this.ManualDebug_Load);
             this.Shown += new System.EventHandler(this.ManualDebugForm_Shown);
-            this.ManualTableLayoutPanel.ResumeLayout(false);
             this.tabControlManualDebug.ResumeLayout(false);
             this.tabPageRobot.ResumeLayout(false);
             this.groupBoxRobot.ResumeLayout(false);
@@ -2144,9 +2096,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.picBoxMotionControlIoORG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBoxMotionControlIoEZ)).EndInit();
             this.tabPageCamera.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxCamera)).EndInit();
             this.CGroupBoxCameraSet.ResumeLayout(false);
             this.CGroupBoxCameraSet.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PictureBoxCamera)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2235,8 +2187,6 @@
         private CustomButton CBtnRobotTestMoveToPoint;
         private CustomButton CBtnRobotTestTeachPoint;
         private System.Windows.Forms.Timer RefreshTimer;
-        private System.Windows.Forms.ListBox listBoxRobotWarnMeas;
-        private CustomLabel customLabel20;
         private CustomGroupBox CGroupBoxCameraSet;
         private CustomLabel customLabel21;
         private System.Windows.Forms.ComboBox ComBoxCameraDevList;
@@ -2298,6 +2248,5 @@
         private CustomTextBox CTextBoxMotionControlYDistance;
         private CustomLabel customLabel40;
         private CustomLabel customLabel39;
-        private System.Windows.Forms.TableLayoutPanel ManualTableLayoutPanel;
     }
 }
