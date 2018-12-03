@@ -1336,7 +1336,7 @@
             this.CButtonMotionAxisStop.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonMotionAxisStop.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonMotionAxisStop.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonMotionAxisStop.Location = new System.Drawing.Point(316, 159);
+            this.CButtonMotionAxisStop.Location = new System.Drawing.Point(318, 159);
             this.CButtonMotionAxisStop.Name = "CButtonMotionAxisStop";
             this.CButtonMotionAxisStop.Size = new System.Drawing.Size(90, 30);
             this.CButtonMotionAxisStop.TabIndex = 10;
@@ -1350,7 +1350,7 @@
             this.CButtonMotionAxisHome.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonMotionAxisHome.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonMotionAxisHome.ForeColor = System.Drawing.Color.White;
-            this.CButtonMotionAxisHome.Location = new System.Drawing.Point(127, 159);
+            this.CButtonMotionAxisHome.Location = new System.Drawing.Point(126, 159);
             this.CButtonMotionAxisHome.Name = "CButtonMotionAxisHome";
             this.CButtonMotionAxisHome.Size = new System.Drawing.Size(90, 30);
             this.CButtonMotionAxisHome.TabIndex = 9;
@@ -1364,7 +1364,7 @@
             this.CButtonMotionAxisRunPos.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonMotionAxisRunPos.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonMotionAxisRunPos.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonMotionAxisRunPos.Location = new System.Drawing.Point(316, 118);
+            this.CButtonMotionAxisRunPos.Location = new System.Drawing.Point(318, 118);
             this.CButtonMotionAxisRunPos.Name = "CButtonMotionAxisRunPos";
             this.CButtonMotionAxisRunPos.Size = new System.Drawing.Size(90, 30);
             this.CButtonMotionAxisRunPos.TabIndex = 8;
@@ -1378,7 +1378,7 @@
             this.CButtonMotionAxisRunNeg.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.CButtonMotionAxisRunNeg.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.CButtonMotionAxisRunNeg.ForeColor = System.Drawing.Color.Transparent;
-            this.CButtonMotionAxisRunNeg.Location = new System.Drawing.Point(127, 118);
+            this.CButtonMotionAxisRunNeg.Location = new System.Drawing.Point(126, 118);
             this.CButtonMotionAxisRunNeg.Name = "CButtonMotionAxisRunNeg";
             this.CButtonMotionAxisRunNeg.Size = new System.Drawing.Size(90, 30);
             this.CButtonMotionAxisRunNeg.TabIndex = 7;
