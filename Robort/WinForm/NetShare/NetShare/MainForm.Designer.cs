@@ -141,7 +141,7 @@
             this.TextBoxUser.Name = "TextBoxUser";
             this.TextBoxUser.Size = new System.Drawing.Size(100, 21);
             this.TextBoxUser.TabIndex = 10;
-            this.TextBoxUser.Text = "User";
+            this.TextBoxUser.Text = "Guest";
             // 
             // TextBoxPassword
             // 
@@ -149,7 +149,6 @@
             this.TextBoxPassword.Name = "TextBoxPassword";
             this.TextBoxPassword.Size = new System.Drawing.Size(100, 21);
             this.TextBoxPassword.TabIndex = 11;
-            this.TextBoxPassword.Text = "123456";
             // 
             // MainForm
             // 

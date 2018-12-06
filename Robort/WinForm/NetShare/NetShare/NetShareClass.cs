@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Management;
 using System.Security.AccessControl;
+using System.Diagnostics;
+using System.Threading;
 
 namespace NetShare
 {
@@ -26,7 +28,7 @@ namespace NetShare
             ERROR_NETWORK_BUSY = 54,
             ERROR_BAD_DEV_TYPE = 66,
             ERROR_BAD_NET_NAME = 67,
-            ERROR_ALREADY_ASSIGNED = 85,
+            ERROR_ALREADY_ASSIGNED = 85, //The local device name is already in use.
             ERROR_INVALID_PASSWORD = 86,
             ERROR_INVALID_PARAMETER = 87,
             ERROR_INVALID_LEVEL = 124,
@@ -127,41 +129,18 @@ namespace NetShare
         }
 
         /// 创建文件夹共享  
-                /// </summary>  
-                /// <param name="FolderPath">文件夹路径</param>  
-                /// <param name="ShareName">共享名</param>  
-                /// <param name="Description">共享注释</param>  
-                /// <returns></returns> 
-        public int CreateShareNetFolder(string FolderPath, string ShareName, string Description)
+        public void CallShareBatFile(string ShareFile)
         {
-            try
-            {
-                ManagementClass managementClass = new ManagementClass("Win32_Share");
-                // Create ManagementBaseObjects for in and out parameters  
-                ManagementBaseObject inParams = managementClass.GetMethodParameters("Create");
-                ManagementBaseObject outParams = null;
-                // Set the input parameters  
-                inParams["Description"] = Description;
-                inParams["Name"] = ShareName;
-                inParams["Path"] = FolderPath;
-                inParams["Type"] = 0x0; // Disk Drive  
-                outParams = managementClass.InvokeMethod("Create", inParams, null);
-                // Check to see if the method invocation was successful  
-                if ((uint)(outParams.Properties["ReturnValue"].Value) != 0)
-                {
-                    throw new Exception("Unable to share directory.");
-                }
+            string targetDir = AppDomain.CurrentDomain.BaseDirectory;//this is where testChange.bat lies
 
-                //设置所有人可读
-                DirectorySecurity fSec = new DirectorySecurity();
-                fSec.AddAccessRule(new FileSystemAccessRule(@"Everyone", FileSystemRights.FullControl, AccessControlType.Allow));
-                System.IO.Directory.SetAccessControl(FolderPath, fSec);
-            }
-            catch
-            {
-                return -1;
-            }
-            return 0;
+            Process p = new Process();  //创建进程对象
+            p.StartInfo.WorkingDirectory = targetDir;
+            p.StartInfo.FileName = ShareFile;
+            p.StartInfo.Arguments = string.Format("10");//this is argument
+            p.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;  //窗口状态为隐藏           
+            p.StartInfo.CreateNoWindow = true;  //启动进程不创建窗口
+            p.Start();   //启动进程
+            p.WaitForExit(100);  //设置100ms等待关联的进程退出
         }
 
         /// <summary>

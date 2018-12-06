@@ -19,10 +19,10 @@ namespace NetShare
         NetShareClass m_NetShare = new NetShareClass();
         string m_SharePath = @"\\";
         string m_ShareFolderName = @"\Share";
-        string m_ShareDeviceName = "User";
-        string m_SharePassWord = "123456";
-        string m_ShareFileName = @"/123.txt";
-        string m_Localpath = "Z:"; ////映射到本地的盘符，如"X:",不做驱动器映射，可为空
+        string m_ShareDeviceName = "Guest";
+        string m_SharePassWord = "";
+        string m_ShareFileName = @"\test.txt";
+        string m_Localpath = "Z:"; ////映射到本地的盘符，如"z:",不做驱动器映射，可为空
         int m_ConnectShareStatus = -1;
 
         public MainForm()
@@ -33,19 +33,28 @@ namespace NetShare
         private void BtnCreate_Click(object sender, EventArgs e)
         {
             //创建网络共享
-            string ShareName = "ShareTest1111";  //网络共享上的名称
-            string FolderPath = @"F:\a";  //映射到本地的文件夹
-            int nRe = m_NetShare.CreateShareNetFolder(FolderPath, ShareName, "共享测试");
-            if(nRe == -1)
-                MessageBox.Show("未能成功创建共享文件夹！");
+            string CreateShare = "CreateShare.bat";
+            string SetSharePermission = "SetShareFilePermission.bat";
+            string FolderPath = @"F:\ShareFolder";  //映射到本地的文件夹
 
-            //本地的磁盘映射文件
-            string file = FolderPath + @"\" + m_ShareFileName;
-            File.Create(file);
+            if (!Directory.Exists(FolderPath))
+            {
+                Directory.CreateDirectory(FolderPath);
+                m_NetShare.CallShareBatFile(CreateShare);
+            }
+
+            string file = FolderPath + m_ShareFileName;
+            if (!File.Exists(file))
+            {
+                FileStream fs = File.Create(file);
+                fs.Close();
+                m_NetShare.CallShareBatFile(SetSharePermission); //设置新创建的文件属性
+            }
         }
 
         private void BtnConnect_Click(object sender, EventArgs e)
         {
+            m_SharePath = @"\\";
             m_SharePath = m_SharePath + TextBoxIP.Text + m_ShareFolderName;
             m_ShareDeviceName = TextBoxUser.Text;
             m_SharePassWord = TextBoxPassword.Text;
@@ -63,7 +72,7 @@ namespace NetShare
             }
             else
             {
-                MessageBox.Show("连接失败！");
+                MessageBox.Show($"连接失败！ErrorCode = {m_ConnectShareStatus}");
             }
         }
 
@@ -92,14 +101,15 @@ namespace NetShare
             {
                 if (File.Exists(m_Localpath + m_ShareFileName))
                 {
-                    FileStream fs = new FileStream(m_Localpath + m_ShareFileName, FileMode.Open);
-                    using (StreamReader stream = new StreamReader(fs))
+                   // FileStream fs = new FileStream(m_Localpath + m_ShareFileName, FileMode.Open);
+                    //using (StreamReader stream = new StreamReader(fs))
+                    using (StreamReader stream = new StreamReader(m_Localpath + m_ShareFileName))
                     {
                         string str = stream.ReadLine();
                         TextBoxShow.Text += str;
                         stream.Close();
                     }
-                    fs.Close();
+                    //fs.Close();
                 }
             }
             else
