@@ -44,7 +44,8 @@ namespace RobotWorkstation
             BorderStyle = BorderStyle.FixedSingle;
             Font = new Font("微软雅黑", 12.5F);
             ForeColor = Color.White;
-            Size = new Size(90, 29);
+            Size = new Size(90, 32);
+            Multiline = true;
         }
     }
 
@@ -57,7 +58,7 @@ namespace RobotWorkstation
             ForeColor = Color.Transparent;
             BackColor = Color.FromArgb(74, 74, 74);
             UseVisualStyleBackColor = false;
-            Size = new Size(90, 30);
+            Size = new Size(90, 36);
         }
     }
 
