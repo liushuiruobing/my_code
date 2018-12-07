@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PicLedReady = new System.Windows.Forms.PictureBox();
             this.PicLedRun = new System.Windows.Forms.PictureBox();
             this.PicLedAlarm = new System.Windows.Forms.PictureBox();
@@ -60,6 +60,11 @@
             this.AlarmText = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Dealwith = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CButtonClearSysAlarm = new RobotWorkstation.CustomButton();
+            this.customLabel6 = new RobotWorkstation.CustomLabel();
+            this.customLabel7 = new RobotWorkstation.CustomLabel();
+            this.customLabel8 = new RobotWorkstation.CustomLabel();
+            this.customLabel9 = new RobotWorkstation.CustomLabel();
+            this.customLabel10 = new RobotWorkstation.CustomLabel();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedReady)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedRun)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedAlarm)).BeginInit();
@@ -314,23 +319,23 @@
             // 
             // DgvSysAlarm
             // 
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DgvSysAlarm.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DgvSysAlarm.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.DgvSysAlarm.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.DgvSysAlarm.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("微软雅黑", 12F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DgvSysAlarm.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("微软雅黑", 12F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DgvSysAlarm.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.DgvSysAlarm.ColumnHeadersHeight = 25;
             this.DgvSysAlarm.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.DgvSysAlarm.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -338,33 +343,33 @@
             this.Level,
             this.AlarmText,
             this.Dealwith});
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle10.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("微软雅黑", 12F);
-            dataGridViewCellStyle10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DgvSysAlarm.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("微软雅黑", 12F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DgvSysAlarm.DefaultCellStyle = dataGridViewCellStyle4;
             this.DgvSysAlarm.EnableHeadersVisualStyles = false;
             this.DgvSysAlarm.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.DgvSysAlarm.Location = new System.Drawing.Point(43, 52);
             this.DgvSysAlarm.Name = "DgvSysAlarm";
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle11.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("微软雅黑", 12F);
-            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DgvSysAlarm.RowHeadersDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("微软雅黑", 12F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DgvSysAlarm.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.DgvSysAlarm.RowHeadersVisible = false;
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle12.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.White;
-            this.DgvSysAlarm.RowsDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White;
+            this.DgvSysAlarm.RowsDefaultCellStyle = dataGridViewCellStyle6;
             this.DgvSysAlarm.RowTemplate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             this.DgvSysAlarm.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.Black;
             this.DgvSysAlarm.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
@@ -378,13 +383,13 @@
             // 
             // ID
             // 
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            dataGridViewCellStyle9.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ID.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ID.DefaultCellStyle = dataGridViewCellStyle3;
             this.ID.DividerWidth = 1;
             this.ID.HeaderText = "ID";
             this.ID.Name = "ID";
@@ -426,12 +431,72 @@
             this.CButtonClearSysAlarm.Text = "清除";
             this.CButtonClearSysAlarm.UseVisualStyleBackColor = false;
             // 
+            // customLabel6
+            // 
+            this.customLabel6.AutoSize = true;
+            this.customLabel6.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel6.Location = new System.Drawing.Point(154, 185);
+            this.customLabel6.Name = "customLabel6";
+            this.customLabel6.Size = new System.Drawing.Size(78, 23);
+            this.customLabel6.TabIndex = 10;
+            this.customLabel6.Text = "总件数：";
+            // 
+            // customLabel7
+            // 
+            this.customLabel7.AutoSize = true;
+            this.customLabel7.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel7.Location = new System.Drawing.Point(154, 228);
+            this.customLabel7.Name = "customLabel7";
+            this.customLabel7.Size = new System.Drawing.Size(78, 23);
+            this.customLabel7.TabIndex = 11;
+            this.customLabel7.Text = "总盘数：";
+            // 
+            // customLabel8
+            // 
+            this.customLabel8.AutoSize = true;
+            this.customLabel8.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel8.Location = new System.Drawing.Point(154, 314);
+            this.customLabel8.Name = "customLabel8";
+            this.customLabel8.Size = new System.Drawing.Size(78, 23);
+            this.customLabel8.TabIndex = 12;
+            this.customLabel8.Text = "当前盘：";
+            // 
+            // customLabel9
+            // 
+            this.customLabel9.AutoSize = true;
+            this.customLabel9.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel9.Location = new System.Drawing.Point(154, 357);
+            this.customLabel9.Name = "customLabel9";
+            this.customLabel9.Size = new System.Drawing.Size(78, 23);
+            this.customLabel9.TabIndex = 13;
+            this.customLabel9.Text = "当前件：";
+            // 
+            // customLabel10
+            // 
+            this.customLabel10.AutoSize = true;
+            this.customLabel10.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel10.Location = new System.Drawing.Point(154, 271);
+            this.customLabel10.Name = "customLabel10";
+            this.customLabel10.Size = new System.Drawing.Size(78, 23);
+            this.customLabel10.TabIndex = 14;
+            this.customLabel10.Text = "空盘数：";
+            // 
             // RunForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.ClientSize = new System.Drawing.Size(1260, 830);
+            this.Controls.Add(this.customLabel10);
+            this.Controls.Add(this.customLabel9);
+            this.Controls.Add(this.customLabel8);
+            this.Controls.Add(this.customLabel7);
+            this.Controls.Add(this.customLabel6);
             this.Controls.Add(this.customGroupBox1);
             this.Controls.Add(this.CButtonAutoRun);
             this.Controls.Add(this.CButtonReset);
@@ -462,6 +527,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.PicRfid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DgvSysAlarm)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -493,5 +559,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn AlarmText;
         private System.Windows.Forms.DataGridViewTextBoxColumn Dealwith;
         private CustomButton CButtonClearSysAlarm;
+        private CustomLabel customLabel6;
+        private CustomLabel customLabel7;
+        private CustomLabel customLabel8;
+        private CustomLabel customLabel9;
+        private CustomLabel customLabel10;
     }
 }
