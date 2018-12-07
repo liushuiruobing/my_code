@@ -41,6 +41,8 @@
             this.tabControlManualDebug = new RobotWorkstation.CustomTabControl();
             this.tabPageRobot = new System.Windows.Forms.TabPage();
             this.groupBoxRobot = new RobotWorkstation.CustomGroupBox();
+            this.ComBoxRobotActions = new System.Windows.Forms.ComboBox();
+            this.customLabel42 = new RobotWorkstation.CustomLabel();
             this.CBtnRobotTestTeachPoint = new RobotWorkstation.CustomButton();
             this.CBtnRobotTestMoveToPoint = new RobotWorkstation.CustomButton();
             this.customLabel19 = new RobotWorkstation.CustomLabel();
@@ -190,6 +192,9 @@
             this.CButtonFindCamera = new RobotWorkstation.CustomButton();
             this.customLabel21 = new RobotWorkstation.CustomLabel();
             this.ComBoxCameraDevList = new System.Windows.Forms.ComboBox();
+            this.tabPageTwoDimensionalCodeScanner = new System.Windows.Forms.TabPage();
+            this.tabPageRfidScanner = new System.Windows.Forms.TabPage();
+            this.tabPagePLC = new System.Windows.Forms.TabPage();
             this.tabControlManualDebug.SuspendLayout();
             this.tabPageRobot.SuspendLayout();
             this.groupBoxRobot.SuspendLayout();
@@ -240,6 +245,9 @@
             this.tabControlManualDebug.Controls.Add(this.tabPageRobot);
             this.tabControlManualDebug.Controls.Add(this.tabPageThreeAxisRobot);
             this.tabControlManualDebug.Controls.Add(this.tabPageCamera);
+            this.tabControlManualDebug.Controls.Add(this.tabPageTwoDimensionalCodeScanner);
+            this.tabControlManualDebug.Controls.Add(this.tabPageRfidScanner);
+            this.tabControlManualDebug.Controls.Add(this.tabPagePLC);
             this.tabControlManualDebug.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tabControlManualDebug.ItemSize = new System.Drawing.Size(120, 26);
             this.tabControlManualDebug.Location = new System.Drawing.Point(12, 12);
@@ -265,6 +273,8 @@
             // 
             // groupBoxRobot
             // 
+            this.groupBoxRobot.Controls.Add(this.ComBoxRobotActions);
+            this.groupBoxRobot.Controls.Add(this.customLabel42);
             this.groupBoxRobot.Controls.Add(this.CBtnRobotTestTeachPoint);
             this.groupBoxRobot.Controls.Add(this.CBtnRobotTestMoveToPoint);
             this.groupBoxRobot.Controls.Add(this.customLabel19);
@@ -336,6 +346,28 @@
             this.groupBoxRobot.TabIndex = 0;
             this.groupBoxRobot.TabStop = false;
             this.groupBoxRobot.Text = "机械臂";
+            // 
+            // ComBoxRobotActions
+            // 
+            this.ComBoxRobotActions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.ComBoxRobotActions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.ComBoxRobotActions.FormattingEnabled = true;
+            this.ComBoxRobotActions.Location = new System.Drawing.Point(818, 623);
+            this.ComBoxRobotActions.Name = "ComBoxRobotActions";
+            this.ComBoxRobotActions.Size = new System.Drawing.Size(274, 29);
+            this.ComBoxRobotActions.TabIndex = 65;
+            // 
+            // customLabel42
+            // 
+            this.customLabel42.AutoSize = true;
+            this.customLabel42.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.customLabel42.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel42.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel42.Location = new System.Drawing.Point(719, 626);
+            this.customLabel42.Name = "customLabel42";
+            this.customLabel42.Size = new System.Drawing.Size(95, 23);
+            this.customLabel42.TabIndex = 64;
+            this.customLabel42.Text = "执行动作：";
             // 
             // CBtnRobotTestTeachPoint
             // 
@@ -2246,12 +2278,42 @@
             this.ComBoxCameraDevList.Size = new System.Drawing.Size(284, 29);
             this.ComBoxCameraDevList.TabIndex = 0;
             // 
+            // tabPageTwoDimensionalCodeScanner
+            // 
+            this.tabPageTwoDimensionalCodeScanner.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.tabPageTwoDimensionalCodeScanner.ForeColor = System.Drawing.Color.White;
+            this.tabPageTwoDimensionalCodeScanner.Location = new System.Drawing.Point(0, 29);
+            this.tabPageTwoDimensionalCodeScanner.Name = "tabPageTwoDimensionalCodeScanner";
+            this.tabPageTwoDimensionalCodeScanner.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageTwoDimensionalCodeScanner.TabIndex = 3;
+            this.tabPageTwoDimensionalCodeScanner.Text = "二维码扫描器";
+            // 
+            // tabPageRfidScanner
+            // 
+            this.tabPageRfidScanner.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.tabPageRfidScanner.ForeColor = System.Drawing.Color.White;
+            this.tabPageRfidScanner.Location = new System.Drawing.Point(0, 29);
+            this.tabPageRfidScanner.Name = "tabPageRfidScanner";
+            this.tabPageRfidScanner.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageRfidScanner.TabIndex = 4;
+            this.tabPageRfidScanner.Text = "RFID 扫描器";
+            // 
+            // tabPagePLC
+            // 
+            this.tabPagePLC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.tabPagePLC.ForeColor = System.Drawing.Color.White;
+            this.tabPagePLC.Location = new System.Drawing.Point(0, 29);
+            this.tabPagePLC.Name = "tabPagePLC";
+            this.tabPagePLC.Size = new System.Drawing.Size(1360, 761);
+            this.tabPagePLC.TabIndex = 5;
+            this.tabPagePLC.Text = "PLC 通信";
+            // 
             // ManualDebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.ClientSize = new System.Drawing.Size(1415, 790);
+            this.ClientSize = new System.Drawing.Size(1415, 800);
             this.ControlBox = false;
             this.Controls.Add(this.tabControlManualDebug);
             this.DoubleBuffered = true;
@@ -2455,5 +2517,10 @@
         private CustomLabel customLabel43;
         private System.Windows.Forms.ComboBox ComBoxMotionControlAxis;
         private CustomLabel customLabel41;
+        private System.Windows.Forms.TabPage tabPageTwoDimensionalCodeScanner;
+        private System.Windows.Forms.TabPage tabPageRfidScanner;
+        private System.Windows.Forms.TabPage tabPagePLC;
+        private System.Windows.Forms.ComboBox ComBoxRobotActions;
+        private CustomLabel customLabel42;
     }
 }
