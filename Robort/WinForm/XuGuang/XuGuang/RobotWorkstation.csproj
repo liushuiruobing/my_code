@@ -231,6 +231,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="deviser.ico" />
+    <None Include="Resources\image\DarkBlue.ico" />
+    <None Include="Resources\image\DarkGreen.ico" />
+    <None Include="Resources\image\DarkRed.ico" />
+    <None Include="Resources\image\DarkYellow.ico" />
+    <None Include="Resources\image\LightBlue.ico" />
+    <None Include="Resources\image\LightGreen.ico" />
+    <None Include="Resources\image\LightRed.ico" />
+    <None Include="Resources\image\LightYellow.ico" />
     <Content Include="Resources\image\SmallGreen.png" />
     <None Include="Resources\image\SmallYellow.png" />
     <None Include="Resources\image\SmallRed.png" />

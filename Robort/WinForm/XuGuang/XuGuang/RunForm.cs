@@ -16,5 +16,30 @@ namespace RobotWorkstation
         {
             InitializeComponent();
         }
+
+        private void CButtonStart_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonPause_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonStop_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonReset_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonAutoRun_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
