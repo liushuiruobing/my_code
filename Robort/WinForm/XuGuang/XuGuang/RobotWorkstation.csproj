@@ -170,7 +170,9 @@
     <Compile Include="RunForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RunForm.Designer.cs" />
+    <Compile Include="RunForm.Designer.cs">
+      <DependentUpon>RunForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="SystemSetingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -180,7 +182,9 @@
     <Compile Include="UserLimitsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UserLimitsForm.Designer.cs" />
+    <Compile Include="UserLimitsForm.Designer.cs">
+      <DependentUpon>UserLimitsForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -200,11 +204,15 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="RunForm.resx" />
+    <EmbeddedResource Include="RunForm.resx">
+      <DependentUpon>RunForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SystemSetingForm.resx">
       <DependentUpon>SystemSetingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserLimitsForm.resx" />
+    <EmbeddedResource Include="UserLimitsForm.resx">
+      <DependentUpon>UserLimitsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -31,6 +31,9 @@ namespace RobotWorkstation
 
         private void SystemSeting_Load(object sender, EventArgs e)
         {
+            tabControlSystemSeting.Width = this.Width - tabControlSystemSeting.Location.X;
+            tabControlSystemSeting.Height = this.Height - tabControlSystemSeting.Location.Y;
+
             CTextBoxSysSetRobotIP.Text = Profile.m_Config.RobotIp;
         }
 

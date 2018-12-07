@@ -55,8 +55,8 @@ namespace RobotWorkstation
 
         private void ManualDebug_Load(object sender, EventArgs e)
         {
-            tabControlManualDebug.Width = this.Width;
-            tabControlManualDebug.Height = this.Height;
+            tabControlManualDebug.Width = this.Width - tabControlManualDebug.Location.X;
+            tabControlManualDebug.Height = this.Height - tabControlManualDebug.Location.Y;
 
             radioButtonRobotDeviceJog.Checked = true;  //默认是Jog模式
             CTextBoxRobotMoveSpeed.Text = Profile.m_Config.RobotMoveSpeed.ToString();

@@ -254,7 +254,7 @@
             this.tabControlManualDebug.Name = "tabControlManualDebug";
             this.tabControlManualDebug.Padding = new System.Drawing.Point(20, 3);
             this.tabControlManualDebug.SelectedIndex = 0;
-            this.tabControlManualDebug.Size = new System.Drawing.Size(1360, 790);
+            this.tabControlManualDebug.Size = new System.Drawing.Size(1248, 818);
             this.tabControlManualDebug.TabIndex = 0;
             this.tabControlManualDebug.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControlManualDebug_Selected);
             // 
@@ -266,7 +266,7 @@
             this.tabPageRobot.Location = new System.Drawing.Point(0, 29);
             this.tabPageRobot.Name = "tabPageRobot";
             this.tabPageRobot.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRobot.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageRobot.Size = new System.Drawing.Size(1248, 789);
             this.tabPageRobot.TabIndex = 0;
             this.tabPageRobot.Text = "机械臂";
             // 
@@ -336,11 +336,12 @@
             this.groupBoxRobot.Controls.Add(this.CButtonServoOff);
             this.groupBoxRobot.Controls.Add(this.CBttonServoOn);
             this.groupBoxRobot.Controls.Add(this.pictureBoxServo);
+            this.groupBoxRobot.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBoxRobot.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.groupBoxRobot.ForeColor = System.Drawing.Color.White;
-            this.groupBoxRobot.Location = new System.Drawing.Point(10, 10);
+            this.groupBoxRobot.Location = new System.Drawing.Point(3, 3);
             this.groupBoxRobot.Name = "groupBoxRobot";
-            this.groupBoxRobot.Size = new System.Drawing.Size(1322, 660);
+            this.groupBoxRobot.Size = new System.Drawing.Size(1242, 660);
             this.groupBoxRobot.TabIndex = 0;
             this.groupBoxRobot.TabStop = false;
             this.groupBoxRobot.Text = "机械臂";
@@ -566,7 +567,7 @@
             this.PageRobotTestUserFrame.Margin = new System.Windows.Forms.Padding(1);
             this.PageRobotTestUserFrame.Name = "PageRobotTestUserFrame";
             this.PageRobotTestUserFrame.Padding = new System.Windows.Forms.Padding(1);
-            this.PageRobotTestUserFrame.Size = new System.Drawing.Size(718, 521);
+            this.PageRobotTestUserFrame.Size = new System.Drawing.Size(718, 547);
             this.PageRobotTestUserFrame.TabIndex = 1;
             this.PageRobotTestUserFrame.Text = "使用者坐标";
             // 
@@ -577,7 +578,7 @@
             this.PageRobotTestToolFrame.Margin = new System.Windows.Forms.Padding(1);
             this.PageRobotTestToolFrame.Name = "PageRobotTestToolFrame";
             this.PageRobotTestToolFrame.Padding = new System.Windows.Forms.Padding(1);
-            this.PageRobotTestToolFrame.Size = new System.Drawing.Size(718, 521);
+            this.PageRobotTestToolFrame.Size = new System.Drawing.Size(718, 547);
             this.PageRobotTestToolFrame.TabIndex = 2;
             this.PageRobotTestToolFrame.Text = "工具坐标";
             // 
@@ -588,7 +589,7 @@
             this.PageRobotTestWorkSpace.Margin = new System.Windows.Forms.Padding(1);
             this.PageRobotTestWorkSpace.Name = "PageRobotTestWorkSpace";
             this.PageRobotTestWorkSpace.Padding = new System.Windows.Forms.Padding(1);
-            this.PageRobotTestWorkSpace.Size = new System.Drawing.Size(718, 521);
+            this.PageRobotTestWorkSpace.Size = new System.Drawing.Size(718, 547);
             this.PageRobotTestWorkSpace.TabIndex = 3;
             this.PageRobotTestWorkSpace.Text = "工作空间";
             // 
@@ -1337,7 +1338,7 @@
             this.tabPageThreeAxisRobot.Font = new System.Drawing.Font("微软雅黑", 10.5F);
             this.tabPageThreeAxisRobot.Location = new System.Drawing.Point(0, 29);
             this.tabPageThreeAxisRobot.Name = "tabPageThreeAxisRobot";
-            this.tabPageThreeAxisRobot.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageThreeAxisRobot.Size = new System.Drawing.Size(1248, 789);
             this.tabPageThreeAxisRobot.TabIndex = 2;
             this.tabPageThreeAxisRobot.Text = "三轴机械臂";
             // 
@@ -2065,7 +2066,7 @@
             this.tabPageCamera.Location = new System.Drawing.Point(0, 29);
             this.tabPageCamera.Name = "tabPageCamera";
             this.tabPageCamera.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCamera.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageCamera.Size = new System.Drawing.Size(1248, 789);
             this.tabPageCamera.TabIndex = 1;
             this.tabPageCamera.Text = "相机";
             // 
@@ -2294,7 +2295,7 @@
             this.tabPageTwoDimensionalCodeScanner.ForeColor = System.Drawing.Color.White;
             this.tabPageTwoDimensionalCodeScanner.Location = new System.Drawing.Point(0, 29);
             this.tabPageTwoDimensionalCodeScanner.Name = "tabPageTwoDimensionalCodeScanner";
-            this.tabPageTwoDimensionalCodeScanner.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageTwoDimensionalCodeScanner.Size = new System.Drawing.Size(1248, 789);
             this.tabPageTwoDimensionalCodeScanner.TabIndex = 3;
             this.tabPageTwoDimensionalCodeScanner.Text = "二维码扫描器";
             // 
@@ -2304,7 +2305,7 @@
             this.tabPageRfidScanner.ForeColor = System.Drawing.Color.White;
             this.tabPageRfidScanner.Location = new System.Drawing.Point(0, 29);
             this.tabPageRfidScanner.Name = "tabPageRfidScanner";
-            this.tabPageRfidScanner.Size = new System.Drawing.Size(1360, 761);
+            this.tabPageRfidScanner.Size = new System.Drawing.Size(1248, 789);
             this.tabPageRfidScanner.TabIndex = 4;
             this.tabPageRfidScanner.Text = "RFID 扫描器";
             // 
@@ -2314,7 +2315,7 @@
             this.tabPagePLC.ForeColor = System.Drawing.Color.White;
             this.tabPagePLC.Location = new System.Drawing.Point(0, 29);
             this.tabPagePLC.Name = "tabPagePLC";
-            this.tabPagePLC.Size = new System.Drawing.Size(1360, 761);
+            this.tabPagePLC.Size = new System.Drawing.Size(1248, 789);
             this.tabPagePLC.TabIndex = 5;
             this.tabPagePLC.Text = "PLC 通信";
             // 
@@ -2323,7 +2324,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.ClientSize = new System.Drawing.Size(1415, 800);
+            this.ClientSize = new System.Drawing.Size(1260, 830);
             this.ControlBox = false;
             this.Controls.Add(this.tabControlManualDebug);
             this.DoubleBuffered = true;
