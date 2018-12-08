@@ -173,6 +173,12 @@
     <Compile Include="RunForm.Designer.cs">
       <DependentUpon>RunForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Salver.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Salver.Designer.cs">
+      <DependentUpon>Salver.cs</DependentUpon>
+    </Compile>
     <Compile Include="SystemSetingForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -206,6 +212,9 @@
     </Compile>
     <EmbeddedResource Include="RunForm.resx">
       <DependentUpon>RunForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Salver.resx">
+      <DependentUpon>Salver.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SystemSetingForm.resx">
       <DependentUpon>SystemSetingForm.cs</DependentUpon>

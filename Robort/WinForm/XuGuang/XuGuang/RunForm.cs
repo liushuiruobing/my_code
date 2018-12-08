@@ -19,12 +19,12 @@ namespace RobotWorkstation
 
         private void CButtonStart_Click(object sender, EventArgs e)
         {
-
+            OriginalSalver.SetSelectedGridColor(1, Color.Green);
         }
 
         private void CButtonPause_Click(object sender, EventArgs e)
         {
-
+            OriginalSalver.SetSelectedGridColor(1, Color.Red);
         }
 
         private void CButtonStop_Click(object sender, EventArgs e)
