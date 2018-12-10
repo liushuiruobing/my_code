@@ -538,6 +538,7 @@
             this.Name = "RunForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "RunForm";
+            this.Load += new System.EventHandler(this.RunForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.PicLedStop)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedAlarm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedRun)).EndInit();

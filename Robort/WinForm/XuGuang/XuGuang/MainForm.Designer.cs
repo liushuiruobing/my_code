@@ -30,12 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("登录");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("运行", 1, 1);
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("手动控制", 2, 2);
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("系统设置", 3, 3);
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("权限管理", 4, 4);
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("退出", 5, 5);
             this.pictureBoxTitle = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -50,93 +44,45 @@
             // 
             // pictureBoxTitle
             // 
+            resources.ApplyResources(this.pictureBoxTitle, "pictureBoxTitle");
             this.pictureBoxTitle.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pictureBoxTitle.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxTitle.Name = "pictureBoxTitle";
-            this.pictureBoxTitle.Size = new System.Drawing.Size(1440, 70);
-            this.pictureBoxTitle.TabIndex = 1;
             this.pictureBoxTitle.TabStop = false;
             // 
             // pictureBox1
             // 
+            resources.ApplyResources(this.pictureBox1, "pictureBox1");
             this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(14, 26);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(128, 22);
-            this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("微软雅黑", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            resources.ApplyResources(this.label1, "label1");
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.label1.Location = new System.Drawing.Point(700, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(220, 38);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "视觉分拣工作站";
             // 
             // CmdTreeView
             // 
+            resources.ApplyResources(this.CmdTreeView, "CmdTreeView");
             this.CmdTreeView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(44)))), ((int)(((byte)(44)))));
             this.CmdTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.CmdTreeView.Dock = System.Windows.Forms.DockStyle.Left;
-            this.CmdTreeView.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.CmdTreeView.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(207)))), ((int)(((byte)(215)))));
             this.CmdTreeView.FullRowSelect = true;
             this.CmdTreeView.HotTracking = true;
-            this.CmdTreeView.ImageIndex = 0;
             this.CmdTreeView.ImageList = this.CmdIcoList;
-            this.CmdTreeView.Indent = 20;
             this.CmdTreeView.ItemHeight = 48;
-            this.CmdTreeView.Location = new System.Drawing.Point(0, 70);
             this.CmdTreeView.Name = "CmdTreeView";
-            treeNode7.Name = "Login";
-            treeNode7.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode7.Text = "登录";
-            treeNode8.ImageIndex = 1;
-            treeNode8.Name = "Run";
-            treeNode8.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode8.SelectedImageIndex = 1;
-            treeNode8.Text = "运行";
-            treeNode9.ImageIndex = 2;
-            treeNode9.Name = "Manual";
-            treeNode9.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode9.SelectedImageIndex = 2;
-            treeNode9.Text = "手动控制";
-            treeNode10.ImageIndex = 3;
-            treeNode10.Name = "SystemSeting";
-            treeNode10.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode10.SelectedImageIndex = 3;
-            treeNode10.Text = "系统设置";
-            treeNode11.ImageIndex = 4;
-            treeNode11.Name = "UserLimits";
-            treeNode11.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode11.SelectedImageIndex = 4;
-            treeNode11.Text = "权限管理";
-            treeNode12.ImageIndex = 5;
-            treeNode12.Name = "Exit";
-            treeNode12.NodeFont = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            treeNode12.SelectedImageIndex = 5;
-            treeNode12.Text = "退出";
             this.CmdTreeView.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode7,
-            treeNode8,
-            treeNode9,
-            treeNode10,
-            treeNode11,
-            treeNode12});
-            this.CmdTreeView.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            ((System.Windows.Forms.TreeNode)(resources.GetObject("CmdTreeView.Nodes"))),
+            ((System.Windows.Forms.TreeNode)(resources.GetObject("CmdTreeView.Nodes1"))),
+            ((System.Windows.Forms.TreeNode)(resources.GetObject("CmdTreeView.Nodes2"))),
+            ((System.Windows.Forms.TreeNode)(resources.GetObject("CmdTreeView.Nodes3"))),
+            ((System.Windows.Forms.TreeNode)(resources.GetObject("CmdTreeView.Nodes4"))),
+            ((System.Windows.Forms.TreeNode)(resources.GetObject("CmdTreeView.Nodes5")))});
             this.CmdTreeView.Scrollable = false;
-            this.CmdTreeView.SelectedImageIndex = 0;
             this.CmdTreeView.ShowLines = false;
             this.CmdTreeView.ShowNodeToolTips = true;
-            this.CmdTreeView.Size = new System.Drawing.Size(180, 830);
-            this.CmdTreeView.TabIndex = 4;
             this.CmdTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.CmdTreeView_NodeMouseClick);
             // 
             // CmdIcoList
@@ -152,26 +98,26 @@
             // 
             // SplitContainerFromMain
             // 
+            resources.ApplyResources(this.SplitContainerFromMain, "SplitContainerFromMain");
             this.SplitContainerFromMain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.SplitContainerFromMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SplitContainerFromMain.Location = new System.Drawing.Point(180, 70);
             this.SplitContainerFromMain.Name = "SplitContainerFromMain";
             // 
             // SplitContainerFromMain.Panel1
             // 
+            resources.ApplyResources(this.SplitContainerFromMain.Panel1, "SplitContainerFromMain.Panel1");
             this.SplitContainerFromMain.Panel1.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // SplitContainerFromMain.Panel2
+            // 
+            resources.ApplyResources(this.SplitContainerFromMain.Panel2, "SplitContainerFromMain.Panel2");
             this.SplitContainerFromMain.Panel2Collapsed = true;
-            this.SplitContainerFromMain.Size = new System.Drawing.Size(1260, 830);
-            this.SplitContainerFromMain.TabIndex = 6;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.BackgroundImage = global::RobotWorkstation.Properties.Resources.Backcolor;
-            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(1440, 900);
             this.ControlBox = false;
             this.Controls.Add(this.SplitContainerFromMain);
             this.Controls.Add(this.CmdTreeView);
@@ -180,14 +126,10 @@
             this.Controls.Add(this.pictureBoxTitle);
             this.ForeColor = System.Drawing.Color.Black;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1600, 900);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(1400, 858);
             this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.TransparencyKey = System.Drawing.Color.White;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.MaximumSizeChanged += new System.EventHandler(this.FormMain_MaximumSizeChanged);

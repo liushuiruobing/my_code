@@ -162,6 +162,7 @@
       <DependentUpon>ManualDebug.cs</DependentUpon>
     </Compile>
     <Compile Include="MotionControl.cs" />
+    <Compile Include="MultiLanguage.cs" />
     <Compile Include="NetShareClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -191,11 +192,17 @@
     <Compile Include="UserLimitsForm.Designer.cs">
       <DependentUpon>UserLimitsForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="MainForm.en-US.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.zh-CN.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ManualDebug.resx">
       <DependentUpon>ManualDebug.cs</DependentUpon>
@@ -216,7 +223,13 @@
     <EmbeddedResource Include="Salver.resx">
       <DependentUpon>Salver.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SystemSetingForm.en-US.resx">
+      <DependentUpon>SystemSetingForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SystemSetingForm.resx">
+      <DependentUpon>SystemSetingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SystemSetingForm.zh-CN.resx">
       <DependentUpon>SystemSetingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserLimitsForm.resx">

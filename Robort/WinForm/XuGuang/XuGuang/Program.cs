@@ -16,6 +16,9 @@ namespace RobotWorkstation
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(MultiLanguage.GetLanguage());
+
             Application.Run(new MainForm());
         }
     }

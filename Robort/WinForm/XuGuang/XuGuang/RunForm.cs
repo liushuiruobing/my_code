@@ -17,6 +17,11 @@ namespace RobotWorkstation
             InitializeComponent();
         }
 
+        private void RunForm_Load(object sender, EventArgs e)
+        {
+            MultiLanguage.LoadLanguage(this, typeof(RunForm));
+        }
+
         private void CButtonStart_Click(object sender, EventArgs e)
         {
             OriginalSalver.SetSelectedGridColor(1, Color.Green);
@@ -41,5 +46,7 @@ namespace RobotWorkstation
         {
 
         }
+
+
     }
 }

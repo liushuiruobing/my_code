@@ -221,5 +221,17 @@ namespace RobotWorkstation
             Profile.SaveConfigFile();
             this.Close();
         }
+
+        public void ApplyResource()
+        {
+            System.ComponentModel.ComponentResourceManager res = new ComponentResourceManager(typeof(MainForm));
+            foreach (Control ctl in Controls)
+            {
+                res.ApplyResources(ctl, ctl.Name);
+            }
+
+            //Caption
+            res.ApplyResources(this, "$this");
+        }
     }
 }
