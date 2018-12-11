@@ -104,6 +104,7 @@ namespace RobotWorkstation
 
                         if (m_LoginForm != null)
                         {
+                            SplitContainerFromMain.Panel1.Controls.Clear();
                             SplitContainerFromMain.Panel1.Controls.Add(m_LoginForm);
                             m_LoginForm.Dock = DockStyle.Fill;
                             m_LoginForm.Show();
@@ -126,6 +127,7 @@ namespace RobotWorkstation
 
                         if (m_RunForm != null)
                         {
+                            SplitContainerFromMain.Panel1.Controls.Clear();
                             SplitContainerFromMain.Panel1.Controls.Add(m_RunForm);
                             m_RunForm.Dock = DockStyle.Fill;
                             m_RunForm.Show();
@@ -148,6 +150,7 @@ namespace RobotWorkstation
 
                         if (m_ManualDebugForm != null)
                         {
+                            SplitContainerFromMain.Panel1.Controls.Clear();
                             SplitContainerFromMain.Panel1.Controls.Add(m_ManualDebugForm);
                             m_ManualDebugForm.Dock = DockStyle.Fill;
                             m_ManualDebugForm.Show();
@@ -170,6 +173,7 @@ namespace RobotWorkstation
 
                         if (m_SystemSetingForm != null)
                         {
+                            SplitContainerFromMain.Panel1.Controls.Clear();
                             SplitContainerFromMain.Panel1.Controls.Add(m_SystemSetingForm);
                             m_SystemSetingForm.Dock = DockStyle.Fill;
                             m_SystemSetingForm.Show();
@@ -192,6 +196,7 @@ namespace RobotWorkstation
 
                         if (m_UserLimitsForm != null)
                         {
+                            SplitContainerFromMain.Panel1.Controls.Clear();
                             SplitContainerFromMain.Panel1.Controls.Add(m_UserLimitsForm);
                             m_UserLimitsForm.Dock = DockStyle.Fill;
                             m_UserLimitsForm.Show();
@@ -220,18 +225,6 @@ namespace RobotWorkstation
 
             Profile.SaveConfigFile();
             this.Close();
-        }
-
-        public void ApplyResource()
-        {
-            System.ComponentModel.ComponentResourceManager res = new ComponentResourceManager(typeof(MainForm));
-            foreach (Control ctl in Controls)
-            {
-                res.ApplyResources(ctl, ctl.Name);
-            }
-
-            //Caption
-            res.ApplyResources(this, "$this");
         }
     }
 }

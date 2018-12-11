@@ -842,16 +842,5 @@ namespace RobotWorkstation
                 
         }
 
-        private void ApplyResource()
-        {
-            System.ComponentModel.ComponentResourceManager res = new ComponentResourceManager(typeof(ManualDebugForm));
-            foreach (Control ctl in Controls)
-            {
-                res.ApplyResources(ctl, ctl.Name);
-            }
-
-            //Caption
-            res.ApplyResources(this, "$this");
-        }
     }
 }
