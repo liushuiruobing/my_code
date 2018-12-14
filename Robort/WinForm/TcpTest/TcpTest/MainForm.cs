@@ -20,6 +20,7 @@ namespace TcpTest
 
         /****************************************************/
         public MyTcpServer m_MyTcpServer = null;
+        public MyTcpClient m_MyTcpClient = null;
 
         /**********************************************/
 
@@ -32,6 +33,12 @@ namespace TcpTest
 
         private void BtnConnect_Click(object sender, EventArgs e)
         {
+            m_MyTcpClient = new MyTcpClient();
+            m_MyTcpClient.CreateClient();
+            if (m_MyTcpClient != null)
+            {
+                 m_MyTcpClient.CreateConnect(IPAddress.Parse("192.168.81.112"), 5025);
+            }
 
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -11,18 +12,6 @@ using System.Windows.Forms;
 
 namespace TcpTest
 {
-    public struct TcpParam
-    {
-        public IPAddress nIpAddress;
-        public int nPort;
-
-        public void InitTcpParam()
-        {
-            nIpAddress = IPAddress.Parse("127.0.0.1");
-            nPort = 5025;
-        }
-    }
-
     public  enum TcpMeasType
     {
         MEAS_TYPE_NONE = 0,
@@ -43,19 +32,101 @@ namespace TcpTest
         public TcpClient Client;
     }
 
-    public partial class MyTcpClient
+    public struct TcpParam
     {
-        public TcpClient m_TcpClient = new TcpClient();
+        public IPAddress nIpAddress;
+        public int nPort;
+
+        public void InitTcpParam()
+        {
+            nIpAddress = IPAddress.Parse("127.0.0.1");
+            nPort = 5025;
+        }
     }
 
+    //Client Class
+    public partial class MyTcpClient
+    {
+        public TcpClient m_TcpClient = null;
+        public TcpParam m_TcpParam;
+        public int RecvTimeOut = 1000; //ms  不使用超时，使用异步通信方式呢？
+        public int SendTimeOut = 10;
+        private Byte[] m_RecvBytes = new Byte[256];
+
+        public MyTcpClient()
+        {
+            m_TcpParam.InitTcpParam();
+        }
+
+        public void CreateClient()
+        {
+            //IPEndPoint EndPoint = new IPEndPoint(m_TcpParam.nIpAddress, m_TcpParam.nPort);
+            //m_TcpClient = new TcpClient(EndPoint);
+            m_TcpClient = new TcpClient();
+
+            m_TcpClient.ReceiveTimeout = RecvTimeOut;
+            m_TcpClient.SendTimeout = SendTimeOut;
+        }
+
+        public async void CreateConnect(IPAddress nIpAddress, int nPort)
+        {
+            if (m_TcpClient != null)
+            {
+                try
+                {
+                    await m_TcpClient.ConnectAsync(nIpAddress, nPort);
+                    NetworkStream stream = m_TcpClient.GetStream();
+                    if (stream.CanRead)
+                    {
+                        BinaryReader br = new BinaryReader(stream);
+                        while (true)
+                        {
+                            try
+                            {
+                                string brString = br.ReadString();     //接收服务器发送的数据
+                                if (brString != null)
+                                {
+                                    Console.WriteLine("接收到服务器发送的数据{0}", brString);
+                                }
+                            }
+                            catch
+                            {
+                                continue;        //接收过程中如果出现异常，将推出循环
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Sorry.  You cannot read from this NetworkStream.");
+                    }
+                }
+                catch (SocketException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        public async void ClientWrite(string line)
+        {
+            NetworkStream stream = m_TcpClient.GetStream();
+            using (var writer = new StreamWriter(stream, Encoding.ASCII, 1024, leaveOpen: true))
+            {
+                writer.AutoFlush = true;
+                await writer.WriteLineAsync(line);
+            }
+        }
+    }
+
+    //Server Class
     public partial class MyTcpServer
     {
         public TcpListener m_TcpListener = null;
         public TcpParam m_TcpParam;
         public List<TcpMeas> m_TcpMeas = new List<TcpMeas>();
 
-        public Thread m_TcpServerListenThread = null;
-        public bool m_ThreadExit = false;  //标志还是信号？
+        private bool m_ThreadExit = false;
+        private Thread m_TcpServerListenThread = null;      
         private Byte[] m_RecvBytes = new Byte[256];
 
         public MyTcpServer()
@@ -92,7 +163,7 @@ namespace TcpTest
                 m_TcpListener.Stop();
         }
 
-        public void TcpListenThread()
+        private void TcpListenThread()
         {
             while (true)
             {
@@ -101,7 +172,7 @@ namespace TcpTest
 
                 try
                 {
-                    while (m_TcpListener != null && m_TcpListener.Pending())  //跳开阻塞，用这个在关闭服务器程序时不会出现异常
+                    while (m_TcpListener != null && m_TcpListener.Pending())  
                     {
                         TcpClient tempClient = new TcpClient();
                         tempClient = m_TcpListener.AcceptTcpClient();
@@ -115,9 +186,9 @@ namespace TcpTest
                         RecvTask.Start();
                     }
                 }
-                catch (Exception e)
+                catch (SocketException e)
                 {
-                    MessageBox.Show(e.Message);
+                    MessageBox.Show("SocketException: {0}", e.Message);
                     break;
                 }
             }
@@ -161,7 +232,7 @@ namespace TcpTest
                     MessageBox.Show(e.Message);
                 }
             }
-
         }
     }
+
 }
