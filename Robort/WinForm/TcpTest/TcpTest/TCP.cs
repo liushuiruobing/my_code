@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,7 +10,7 @@ using System.Windows.Forms;
 
 namespace TcpTest
 {
-    public  enum TcpMeasType
+    public enum TcpMeasType
     {
         MEAS_TYPE_NONE = 0,
         MEAS_TYPE_MIS,
@@ -51,14 +49,14 @@ namespace TcpTest
         public TcpParam m_TcpParam;
         public int RecvTimeOut = 1000; //ms  不使用超时，使用异步通信方式呢？
         public int SendTimeOut = 10;
-        private Byte[] m_RecvBytes = new Byte[256];
+        private Byte[] m_RecvBytes = new Byte[8192];
 
         public MyTcpClient()
         {
             m_TcpParam.InitTcpParam();
         }
 
-        public void CreateClient()
+        public void InitClient()
         {
             //IPEndPoint EndPoint = new IPEndPoint(m_TcpParam.nIpAddress, m_TcpParam.nPort);
             //m_TcpClient = new TcpClient(EndPoint);
@@ -68,52 +66,71 @@ namespace TcpTest
             m_TcpClient.SendTimeout = SendTimeOut;
         }
 
-        public async void CreateConnect(IPAddress nIpAddress, int nPort)
+        public void CreateConnect(IPAddress nIpAddress, int nPort)
         {
             if (m_TcpClient != null)
             {
                 try
                 {
-                    await m_TcpClient.ConnectAsync(nIpAddress, nPort);
-                    NetworkStream stream = m_TcpClient.GetStream();
-                    if (stream.CanRead)
+                    m_TcpClient.Connect(nIpAddress, nPort);
+                    if (m_TcpClient.Connected)
                     {
-                        BinaryReader br = new BinaryReader(stream);
-                        while (true)
-                        {
-                            try
-                            {
-                                string brString = br.ReadString();     //接收服务器发送的数据
-                                if (brString != null)
-                                {
-                                    Console.WriteLine("接收到服务器发送的数据{0}", brString);
-                                }
-                            }
-                            catch
-                            {
-                                continue;        //接收过程中如果出现异常，将推出循环
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Sorry.  You cannot read from this NetworkStream.");
+                        NetworkStream stream = m_TcpClient.GetStream();
+                        Task RecvTask = new Task(TcpClientRecvTask, stream);
+                        RecvTask.Start();
                     }
                 }
-                catch (SocketException ex)
+                catch (System.Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
             }
         }
 
+        private void TcpClientRecvTask(object Client)
+        {
+            NetworkStream stream = (NetworkStream)(Client);
+            int RecvCount = 0;
+            while (true)
+            {
+                try
+                {
+                    while ((RecvCount = stream.Read(m_RecvBytes, 0, m_RecvBytes.Length)) != 0)
+                    {
+                        // Translate data bytes to a ASCII string.
+                        String data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
+                        Console.WriteLine("Received: {0}", data);
+
+                        //主线程创建1个任务来处理客户端接收到的数据
+
+                        //当即回复收到指令，如果是查询的指令，则在主线程的任务中去回复查询的内容
+                        byte[] SendBack = System.Text.Encoding.ASCII.GetBytes(data);
+                        stream.Write(SendBack, 0, SendBack.Length);
+                    }
+
+                    // Shutdown and end connection
+                    stream.Close();
+                    m_TcpClient.Close();
+                    break;
+                }
+                catch (Exception e)
+                {
+                    //MessageBox.Show(e.Message);
+                    continue;
+                }
+            }
+        }
+
         public async void ClientWrite(string line)
         {
-            NetworkStream stream = m_TcpClient.GetStream();
-            using (var writer = new StreamWriter(stream, Encoding.ASCII, 1024, leaveOpen: true))
+            if (m_TcpClient.Connected)
             {
-                writer.AutoFlush = true;
-                await writer.WriteLineAsync(line);
+                NetworkStream stream = m_TcpClient.GetStream();
+                using (var writer = new StreamWriter(stream, Encoding.ASCII, 1024, leaveOpen: true))
+                {
+                    writer.AutoFlush = true;
+                    await writer.WriteLineAsync(line);
+                }
             }
         }
     }
@@ -127,7 +144,7 @@ namespace TcpTest
 
         private bool m_ThreadExit = false;
         private Thread m_TcpServerListenThread = null;      
-        private Byte[] m_RecvBytes = new Byte[256];
+        private Byte[] m_RecvBytes = new Byte[8192];
 
         public MyTcpServer()
         {
@@ -209,26 +226,26 @@ namespace TcpTest
                         String data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
                         Console.WriteLine("Received: {0}", data);
 
-
                         //接收到数据之后把消息存放到消息队列，
                         //根据数据中不同的消息类型来存储在队列的不同位置中
                         //主线程创建2个任务来分别处理不同类型的消息，任务应该以异步的方式创建
                         
                         //write message list
 
-
                         //当即回复收到指令，如果是查询的指令，则在主线程的任务中去回复查询的内容
                         byte[] SendBack = System.Text.Encoding.ASCII.GetBytes(data);  //再把数据返回
                         stream.Write(SendBack, 0, SendBack.Length);
-                        Console.WriteLine("Sent: {0}", data);
                     }
 
                     // Shutdown and end connection
+                    stream.Close();
                     CurClient.Close();
                     break;
                 }
                 catch (Exception e)
                 {
+                    //stream.Close();
+                    //CurClient.Close();
                     MessageBox.Show(e.Message);
                 }
             }

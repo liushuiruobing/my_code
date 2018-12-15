@@ -34,12 +34,12 @@ namespace TcpTest
         private void BtnConnect_Click(object sender, EventArgs e)
         {
             m_MyTcpClient = new MyTcpClient();
-            m_MyTcpClient.CreateClient();
+            m_MyTcpClient.m_TcpParam.InitTcpParam();
+            m_MyTcpClient.InitClient();
             if (m_MyTcpClient != null)
             {
-                 m_MyTcpClient.CreateConnect(IPAddress.Parse("192.168.81.112"), 5025);
+                m_MyTcpClient.CreateConnect(IPAddress.Parse(textBoxIp.Text), int.Parse(textBoxPort.Text));
             }
-
         }
 
         private void BtnDisConnect_Click(object sender, EventArgs e)
@@ -91,7 +91,8 @@ namespace TcpTest
         //*******************************************/
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            m_MyTcpServer.CloseServer();
+            if (m_MyTcpServer != null)
+                m_MyTcpServer.CloseServer();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
