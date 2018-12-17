@@ -22,7 +22,7 @@ namespace TcpTest
         MEAS_CODE_NONE = 0,
     }
 
-    public struct TcpMeas
+    public class TcpMeas
     {
         public TcpClient Client;
         public TcpMeasType MeasType;
@@ -53,6 +53,7 @@ namespace TcpTest
         public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
 
         private Byte[] m_RecvBytes = new Byte[8192];
+        public const int m_SendBytesMax = 1024;
 
         public MyTcpClient()
         {
@@ -130,11 +131,19 @@ namespace TcpTest
         {
             if (m_TcpClient.Connected)
             {
-                NetworkStream stream = m_TcpClient.GetStream();
-                using (var writer = new StreamWriter(stream, Encoding.ASCII, 1024, leaveOpen: true))
+                try
                 {
-                    writer.AutoFlush = true;
-                    await writer.WriteLineAsync(line);
+                    NetworkStream stream = m_TcpClient.GetStream();
+                    using (var writer = new StreamWriter(stream, Encoding.ASCII, m_SendBytesMax, leaveOpen: true))
+                    {
+                        writer.AutoFlush = true;
+                        await writer.WriteLineAsync(line);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    //MessageBox.Show(ex.Message);
+                    return;
                 }
             }
         }
@@ -147,6 +156,7 @@ namespace TcpTest
         public TcpParam m_TcpParam;
         public List<TcpMeas> m_TcpMeas = new List<TcpMeas>();
         public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
+        public const int m_SendBytesMax = 1024;
 
         private bool m_ThreadExit = false;
         private Thread m_TcpServerListenThread = null;      
@@ -256,6 +266,7 @@ namespace TcpTest
                     //stream.Close();
                     //CurClient.Close();
                     MessageBox.Show(e.Message);
+                    break;
                 }
             }
         }

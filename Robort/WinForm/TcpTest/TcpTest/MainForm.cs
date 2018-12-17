@@ -18,7 +18,7 @@ namespace TcpTest
     {
         SynchronizationContext m_SyncContext = null;
 
-        /****************************************************/
+        /**********************************************/
         public MyTcpServer m_MyTcpServer = null;
         public MyTcpClient m_MyTcpClient = null;
         public Thread TcpMeasProcessThread = null;
@@ -30,9 +30,12 @@ namespace TcpTest
         {
             InitializeComponent();
             //TextBox.CheckForIllegalCrossThreadCalls = false;
-            m_SyncContext = SynchronizationContext.Current;  //获取当前线程的同步上下文，当前线程即UI线程
+            m_SyncContext = SynchronizationContext.Current;  //获取当前线程的同步上下文，当前线程即UI线程           
+        }
 
-            
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
         }
 
         private void BtnConnect_Click(object sender, EventArgs e)
@@ -90,12 +93,11 @@ namespace TcpTest
                     {
                         lock (this)
                         {
-                            //异步的方式处理所有消息
-                            
+                            //异步的方式处理所有消息                          
                             for (int i = 0; i < m_MyTcpServer.m_TcpMeas.Count; i++)
                             {
                                 TcpMeas meas = m_MyTcpServer.m_TcpMeas[i];
-                                 m_SyncContext.Post(SetTextSafePost, Encoding.ASCII.GetString(meas.Param, 0, meas.Param.Length));
+                                 m_SyncContext.Post(ProcessServerMeassage, meas);
                             }
 
                             m_MyTcpServer.m_TcpMeas.Clear();
@@ -110,12 +112,12 @@ namespace TcpTest
         }
 
         /*采用SynchronizationContext方法*****************************************/
-        private void SetTextSafePost(object str)
+        private void ProcessServerMeassage(object Meassage)
         {
-            textBoxRecv.Text += str.ToString();  //考虑线程安全性，多线程访问
+            TcpMeas meas = (TcpMeas)Meassage;
+           // textBoxRecv.Text += meas.ToString();  //考虑线程安全性，多线程访问
         }
         /*////////////////////////////////////////
-
 
         /*采用Invoke方法 ***************************************/
         delegate void SetTextCallback(string text);
@@ -133,21 +135,6 @@ namespace TcpTest
             SystemRunning = false;
             if (m_MyTcpServer != null)
                 m_MyTcpServer.CloseServer();
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
- 
-        }
-
-        private void TimerRefresh_Tick(object sender, EventArgs e)
-        {
-            if (m_MyTcpClient != null)
-            {
-                //textBoxRecv.Text += m_MyTcpClient.m_StrRecv;
-            }
-
-
         }
     }
 }
