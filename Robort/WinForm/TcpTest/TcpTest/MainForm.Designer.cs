@@ -33,7 +33,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxPort = new System.Windows.Forms.TextBox();
             this.BtnConnect = new System.Windows.Forms.Button();
-            this.BtnDisConnect = new System.Windows.Forms.Button();
             this.textBoxSend = new System.Windows.Forms.TextBox();
             this.textBoxRecv = new System.Windows.Forms.TextBox();
             this.BtnSend = new System.Windows.Forms.Button();
@@ -44,7 +43,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(55, 29);
+            this.label1.Location = new System.Drawing.Point(43, 29);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(23, 12);
             this.label1.TabIndex = 0;
@@ -52,7 +51,7 @@
             // 
             // textBoxIp
             // 
-            this.textBoxIp.Location = new System.Drawing.Point(84, 27);
+            this.textBoxIp.Location = new System.Drawing.Point(72, 27);
             this.textBoxIp.Name = "textBoxIp";
             this.textBoxIp.Size = new System.Drawing.Size(100, 21);
             this.textBoxIp.TabIndex = 1;
@@ -61,7 +60,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(43, 64);
+            this.label2.Location = new System.Drawing.Point(228, 29);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(35, 12);
             this.label2.TabIndex = 2;
@@ -69,7 +68,7 @@
             // 
             // textBoxPort
             // 
-            this.textBoxPort.Location = new System.Drawing.Point(84, 61);
+            this.textBoxPort.Location = new System.Drawing.Point(269, 26);
             this.textBoxPort.Name = "textBoxPort";
             this.textBoxPort.Size = new System.Drawing.Size(100, 21);
             this.textBoxPort.TabIndex = 3;
@@ -77,38 +76,29 @@
             // 
             // BtnConnect
             // 
-            this.BtnConnect.Location = new System.Drawing.Point(366, 29);
+            this.BtnConnect.Location = new System.Drawing.Point(462, 25);
             this.BtnConnect.Name = "BtnConnect";
             this.BtnConnect.Size = new System.Drawing.Size(75, 23);
             this.BtnConnect.TabIndex = 4;
-            this.BtnConnect.Text = "连接";
+            this.BtnConnect.Text = "连接客户端";
             this.BtnConnect.UseVisualStyleBackColor = true;
             this.BtnConnect.Click += new System.EventHandler(this.BtnConnect_Click);
             // 
-            // BtnDisConnect
-            // 
-            this.BtnDisConnect.Location = new System.Drawing.Point(464, 29);
-            this.BtnDisConnect.Name = "BtnDisConnect";
-            this.BtnDisConnect.Size = new System.Drawing.Size(75, 23);
-            this.BtnDisConnect.TabIndex = 5;
-            this.BtnDisConnect.Text = "断开";
-            this.BtnDisConnect.UseVisualStyleBackColor = true;
-            this.BtnDisConnect.Click += new System.EventHandler(this.BtnDisConnect_Click);
-            // 
             // textBoxSend
             // 
-            this.textBoxSend.Location = new System.Drawing.Point(45, 121);
+            this.textBoxSend.Location = new System.Drawing.Point(45, 71);
             this.textBoxSend.Multiline = true;
             this.textBoxSend.Name = "textBoxSend";
-            this.textBoxSend.Size = new System.Drawing.Size(303, 177);
+            this.textBoxSend.Size = new System.Drawing.Size(303, 227);
             this.textBoxSend.TabIndex = 6;
+            this.textBoxSend.Text = "Test";
             // 
             // textBoxRecv
             // 
-            this.textBoxRecv.Location = new System.Drawing.Point(366, 121);
+            this.textBoxRecv.Location = new System.Drawing.Point(366, 71);
             this.textBoxRecv.Multiline = true;
             this.textBoxRecv.Name = "textBoxRecv";
-            this.textBoxRecv.Size = new System.Drawing.Size(296, 177);
+            this.textBoxRecv.Size = new System.Drawing.Size(303, 227);
             this.textBoxRecv.TabIndex = 7;
             // 
             // BtnSend
@@ -133,7 +123,7 @@
             // 
             // BtnCreateServer
             // 
-            this.BtnCreateServer.Location = new System.Drawing.Point(563, 29);
+            this.BtnCreateServer.Location = new System.Drawing.Point(594, 24);
             this.BtnCreateServer.Name = "BtnCreateServer";
             this.BtnCreateServer.Size = new System.Drawing.Size(75, 23);
             this.BtnCreateServer.TabIndex = 10;
@@ -151,7 +141,6 @@
             this.Controls.Add(this.BtnSend);
             this.Controls.Add(this.textBoxRecv);
             this.Controls.Add(this.textBoxSend);
-            this.Controls.Add(this.BtnDisConnect);
             this.Controls.Add(this.BtnConnect);
             this.Controls.Add(this.textBoxPort);
             this.Controls.Add(this.label2);
@@ -173,7 +162,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBoxPort;
         private System.Windows.Forms.Button BtnConnect;
-        private System.Windows.Forms.Button BtnDisConnect;
         private System.Windows.Forms.TextBox textBoxSend;
         private System.Windows.Forms.TextBox textBoxRecv;
         private System.Windows.Forms.Button BtnSend;

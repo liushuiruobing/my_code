@@ -10,26 +10,6 @@ using System.Windows.Forms;
 
 namespace TcpTest
 {
-    public enum TcpMeasType
-    {
-        MEAS_TYPE_NONE = 0,
-        MEAS_TYPE_MIS,
-        MEAS_TYPE_PLC
-    }
-
-    public enum TcpMeasCode
-    {
-        MEAS_CODE_NONE = 0,
-    }
-
-    public class TcpMeas
-    {
-        public TcpClient Client;
-        public TcpMeasType MeasType;
-        public int MeasCode;
-        public byte[] Param;       
-    }
-
     public struct TcpParam
     {
         public IPAddress nIpAddress;
@@ -38,18 +18,42 @@ namespace TcpTest
         public void InitTcpParam()
         {
             nIpAddress = IPAddress.Parse("127.0.0.1");
-            nPort = 5025;
+            nPort = 20000;
         }
     }
 
-    //Client Class
+    public enum TcpMeasType
+    {
+        MEAS_TYPE_NONE = 0,
+        MEAS_TYPE_MIS,
+        MEAS_TYPE_PLC,
+        MEAS_TYPE_ARM
+    }
+
+    public enum TcpMeasCode
+    {
+        MEAS_CODE_NONE = 0,
+        //...........命令码
+    }
+
+    //Tcp Meassage Class
+    public class TcpMeas
+    {
+        public TcpClient Client;
+        public TcpMeasType MeasType;
+        public int MeasCode;
+        public byte[] Param;       
+    }
+
+
+    //Tcp Client Class
     public partial class MyTcpClient
     {
         public TcpClient m_TcpClient = null;
         public TcpParam m_TcpParam;
-        public int RecvTimeOut = 100; //ms  不使用超时，使用异步通信方式呢？
+        public int RecvTimeOut = 100; 
         public int SendTimeOut = 100;        
-        public List<TcpMeas> m_RecvMeasList = new List<TcpMeas>();
+        public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
         public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
 
         private Byte[] m_RecvBytes = new Byte[8192];
@@ -101,16 +105,17 @@ namespace TcpTest
                 {
                     while ((RecvCount = stream.Read(m_RecvBytes, 0, m_RecvBytes.Length)) != 0)
                     {
-                        // Translate data bytes to a ASCII string.
+                        bool Process = false;
                         lock (this)
                         {
-                            string data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
-                            Console.WriteLine("Received: {0}", data);
+                            //string data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
+                            //Console.WriteLine("Received: {0}", data);
 
                             //主线程创建1个任务来处理客户端接收到的数据
-
-                            //当即回复收到指令，如果是查询的指令，则在主线程的任务中去回复查询的内容
-                            stream.Write(m_SendBack, 0, m_SendBack.Length);
+                            Process = ProcessAndAddMessageToQueue(m_RecvBytes);
+                            
+                            if(Process)
+                                stream.Write(m_SendBack, 0, m_SendBack.Length);
                         }                                         
                     }
 
@@ -125,6 +130,35 @@ namespace TcpTest
                     continue;
                 }
             }
+        }
+
+        public bool ProcessAndAddMessageToQueue(byte[] RecvBytes)
+        {
+            bool Re = false;
+            bool CheckData = false;
+            TcpMeasType MeasType = TcpMeasType.MEAS_TYPE_NONE;
+            int MeasCode = 0;
+
+            //根据制定的协议校验数据
+            //..........
+            CheckData = true;
+
+            //分析数据，把数据添加到队列m_TcpMeas
+            if (CheckData)
+            {
+                TcpMeas TempMeas = new TcpMeas();
+                TempMeas.Client = m_TcpClient;
+                TempMeas.MeasType = MeasType;
+                TempMeas.MeasCode = MeasCode;
+                TempMeas.Param = System.Text.Encoding.ASCII.GetBytes("Just for test !");
+
+                if (TempMeas != null)
+                    m_RecvMeasQueue.Enqueue(TempMeas);
+
+                Re = true;
+            }
+
+            return Re;
         }
 
         public async void ClientWrite(string line)
@@ -149,12 +183,12 @@ namespace TcpTest
         }
     }
 
-    //Server Class
+    //Tcp Server Class
     public partial class MyTcpServer
     {
         public TcpListener m_TcpListener = null;
         public TcpParam m_TcpParam;
-        public List<TcpMeas> m_TcpMeas = new List<TcpMeas>();
+        public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
         public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
         public const int m_SendBytesMax = 1024;
 
@@ -244,12 +278,12 @@ namespace TcpTest
                             //接收到数据之后把消息存放到消息队列，
                             //根据数据中不同的消息类型来存储在队列的不同位置中
                             //主线程创建2个任务来分别处理不同类型的消息，任务应该以异步的方式创建
-                            Process = ProcessAddMessageToList(m_RecvBytes, CurClient);
+                            Process = ProcessAndAddMessageToQueue(m_RecvBytes, CurClient);
                         }
 
                         //just for test
-                        string data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
-                        Console.WriteLine("Received: {0}", data);
+                        //string data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
+                        //Console.WriteLine("Received: {0}", data);
 
                         //当即回复收到指令，如果是查询的指令，则在主线程的任务中去回复查询的内容
                         if (Process)
@@ -263,15 +297,13 @@ namespace TcpTest
                 }
                 catch (Exception e)
                 {
-                    //stream.Close();
-                    //CurClient.Close();
                     MessageBox.Show(e.Message);
                     break;
                 }
             }
         }
 
-        public bool ProcessAddMessageToList(byte[] RecvBytes, TcpClient Client)
+        public bool ProcessAndAddMessageToQueue(byte[] RecvBytes, TcpClient Client)
         {
             bool Re = false;
             bool CheckData = false;
@@ -291,7 +323,8 @@ namespace TcpTest
                 TempMeas.MeasCode = MeasCode;
                 TempMeas.Param = System.Text.Encoding.ASCII.GetBytes("Just for test !");
 
-                m_TcpMeas.Add(TempMeas);
+                if (TempMeas != null)
+                    m_RecvMeasQueue.Enqueue(TempMeas);
 
                 Re = true;
             }

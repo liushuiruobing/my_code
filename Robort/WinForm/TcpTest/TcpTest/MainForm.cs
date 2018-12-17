@@ -21,7 +21,8 @@ namespace TcpTest
         /**********************************************/
         public MyTcpServer m_MyTcpServer = null;
         public MyTcpClient m_MyTcpClient = null;
-        public Thread TcpMeasProcessThread = null;
+        public Thread TcpProcessClientMeasThread = null;
+        public Thread TcpProcessServerMeasThread = null;
         public bool SystemRunning = true;
 
         /**********************************************/
@@ -46,17 +47,59 @@ namespace TcpTest
             if (m_MyTcpClient != null)
             {
                 m_MyTcpClient.CreateConnect(IPAddress.Parse(textBoxIp.Text), int.Parse(textBoxPort.Text));
+                if (m_MyTcpClient.m_TcpClient.Connected)
+                {
+                    TcpProcessClientMeasThread = new Thread(new ThreadStart(TcpProcessClientMeasThreadFunc));
+                    TcpProcessClientMeasThread.Start();
+                }
             }
         }
 
-        private void BtnDisConnect_Click(object sender, EventArgs e)
+        public void TcpProcessClientMeasThreadFunc()
         {
+            while (true)
+            {
+                if (!SystemRunning)
+                    break;
 
+                if (m_MyTcpClient != null)
+                {
+                    try
+                    {
+                        lock (this)
+                        {
+                            //异步的方式处理所有消息                          
+                            while (m_MyTcpClient.m_RecvMeasQueue.Count > 0)
+                            {
+                                TcpMeas meas = m_MyTcpClient.m_RecvMeasQueue.Dequeue();
+                                m_SyncContext.Post(ProcessClientMeassage, meas);
+                            }
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            }
+        }
+
+        /*采用SynchronizationContext方法*****************************************/
+        private void ProcessClientMeassage(object Meassage)
+        {
+            TcpMeas meas = (TcpMeas)Meassage;
+            switch (meas.MeasType)
+            {
+                case TcpMeasType.MEAS_TYPE_ARM:
+                    break;
+                default: break;
+            }
         }
 
         private void BtnSend_Click(object sender, EventArgs e)
         {
-
+            if (m_MyTcpClient != null)
+                m_MyTcpClient.ClientWrite(textBoxSend.Text);
         }
 
         private void BtnClear_Click(object sender, EventArgs e)
@@ -73,17 +116,16 @@ namespace TcpTest
             bool Re = m_MyTcpServer.CreatServer();
             if (Re)
             {
-                TcpMeasProcessThread = new Thread(new ThreadStart(TcpMeasProcessThreadFunc));
-                TcpMeasProcessThread.Start();
+                TcpProcessServerMeasThread = new Thread(new ThreadStart(TcpProcessServerMeasThreadFunc));
+                TcpProcessServerMeasThread.Start();
                 MessageBox.Show("服务创建成功！");
             }
         }
 
-        public void TcpMeasProcessThreadFunc()
+        public void TcpProcessServerMeasThreadFunc()
         {
             while (true)
             {
-                Thread.Sleep(10);
                 if (!SystemRunning)
                     break;
 
@@ -94,13 +136,11 @@ namespace TcpTest
                         lock (this)
                         {
                             //异步的方式处理所有消息                          
-                            for (int i = 0; i < m_MyTcpServer.m_TcpMeas.Count; i++)
+                            while (m_MyTcpServer.m_RecvMeasQueue.Count > 0)
                             {
-                                TcpMeas meas = m_MyTcpServer.m_TcpMeas[i];
-                                 m_SyncContext.Post(ProcessServerMeassage, meas);
+                                TcpMeas meas = m_MyTcpServer.m_RecvMeasQueue.Dequeue();
+                                m_SyncContext.Post(ProcessServerMeassage, meas);
                             }
-
-                            m_MyTcpServer.m_TcpMeas.Clear();
                         }
                     }
                     catch (System.Exception ex)
@@ -115,7 +155,18 @@ namespace TcpTest
         private void ProcessServerMeassage(object Meassage)
         {
             TcpMeas meas = (TcpMeas)Meassage;
-           // textBoxRecv.Text += meas.ToString();  //考虑线程安全性，多线程访问
+            if (meas != null)
+            {
+                switch (meas.MeasType)
+                {
+                    case TcpMeasType.MEAS_TYPE_MIS:
+                        break;
+                    case TcpMeasType.MEAS_TYPE_PLC:
+                        break;
+                    default: break;
+                }
+            }
+            Debug.WriteLine(Encoding.ASCII.GetString(meas.Param, 0, meas.Param.Length));         
         }
         /*////////////////////////////////////////
 
