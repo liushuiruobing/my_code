@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.textBoxIp = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -39,6 +40,7 @@
             this.BtnSend = new System.Windows.Forms.Button();
             this.BtnClear = new System.Windows.Forms.Button();
             this.BtnCreateServer = new System.Windows.Forms.Button();
+            this.TimerRefresh = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -141,6 +143,11 @@
             this.BtnCreateServer.UseVisualStyleBackColor = true;
             this.BtnCreateServer.Click += new System.EventHandler(this.BtnCreateServer_Click);
             // 
+            // TimerRefresh
+            // 
+            this.TimerRefresh.Interval = 1000;
+            this.TimerRefresh.Tick += new System.EventHandler(this.TimerRefresh_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -179,6 +186,7 @@
         private System.Windows.Forms.Button BtnSend;
         private System.Windows.Forms.Button BtnClear;
         private System.Windows.Forms.Button BtnCreateServer;
+        private System.Windows.Forms.Timer TimerRefresh;
     }
 }
 

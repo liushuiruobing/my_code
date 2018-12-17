@@ -24,10 +24,10 @@ namespace TcpTest
 
     public struct TcpMeas
     {
+        public TcpClient Client;
         public TcpMeasType MeasType;
         public int MeasCode;
-        public byte[] Param;
-        public TcpClient Client;
+        public byte[] Param;       
     }
 
     public struct TcpParam
@@ -47,8 +47,11 @@ namespace TcpTest
     {
         public TcpClient m_TcpClient = null;
         public TcpParam m_TcpParam;
-        public int RecvTimeOut = 1000; //ms  不使用超时，使用异步通信方式呢？
-        public int SendTimeOut = 10;
+        public int RecvTimeOut = 100; //ms  不使用超时，使用异步通信方式呢？
+        public int SendTimeOut = 100;        
+        public List<TcpMeas> m_RecvMeasList = new List<TcpMeas>();
+        public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
+
         private Byte[] m_RecvBytes = new Byte[8192];
 
         public MyTcpClient()
@@ -60,8 +63,8 @@ namespace TcpTest
         {
             //IPEndPoint EndPoint = new IPEndPoint(m_TcpParam.nIpAddress, m_TcpParam.nPort);
             //m_TcpClient = new TcpClient(EndPoint);
-            m_TcpClient = new TcpClient();
 
+            m_TcpClient = new TcpClient();
             m_TcpClient.ReceiveTimeout = RecvTimeOut;
             m_TcpClient.SendTimeout = SendTimeOut;
         }
@@ -98,14 +101,16 @@ namespace TcpTest
                     while ((RecvCount = stream.Read(m_RecvBytes, 0, m_RecvBytes.Length)) != 0)
                     {
                         // Translate data bytes to a ASCII string.
-                        String data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
-                        Console.WriteLine("Received: {0}", data);
+                        lock (this)
+                        {
+                            string data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
+                            Console.WriteLine("Received: {0}", data);
 
-                        //主线程创建1个任务来处理客户端接收到的数据
+                            //主线程创建1个任务来处理客户端接收到的数据
 
-                        //当即回复收到指令，如果是查询的指令，则在主线程的任务中去回复查询的内容
-                        byte[] SendBack = System.Text.Encoding.ASCII.GetBytes(data);
-                        stream.Write(SendBack, 0, SendBack.Length);
+                            //当即回复收到指令，如果是查询的指令，则在主线程的任务中去回复查询的内容
+                            stream.Write(m_SendBack, 0, m_SendBack.Length);
+                        }                                         
                     }
 
                     // Shutdown and end connection
@@ -141,6 +146,7 @@ namespace TcpTest
         public TcpListener m_TcpListener = null;
         public TcpParam m_TcpParam;
         public List<TcpMeas> m_TcpMeas = new List<TcpMeas>();
+        public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
 
         private bool m_ThreadExit = false;
         private Thread m_TcpServerListenThread = null;      
@@ -197,7 +203,7 @@ namespace TcpTest
                         //下面三行是测试代码
                         Socket s = tempClient.Client;
                         IPEndPoint clientipe = (IPEndPoint)s.RemoteEndPoint;
-                        Console.WriteLine("[" + clientipe.Address.ToString() + "]" + " Connected");
+                        //Console.WriteLine("[" + clientipe.Address.ToString() + "]" + " Connected");
 
                         Task RecvTask = new Task(TcpListenRecvTask, tempClient);
                         RecvTask.Start();
@@ -222,19 +228,22 @@ namespace TcpTest
                 {
                     while ((RecvCount = stream.Read(m_RecvBytes, 0, m_RecvBytes.Length)) != 0)
                     {
-                        // Translate data bytes to a ASCII string.
-                        String data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
+                        bool Process = false;
+                        lock (this)
+                        {
+                            //接收到数据之后把消息存放到消息队列，
+                            //根据数据中不同的消息类型来存储在队列的不同位置中
+                            //主线程创建2个任务来分别处理不同类型的消息，任务应该以异步的方式创建
+                            Process = ProcessAddMessageToList(m_RecvBytes, CurClient);
+                        }
+
+                        //just for test
+                        string data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
                         Console.WriteLine("Received: {0}", data);
 
-                        //接收到数据之后把消息存放到消息队列，
-                        //根据数据中不同的消息类型来存储在队列的不同位置中
-                        //主线程创建2个任务来分别处理不同类型的消息，任务应该以异步的方式创建
-                        
-                        //write message list
-
                         //当即回复收到指令，如果是查询的指令，则在主线程的任务中去回复查询的内容
-                        byte[] SendBack = System.Text.Encoding.ASCII.GetBytes(data);  //再把数据返回
-                        stream.Write(SendBack, 0, SendBack.Length);
+                        if (Process)
+                            stream.Write(m_SendBack, 0, m_SendBack.Length);
                     }
 
                     // Shutdown and end connection
@@ -250,6 +259,33 @@ namespace TcpTest
                 }
             }
         }
-    }
 
+        public bool ProcessAddMessageToList(byte[] RecvBytes, TcpClient Client)
+        {
+            bool Re = false;
+            bool CheckData = false;
+            TcpMeasType MeasType = TcpMeasType.MEAS_TYPE_NONE;
+            int MeasCode = 0;
+
+            //根据制定的协议校验数据
+            //..........
+            CheckData = true;
+
+            //分析数据，把数据添加到队列m_TcpMeas
+            if (CheckData)
+            {
+                TcpMeas TempMeas = new TcpMeas();
+                TempMeas.Client = Client;
+                TempMeas.MeasType = MeasType;
+                TempMeas.MeasCode = MeasCode;
+                TempMeas.Param = System.Text.Encoding.ASCII.GetBytes("Just for test !");
+
+                m_TcpMeas.Add(TempMeas);
+
+                Re = true;
+            }
+
+            return Re;
+        }
+    }
 }
