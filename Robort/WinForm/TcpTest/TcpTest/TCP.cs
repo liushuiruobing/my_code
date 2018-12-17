@@ -45,7 +45,6 @@ namespace TcpTest
         public byte[] Param;       
     }
 
-
     //Tcp Client Class
     public partial class MyTcpClient
     {
@@ -108,12 +107,8 @@ namespace TcpTest
                         bool Process = false;
                         lock (this)
                         {
-                            //string data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
-                            //Console.WriteLine("Received: {0}", data);
-
                             //主线程创建1个任务来处理客户端接收到的数据
-                            Process = ProcessAndAddMessageToQueue(m_RecvBytes);
-                            
+                            Process = ProcessAndAddMessageToQueue(m_RecvBytes);                           
                             if(Process)
                                 stream.Write(m_SendBack, 0, m_SendBack.Length);
                         }                                         
@@ -241,14 +236,7 @@ namespace TcpTest
                 {
                     while (m_TcpListener != null && m_TcpListener.Pending())  
                     {
-                        TcpClient tempClient = new TcpClient();
-                        tempClient = m_TcpListener.AcceptTcpClient();
-                        
-                        //下面三行是测试代码
-                        Socket s = tempClient.Client;
-                        IPEndPoint clientipe = (IPEndPoint)s.RemoteEndPoint;
-                        //Console.WriteLine("[" + clientipe.Address.ToString() + "]" + " Connected");
-
+                        TcpClient tempClient = m_TcpListener.AcceptTcpClient();
                         Task RecvTask = new Task(TcpListenRecvTask, tempClient);
                         RecvTask.Start();
                     }
@@ -276,22 +264,14 @@ namespace TcpTest
                         lock (this)
                         {
                             //接收到数据之后把消息存放到消息队列，
-                            //根据数据中不同的消息类型来存储在队列的不同位置中
-                            //主线程创建2个任务来分别处理不同类型的消息，任务应该以异步的方式创建
+                            //主线程创建不同的线程来分别异步的方式处理不同类型的消息
                             Process = ProcessAndAddMessageToQueue(m_RecvBytes, CurClient);
+                            if (Process)
+                                stream.Write(m_SendBack, 0, m_SendBack.Length);
                         }
-
-                        //just for test
-                        //string data = System.Text.Encoding.ASCII.GetString(m_RecvBytes, 0, RecvCount);
-                        //Console.WriteLine("Received: {0}", data);
-
-                        //当即回复收到指令，如果是查询的指令，则在主线程的任务中去回复查询的内容
-                        if (Process)
-                            stream.Write(m_SendBack, 0, m_SendBack.Length);
                     }
-
-                    // Shutdown and end connection
-                    stream.Close();
+                                      
+                    stream.Close(); // Shutdown and end connection
                     CurClient.Close();
                     break;
                 }
