@@ -139,6 +139,7 @@
     <Compile Include="CustomUI.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DataStruct.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,6 +194,7 @@
     <Compile Include="UserLimitsForm.Designer.cs">
       <DependentUpon>UserLimitsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="VisualSortingStation.cs" />
     <EmbeddedResource Include="LoginForm.en-US.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -512,27 +512,27 @@ namespace RobotWorkstation
         * X,Y,Z unit is mm
         * **********************************************************************************************************************
         */
-        //public void GetState()
-        //{
-        //    if (m_Robot.HasAlarm())
-        //    {
-        //        DataStruct.SysStat.Robot = 2;
-        //        DataStruct.SysAlarm.Robot = 2;  // alarm
-        //    }
-        //    else
-        //    {
-        //        if (m_Robot.HasWarning())
-        //        {
-        //            DataStruct.SysStat.Robot = 1;
-        //            DataStruct.SysAlarm.Robot = 1;  // warn
-        //        }
-        //        else
-        //        {
-        //            DataStruct.SysStat.Robot = 0;
-        //            DataStruct.SysAlarm.Robot = 0;
-        //        }
-        //    }
-        //}
+        public void GetState()
+        {
+            if (m_Robot.HasAlarm())
+            {
+                DataStruct.SysStat.Robot = 2;
+                DataStruct.SysAlarm.Robot = 2;  // alarm
+            }
+            else
+            {
+                if (m_Robot.HasWarning())
+                {
+                    DataStruct.SysStat.Robot = 1;
+                    DataStruct.SysAlarm.Robot = 1;  // warn
+                }
+                else
+                {
+                    DataStruct.SysStat.Robot = 0;
+                    DataStruct.SysAlarm.Robot = 0;
+                }
+            }
+        }
 
     }
 }

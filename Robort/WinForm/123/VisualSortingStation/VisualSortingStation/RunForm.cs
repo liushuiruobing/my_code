@@ -71,11 +71,15 @@ namespace RobotWorkstation
         {
             Bitmap bmpGreen = Properties.Resources.SmallGreen;
             Bitmap bmpRed = Properties.Resources.SmallRed;
-          
-		  	//PicRobot.Image = m_AutoRobot.m_IsConnected ? bmpGreen : bmpRed;
-     //       PicCamera.Image = m_Camera.m_CameraConnect ? bmpGreen : bmpRed;
-     //       PicQRCodeScanner.Image = m_QRCode.QRCodeConnect ? bmpGreen : bmpRed;
-     //       PicRfid.Image = m_RFID.RfidConnect ? bmpGreen : bmpRed;
+
+            if (DataStruct.SysAlarm.Robot >= 1)  //机器人
+                PicRobot.Image = bmpGreen;
+            else
+                PicRobot.Image = bmpRed;
+
+            //       PicCamera.Image = m_Camera.m_CameraConnect ? bmpGreen : bmpRed;
+            //       PicQRCodeScanner.Image = m_QRCode.QRCodeConnect ? bmpGreen : bmpRed;
+            //       PicRfid.Image = m_RFID.RfidConnect ? bmpGreen : bmpRed;
 
             //添加报警信息
             for (int i = 0; i < (int)SysAlarm.Type.Max; i++)
