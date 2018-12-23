@@ -5,18 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace RobotWorkstation
-{   
-    public class SysAlarm
+{
+    public enum LanguageId
     {
-        public int Language = (int)LanguageId.Language_CN;
+        Language_CN = 0,
+        Language_EN,
+        Language_Total
+    }
 
-        public enum LanguageId
-        {
-            Language_CN = 0,
-            Language_EN,
-            Language_Total
-        }
-
+    public class SysAlarm
+    {       
         /*告警数据结构*/
         public struct StructAlarm
         {
@@ -75,6 +73,7 @@ namespace RobotWorkstation
         private static SysAlarm m_UniqueSysAlarm;  // 定义一个静态变量来保存类的实例
         private static readonly object m_locker = new object();  // 定义一个标识确保线程同步
 
+        public int Language = (int)LanguageId.Language_CN;
         StructAlarm[] m_Alarm = new StructAlarm[(int)Type.Max];  //报警信息
 
         // 定义私有构造函数，使外界不能创建该类实例

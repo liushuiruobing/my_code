@@ -131,6 +131,15 @@ namespace RobotWorkstation
             CameraStartGrab(m_CameraPictureBox);
         }
 
+        public bool InitCamera()
+        {
+            if (FindCameraDevice())
+            {
+                OpenCameraDevice();
+            }
+            return m_CameraConnect;
+        }
+
         public void SetCameraParam(CameraParamStruct param)
         {
             int nRet = m_CameraOperator.SetFloatValue("ExposureTime", param.Exposure);

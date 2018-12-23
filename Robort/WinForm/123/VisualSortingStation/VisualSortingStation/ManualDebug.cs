@@ -45,14 +45,7 @@ namespace RobotWorkstation
         {
             InitializeComponent();
 
-            //下面的三个页暂不使用
-            PageRobotTestUserFrame.Parent = null;
-            PageRobotTestToolFrame.Parent = null;
-            PageRobotTestWorkSpace.Parent = null;
-
-            ComBoxRobotActions.SelectedIndex = 0;
-
-            InitRobot();  //台达机械臂
+            InitRobot();
             InitCamera();  //视觉相机
             InitRfid();
             InitQRCode();
@@ -72,22 +65,6 @@ namespace RobotWorkstation
             DGV_RobotGlobalPoint.Rows.Clear();
             LoadRobotGlobalPoints(0, RobotGlobalPointsBefore);
             TimerInitRobotGlobalPointDGV.Start();
-        }
-
-        public void InitRobot()
-        {
-            bool openRet = m_ManualRobot.Open(Profile.m_Config.RobotIp);
-            if (openRet)
-            {
-                //读取xml配置文件然后设置机械臂
-                //m_ManualRobot.SetSpeed(40);
-                //m_ManualRobot.SetJointDistance(1000);
-                //m_ManualRobot.SetCartesianDistance(1000);
-            }
-            else
-            {
-                Debug.WriteLine("The Robot Open Failed!");
-            }
         }
 
         //加载机械臂的全局点位信息
@@ -587,14 +564,24 @@ namespace RobotWorkstation
             RefreshTimer.Start();
         }
 
-        /*相机相关****************************************/
+
+        public void InitRobot()
+        {
+            //下面的三个页暂不使用
+            PageRobotTestUserFrame.Parent = null;
+            PageRobotTestToolFrame.Parent = null;
+            PageRobotTestWorkSpace.Parent = null;
+            ComBoxRobotActions.SelectedIndex = 0;
+
+            m_ManualRobot.InitRobot();  //台达机械臂
+        }
 
         public void InitCamera()
         {
             if (m_Camera != null)
             {
-                m_Camera.m_CameraPictureBox = PictureBoxCamera;
-                m_Camera.m_CameraListComboBox = ComBoxCameraDevList;
+                PictureBoxCamera = m_Camera.m_CameraPictureBox;
+                ComBoxCameraDevList = m_Camera.m_CameraListComboBox;
             }        
         }
 
@@ -899,7 +886,7 @@ namespace RobotWorkstation
         private void CBtnRfidConnect_Click(object sender, EventArgs e)
         {
             m_RFID.m_Ip = CTextBoxRfidIp.Text;
-            bool bCon = m_RFID.Connect(m_RFID.m_Ip);
+            bool bCon = m_RFID.Connect();
             if (bCon)
             {
                 MessageBox.Show("RFID 连接成功！");

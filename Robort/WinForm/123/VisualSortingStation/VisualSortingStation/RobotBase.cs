@@ -534,11 +534,5 @@ namespace RobotWorkstation
         //    }
         //}
 
-        /*设置机器人报警消息*/
-        //public void SetAlarm(SysAlarm.Type type)
-        //{
-        //    SysAlarm sa = SysAlarm.GetInstance();
-        //    sa.SetAlarm(type, true);
-        //}
     }
 }

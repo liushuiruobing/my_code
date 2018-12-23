@@ -86,12 +86,16 @@ namespace RobotWorkstation
             return m_UniqueRFID;
         }
 
+        public bool InitRFID()
+        {
+            return Connect();             
+        }
 
-        public bool Connect(string Ip)  // Create new modbus master and add event functions
+        public bool Connect()  // Create new modbus master and add event functions
         {
             try
             {             
-                m_ModbusMaster = new Master(Ip, m_Port);
+                m_ModbusMaster = new Master(m_Ip, m_Port);
                 m_ModbusMaster.OnResponseData += new Master.ResponseData(ModbusMaster_OnResponseData);
                 if (m_ModbusMaster.connected == true)
                 {

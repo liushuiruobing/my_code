@@ -14,6 +14,11 @@ namespace RobotWorkstation
     
     public partial class MainForm : Form
     {
+        public RobotDevice m_AutoRobot = null;  //机械臂            
+        public VisionCamera m_Camera = null;  //视觉相机     
+        public RFID m_RFID = null;   //RFID      
+        public QRCode m_QRCode = null; //二维码
+
         CustomColor m_CustomColor;
         LoginForm m_LoginForm = null;
         RunForm m_RunForm = null;
@@ -36,9 +41,31 @@ namespace RobotWorkstation
         {
             InitializeComponent();
             InitOtherForm();
-            this.CenterToScreen();
-            
+            this.CenterToScreen();           
             Profile.LoadConfigFile();
+
+            //检查各模块的状态
+            SysAlarm sysAlarm = SysAlarm.GetInstance();
+            RobotDevice m_Robot = RobotDevice.GetInstance();  //机械臂
+            bool Re = m_Robot.InitRobot();
+            if (!Re)
+                sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
+
+            VisionCamera m_Camera = VisionCamera.GetInstance();  //视觉相机  
+            //Re = m_Camera.InitCamera();
+            //if (!Re)
+            //    sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
+
+            RFID m_RFID = RFID.GetInstance();   //RFID    
+            Re = m_RFID.InitRFID();
+            if (!Re)
+                sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
+
+            QRCode m_QRCode = QRCode.GetInstance(); //二维码
+            Re = m_QRCode.QRCodeInit();
+            if (!Re)
+                sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
+
         }
 
         private void MainForm_Load(object sender, EventArgs e)

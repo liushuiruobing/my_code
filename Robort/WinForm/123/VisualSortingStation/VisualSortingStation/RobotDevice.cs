@@ -1,6 +1,7 @@
 ﻿using RABD.DROE.SystemDefine;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,6 +38,20 @@ namespace RobotWorkstation
             }
 
             return m_UniqueRobot;
+        }
+
+        public bool InitRobot()
+        {
+            bool openRet = m_UniqueRobot.Open(Profile.m_Config.RobotIp);
+            if (openRet)
+            {
+                //读取xml配置文件然后设置机械臂
+                //m_ManualRobot.SetSpeed(40);
+                //m_ManualRobot.SetJointDistance(1000);
+                //m_ManualRobot.SetCartesianDistance(1000);
+            }
+
+            return openRet;
         }
     }
 }
