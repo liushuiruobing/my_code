@@ -83,7 +83,7 @@ namespace RobotWorkstation
             {
                 byte temp = data[i];
 
-                //根据解析的数据 设置不同的状态 DataStruct.IOState中的不同状态                
+                //根据解析的数据 设置不同的状态 DataStruct.SysStat 中不同的状态                
             }
         }
     }

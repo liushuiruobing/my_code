@@ -2,13 +2,94 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RobotWorkstation
 {
+    public enum AutoRunAction
+    {
+        AuoRunStart = 0,              //开始
+        AutoRunGetGrapCoords,         //获得抓取坐标
+        AutoRunMoveToGrap,            //移动到位并抓取
+        AutoRunMoveToScanQRCode,      //移动到位并扫码,检查扫码格式，不正确则依然执行此动作
+        AutoRunMoveToPut,             //移动到位并放下，计数后开始下一件，满总数后下一步
+        AutoRunTurnOverPanel,         //计数满则翻盘运走，从头开始
+
+    }
+
     class VisualSortingStation  //视觉分拣业务类
     {
         public static IO m_IO = IO.GetInstance();
+        private static AutoRunAction m_AutoRunAction = AutoRunAction.AuoRunStart;
+        private volatile static bool m_ShouldExit = false;
+        public static bool ShouldExit
+        {
+            set
+            {
+                m_ShouldExit = value;
+            }
+            get
+            {
+                return m_ShouldExit;
+            }
+
+        }
+        public static void MainThreadFunc()
+        {
+            DataStruct.InitSysStat();
+            DataStruct.InitSysAlarm();
+
+            //创建Server端线程
+
+            //创建Client线程
+
+
+
+            while (!m_ShouldExit)
+            {
+                if (DataStruct.SysStat.Run )
+                {
+                    AutoSortingRun();
+                }
+
+                Thread.Sleep(100);
+            }
+
+            m_ShouldExit = false;
+        }
+
+        public static void TcpServerRun()
+        {
+            //创建TCP服务端分别处理PLC和MIS系统的消息，让工作站不知道是谁的消息，只知道是某个Client的消息
+        }
+
+        public static void TcpClientRun()
+        {
+            //创建客户端处理与单片机的消息，让工作站不知道是谁的消息，只知道和某个Server端的消息
+        }
+
+        public static void AutoSortingRun()
+        {
+            //执行各动作
+            switch (m_AutoRunAction)
+            {
+                case AutoRunAction.AuoRunStart:                 //开始
+                    break;
+                case AutoRunAction.AutoRunGetGrapCoords:        //获得抓取坐标          
+                    break;
+                case AutoRunAction.AutoRunMoveToGrap:           //移动到位并抓取       
+                    break;
+                case AutoRunAction.AutoRunMoveToScanQRCode:     //移动到位并扫码,检查扫码格式，不正确则依然执行此动作v          
+                    break;
+                case AutoRunAction.AutoRunMoveToPut:            //移动到位并放下，计数后开始下一件，满总数后下一步    
+                    break;
+                case AutoRunAction.AutoRunTurnOverPanel:        //计数满则翻盘运走，从头开始
+                    break;
+                default:
+                    break;
+            }
+        }
 
         // 0 -- run , 1 -- stop , 2 -- pause
         public static int CheckSysAlarm()

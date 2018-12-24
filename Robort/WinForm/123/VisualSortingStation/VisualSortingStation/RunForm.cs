@@ -134,7 +134,7 @@ namespace RobotWorkstation
             //运行状态更新
             Bitmap bmpGreen = Properties.Resources.SmallGreen;
             Bitmap bmpRed = Properties.Resources.SmallRed;
-            if (DataStruct.SysStat.Robot >= 1)  
+            if (DataStruct.SysStat.Robot == 0)  
                 PicRobot.Image = bmpGreen;
             else
                 PicRobot.Image = bmpRed;

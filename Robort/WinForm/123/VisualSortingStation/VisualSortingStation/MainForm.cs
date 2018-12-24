@@ -49,23 +49,34 @@ namespace RobotWorkstation
             m_Robot = RobotDevice.GetInstance();  //机械臂
             bool Re = m_Robot.InitRobot();
             if (!Re)
+            {
+                DataStruct.SysStat.Robot = 1;
                 sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
+            }
 
-            m_Camera = VisionCamera.GetInstance();  //视觉相机  
-            Re = m_Camera.InitCamera();
-            if (!Re)
-                sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
-
+            //m_Camera = VisionCamera.GetInstance();  //视觉相机  
+            //Re = m_Camera.InitCamera();
+            //if (!Re)
+            //{
+            //    DataStruct.SysStat.Camera = 1;
+            //    sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
+            //}
+                
             m_RFID = RFID.GetInstance();   //RFID    
             Re = m_RFID.InitRFID();
             if (!Re)
+            {
+                DataStruct.SysStat.RFID = 1;
                 sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
-
+            }
+                
             m_QRCode = QRCode.GetInstance(); //二维码
             Re = m_QRCode.QRCodeInit();
             if (!Re)
+            {
+                DataStruct.SysStat.QRCode = 1;
                 sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
-
+            }              
         }
 
         private void MainForm_Load(object sender, EventArgs e)

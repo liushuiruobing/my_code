@@ -57,5 +57,49 @@ namespace RobotWorkstation
             public static ushort QRCode;                                        // ID = 3 , Level = 2 ; 0 -- normal , 1 -- Alarm
             public static ushort RFID;                                          // ID = 3 , Level = 2 ; 0 -- normal , 1 -- Alarm
         }
+
+        public static void InitSysStat()
+        {
+            SysStat.WorkMode = 0x01;                // 0 -- Auto，1 -- manul
+            SysStat.Robot = 0x00;                   // 0 -- not , 1 -- device robot alarm
+            SysStat.Camera = 0x00;
+            SysStat.QRCode = 0x00;
+            SysStat.RFID = 0x00;
+
+            SysStat.Ready = false;
+            SysStat.Run = false;
+            SysStat.Pause = false;
+            SysStat.Stop = true;
+            SysStat.Reset = false;
+
+            SysStat.RedAlarm = false;
+            SysStat.YellowAlarm = false;
+            SysStat.LedGreen = false;
+            SysStat.LedBlue = false;
+            SysStat.Beep = false;
+
+            SysStat.EmptyPanelUp = false;
+            SysStat.EmptyPanelUpArrive = false;
+            SysStat.EmptyPanelDown = false;
+            SysStat.EmptyPanelDownArrive = false;
+
+            SysStat.OverturnPanelArrive = false;
+
+            SysStat.RobotCylinder = false;
+            SysStat.RobotCylGoArrive = false;
+            SysStat.RobotCylBackArrive = false;
+            SysStat.RobotNozzleInhale = false;
+            SysStat.RobotNozzleBlow = false;
+            SysStat.RobotVacuoCheck = false;
+
+        }
+
+        public static void InitSysAlarm()
+        {
+            SysAlarm.Robot = 0x00;                                         // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
+            SysAlarm.Camera = 0x00;
+            SysAlarm.QRCode = 0x00;
+            SysAlarm.RFID = 0x00;
+        }
     }
 }

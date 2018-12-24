@@ -125,7 +125,7 @@ namespace RobotWorkstation
             return m_Alarm[(int)type];
         }
 
-        /*获取报警信息*/
+        /*设置报警信息*/
         public void SetAlarm(Type type, bool isAlarm)
         {
             m_Alarm[(int)type].IsAlarm = isAlarm;
