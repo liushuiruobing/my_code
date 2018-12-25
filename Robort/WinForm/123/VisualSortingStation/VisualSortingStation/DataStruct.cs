@@ -39,6 +39,7 @@ namespace RobotWorkstation
 
             //托盘
             public static bool OverturnPanelArrive;     //翻转托盘到位
+            public static bool ReceivePanelArrive;      //翻转后接收托盘到位
 
             //机械臂
             public static bool RobotCylinder;           //机械臂抓手气缸
@@ -61,10 +62,10 @@ namespace RobotWorkstation
         public static void InitSysStat()
         {
             SysStat.WorkMode = 0x01;                // 0 -- Auto，1 -- manul
-            SysStat.Robot = 0x00;                   // 0 -- not , 1 -- device robot alarm
-            SysStat.Camera = 0x00;
-            SysStat.QRCode = 0x00;
-            SysStat.RFID = 0x00;
+            SysStat.Robot = 1;                   // 0 -- not , 1 -- device robot alarm
+            SysStat.Camera = 1;
+            SysStat.QRCode = 1;
+            SysStat.RFID = 1;
 
             SysStat.Ready = false;
             SysStat.Run = false;
@@ -84,6 +85,7 @@ namespace RobotWorkstation
             SysStat.EmptyPanelDownArrive = false;
 
             SysStat.OverturnPanelArrive = false;
+            SysStat.ReceivePanelArrive = false;
 
             SysStat.RobotCylinder = false;
             SysStat.RobotCylGoArrive = false;

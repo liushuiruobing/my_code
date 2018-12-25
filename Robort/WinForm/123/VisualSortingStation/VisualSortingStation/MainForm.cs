@@ -62,13 +62,13 @@ namespace RobotWorkstation
             //    sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
             //}
                 
-            m_RFID = RFID.GetInstance();   //RFID    
-            Re = m_RFID.InitRFID();
-            if (!Re)
-            {
-                DataStruct.SysStat.RFID = 1;
-                sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
-            }
+            //m_RFID = RFID.GetInstance();   //RFID    
+            //Re = m_RFID.InitRFID();
+            //if (!Re)
+            //{
+            //    DataStruct.SysStat.RFID = 1;
+            //    sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
+            //}
                 
             m_QRCode = QRCode.GetInstance(); //二维码
             Re = m_QRCode.QRCodeInit();
@@ -76,7 +76,7 @@ namespace RobotWorkstation
             {
                 DataStruct.SysStat.QRCode = 1;
                 sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
-            }              
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)

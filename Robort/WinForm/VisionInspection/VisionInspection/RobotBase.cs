@@ -90,6 +90,16 @@ namespace SmartWorkStationDR11A
             m_Robot.RunProgram();
         }
 
+        public void RunSelectProgram(short Index)
+        {
+            if (!m_IsConnected)
+            {
+                return;
+            }
+
+            m_Robot.RunSelectProgram(Index);
+        }
+
         /*暂停运行脚本*/
         public void PauseProgram()
         {
@@ -338,6 +348,16 @@ namespace SmartWorkStationDR11A
             m_Robot.GotoMovP(p);
         }
 
+        public void MovP(cPoint p)
+        {
+            if (!m_IsConnected)
+            {
+                return;
+            }
+
+            m_Robot.MovP(p);
+        }
+
         public void StartContinuousMovP(cPoint p)
         {
             if (!m_IsConnected)
@@ -376,6 +396,16 @@ namespace SmartWorkStationDR11A
             }
 
             m_Robot.TechGlobalPoint(index);
+        }
+
+        public void SetGlobalPoint(int index, cPoint p)
+        {
+            if (!m_IsConnected)
+            {
+                return;
+            }
+
+            m_Robot.SetGlobalPoint(index, p);
         }
 
         public void SetOutputState(int index, bool TOnFOff)

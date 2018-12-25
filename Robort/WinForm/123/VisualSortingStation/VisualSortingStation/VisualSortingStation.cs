@@ -20,9 +20,18 @@ namespace RobotWorkstation
 
     class VisualSortingStation  //视觉分拣业务类
     {
-        public static IO m_IO = IO.GetInstance();
+        public static IO m_IO = IO.GetInstance();               
+        public static int m_DevicesTotal = 0;
+        private const int m_OnePanelDevicesMax = 16;
         private static AutoRunAction m_AutoRunAction = AutoRunAction.AuoRunStart;
         private volatile static bool m_ShouldExit = false;
+
+        private static RobotDevice m_Robot = RobotDevice.GetInstance();
+        QRCode m_QRCode = QRCode.GetInstance();
+        private static bool m_ScanQRCode = false;
+        public static List<string> m_QRCodeStr = new List<string>();
+        public event EventHandler m_StationQRCodeRecvDataEvent;
+
         public static bool ShouldExit
         {
             set
@@ -33,18 +42,24 @@ namespace RobotWorkstation
             {
                 return m_ShouldExit;
             }
-
         }
+
+        public VisualSortingStation()
+        {
+            m_StationQRCodeRecvDataEvent += new EventHandler(QRCodeRecvData); 
+        }
+
         public static void MainThreadFunc()
         {
             DataStruct.InitSysStat();
             DataStruct.InitSysAlarm();
+            m_QRCodeStr.Clear();
 
             //创建Server端线程
 
             //创建Client线程
 
-
+            //创建网络共享文件
 
             while (!m_ShouldExit)
             {
@@ -75,17 +90,108 @@ namespace RobotWorkstation
             switch (m_AutoRunAction)
             {
                 case AutoRunAction.AuoRunStart:                 //开始
-                    break;
-                case AutoRunAction.AutoRunGetGrapCoords:        //获得抓取坐标          
-                    break;
-                case AutoRunAction.AutoRunMoveToGrap:           //移动到位并抓取       
-                    break;
+                    {
+                        bool Start = false;
+                        //检查各盘是否到位，都无误后 Start = true
+
+                        if(Start)
+                            m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
+                    }break;
+                case AutoRunAction.AutoRunGetGrapCoords:        //获得抓取坐标
+                    {
+                        bool Coords = false;
+
+                        //调用视觉算法获取坐标
+                        double x = 0;
+                        double y = 0;
+                        double z = 0;
+                        double rz = 0;
+
+                        //检查坐标范围,正确则Coords = true
+                        if (true)
+                        {
+                            m_Robot.SetGrapPointCoords(x, y, z, rz);
+                            Coords = true;
+                        }
+
+                        if (Coords)
+                            m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;
+                        else
+                            m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
+
+                    }break;
+                case AutoRunAction.AutoRunMoveToGrap:           //移动到位并抓取   
+                    {
+                        //移动到指定位置抓手气缸进到位，后吸起器件，上位机发指令，机械臂脚本解析，执行动作
+                        //m_IO.SetRobotIo();
+
+                        //吸嘴真空检查是否真的抓取成功 Grap = true
+                        if (DataStruct.SysStat.RobotVacuoCheck)
+                            m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
+                        else
+                            m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;
+
+                    }break;
                 case AutoRunAction.AutoRunMoveToScanQRCode:     //移动到位并扫码,检查扫码格式，不正确则依然执行此动作v          
-                    break;
+                    {                       
+                        //移动到位
+
+                        //读取二维码
+
+                        //检查二维码，不为None,格式正确，则ScanQRCode = true,否则重新识别
+
+                        if (m_ScanQRCode)
+                            m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;
+                        else
+                            m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
+                    }break;
                 case AutoRunAction.AutoRunMoveToPut:            //移动到位并放下，计数后开始下一件，满总数后下一步    
-                    break;
+                    {
+                        bool Put = false;
+                        int TempCount = 0;
+
+                        //放下件
+
+                        //检查真空是否真的放下，真放下则Put = true, TempCount+1;
+                        if (Put)
+                            TempCount++;
+                        else
+                            m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;
+
+                        if (TempCount >= m_OnePanelDevicesMax)
+                        {
+                            m_AutoRunAction = AutoRunAction.AutoRunTurnOverPanel;
+                            TempCount = 0;
+                        }
+                        else
+                        {
+                            m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
+                        }                           
+                    }break;
                 case AutoRunAction.AutoRunTurnOverPanel:        //计数满则翻盘运走，从头开始
-                    break;
+                    {
+                        bool TurnOver = false;
+                        //设置气缸锁定器件
+
+                        //翻转
+
+                        //翻转成功，解锁器件，延时，通知运走
+                        if (TurnOver)
+                        {
+                            //存储文件，通知运走
+                            if (m_QRCodeStr.Count >= m_OnePanelDevicesMax) //
+                            {
+                                var temp = m_QRCodeStr.Distinct(); //却掉重复扫描的 
+                                if (temp.Count() == m_OnePanelDevicesMax)
+                                {
+                                    //写入到网络共享文件中
+
+                                    m_AutoRunAction = AutoRunAction.AuoRunStart;
+                                    m_DevicesTotal += m_OnePanelDevicesMax;
+                                }                         
+                            }
+                        }                     
+                    }break;
                 default:
                     break;
             }
@@ -137,21 +243,13 @@ namespace RobotWorkstation
 
 
             if ((!DataStruct.SysStat.YellowAlarm) && (!DataStruct.SysStat.RedAlarm))
-            {
                 return 0;
-            }
             else if (DataStruct.SysStat.YellowAlarm && !DataStruct.SysStat.RedAlarm)
-            {
                 return 1;
-            }
             else if (DataStruct.SysStat.RedAlarm && !DataStruct.SysStat.YellowAlarm)
-            {
                 return 2;
-            }
             else
-            {
                 return 3;
-            }
         }
 
         //Alarm type , 0 = Green ; 1 = Yellow ; 2 = Red ; 3 = Red & Yellow
@@ -181,6 +279,37 @@ namespace RobotWorkstation
                 m_IO.SetControlBoardIo(IOType.IOTypeLedYellow, IOValue.IOValueHigh);
                 m_IO.SetControlBoardIo(IOType.IOTypeLedRed, IOValue.IOValueHigh);
             }
+        }
+
+        private void QRCodeRecvData(object sender, EventArgs e)
+        {
+            if (e is QRCodeEventArgers)
+            {
+                QRCodeEventArgers Temp = e as QRCodeEventArgers;
+                bool Check = CheckAndSaveReadData(Temp.QRCodeRecv);
+                if (Check)
+                    m_ScanQRCode = true;
+                else
+                    m_ScanQRCode = false;                
+            }
+        }
+
+        //校验读取数据的准确性
+        public bool CheckAndSaveReadData(string Code)
+        {
+            bool Check = false;
+            string temp = String.Copy(Code);
+
+            //检查读取到的数据格式是否正确 “24个，12个，12个”KR12BN5901313ABPVKBF0238,00C3F413543E,00C3F413543F
+            const char SplitChar = ',';         
+            var StrAfterSplit = temp.Split(SplitChar);
+            if (StrAfterSplit.Length == 3 && StrAfterSplit[0].Length == 24 && StrAfterSplit[1].Length == 12 && StrAfterSplit[2].Length == 12)
+            {
+                Check = true;
+                m_QRCodeStr.Add(Code);
+            }
+
+            return Check;
         }
     }
 }

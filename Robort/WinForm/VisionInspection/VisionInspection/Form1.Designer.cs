@@ -59,6 +59,10 @@
             this.label_HintMeas = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.textBox_Robot_RZ = new System.Windows.Forms.TextBox();
+            this.textBox_CurRZ = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.textBox_CurZ = new System.Windows.Forms.TextBox();
             this.textBox_CurY = new System.Windows.Forms.TextBox();
@@ -75,10 +79,7 @@
             this.lable = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.timer_Robot = new System.Windows.Forms.Timer(this.components);
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.textBox_CurRZ = new System.Windows.Forms.TextBox();
-            this.textBox_Robot_RZ = new System.Windows.Forms.TextBox();
+            this.BtnSetPoints = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.CameraPictureBox)).BeginInit();
             this.groupBox_Camera.SuspendLayout();
             this.groupBox_VisionTest.SuspendLayout();
@@ -375,6 +376,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.BtnSetPoints);
             this.groupBox1.Controls.Add(this.textBox_Robot_RZ);
             this.groupBox1.Controls.Add(this.textBox_CurRZ);
             this.groupBox1.Controls.Add(this.label15);
@@ -400,6 +402,40 @@
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "机械臂测试";
+            // 
+            // textBox_Robot_RZ
+            // 
+            this.textBox_Robot_RZ.Location = new System.Drawing.Point(47, 134);
+            this.textBox_Robot_RZ.Name = "textBox_Robot_RZ";
+            this.textBox_Robot_RZ.Size = new System.Drawing.Size(85, 21);
+            this.textBox_Robot_RZ.TabIndex = 19;
+            this.textBox_Robot_RZ.Text = "29.00";
+            // 
+            // textBox_CurRZ
+            // 
+            this.textBox_CurRZ.Location = new System.Drawing.Point(192, 134);
+            this.textBox_CurRZ.Name = "textBox_CurRZ";
+            this.textBox_CurRZ.ReadOnly = true;
+            this.textBox_CurRZ.Size = new System.Drawing.Size(85, 21);
+            this.textBox_CurRZ.TabIndex = 18;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(170, 139);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(23, 12);
+            this.label15.TabIndex = 17;
+            this.label15.Text = "RZ:";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(25, 138);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(23, 12);
+            this.label14.TabIndex = 16;
+            this.label14.Text = "RZ:";
             // 
             // label13
             // 
@@ -472,7 +508,7 @@
             // 
             // button_RobotRun
             // 
-            this.button_RobotRun.Location = new System.Drawing.Point(51, 168);
+            this.button_RobotRun.Location = new System.Drawing.Point(192, 171);
             this.button_RobotRun.Name = "button_RobotRun";
             this.button_RobotRun.Size = new System.Drawing.Size(75, 23);
             this.button_RobotRun.TabIndex = 6;
@@ -538,39 +574,15 @@
             this.timer_Robot.Enabled = true;
             this.timer_Robot.Tick += new System.EventHandler(this.timer_Robot_Tick);
             // 
-            // label14
+            // BtnSetPoints
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(25, 138);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(23, 12);
-            this.label14.TabIndex = 16;
-            this.label14.Text = "RZ:";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(170, 139);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(23, 12);
-            this.label15.TabIndex = 17;
-            this.label15.Text = "RZ:";
-            // 
-            // textBox_CurRZ
-            // 
-            this.textBox_CurRZ.Location = new System.Drawing.Point(192, 134);
-            this.textBox_CurRZ.Name = "textBox_CurRZ";
-            this.textBox_CurRZ.ReadOnly = true;
-            this.textBox_CurRZ.Size = new System.Drawing.Size(85, 21);
-            this.textBox_CurRZ.TabIndex = 18;
-            // 
-            // textBox_Robot_RZ
-            // 
-            this.textBox_Robot_RZ.Location = new System.Drawing.Point(47, 134);
-            this.textBox_Robot_RZ.Name = "textBox_Robot_RZ";
-            this.textBox_Robot_RZ.Size = new System.Drawing.Size(85, 21);
-            this.textBox_Robot_RZ.TabIndex = 19;
-            this.textBox_Robot_RZ.Text = "-267.00";
+            this.BtnSetPoints.Location = new System.Drawing.Point(57, 171);
+            this.BtnSetPoints.Name = "BtnSetPoints";
+            this.BtnSetPoints.Size = new System.Drawing.Size(75, 23);
+            this.BtnSetPoints.TabIndex = 20;
+            this.BtnSetPoints.Text = "设置点位";
+            this.BtnSetPoints.UseVisualStyleBackColor = true;
+            this.BtnSetPoints.Click += new System.EventHandler(this.BtnSetPoints_Click);
             // 
             // FormMain
             // 
@@ -653,6 +665,7 @@
         private System.Windows.Forms.TextBox textBox_CurRZ;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button BtnSetPoints;
     }
 }
 

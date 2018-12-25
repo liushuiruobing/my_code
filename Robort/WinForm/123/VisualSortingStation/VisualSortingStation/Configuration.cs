@@ -24,7 +24,7 @@ namespace RobotWorkstation
 
         public Configuration()
         {
-            RobotIp = "192.168.1.124";
+            RobotIp = "192.168.1.1";
             RobotMoveSpeed = 20;
             RobotMoveDistance = 1000;
             RobotMoveDistanceUm = 1000;

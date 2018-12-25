@@ -22,7 +22,7 @@ namespace RobotWorkstation
         public SerialPort m_SerialPort = null;
         public Queue<string> m_ReadQueue = new Queue<string>();
         private string m_ReadNone = "None";
-        public string m_StrPort = "COM1";
+        public string m_StrPort = "COM3";
         public int m_BaudRate = 115200;
         public Parity m_Parity = Parity.None;
         public int m_DataBits = 8;
@@ -144,10 +144,8 @@ namespace RobotWorkstation
             {
                 QRCodeEventArgers ev = new QRCodeEventArgers();
                 ev.QRCodeRecv = ((SerialPort)sender).ReadExisting();
-                if (ev.QRCodeRecv == m_ReadNone)
-                    ev.QRCodeRecv += Environment.NewLine;                   
-
-                QRCodeRecvDataEvent?.Invoke(this, ev);
+                if (ev.QRCodeRecv != m_ReadNone)       
+                    QRCodeRecvDataEvent?.Invoke(this, ev);
             }
             catch (System.TimeoutException)
             {
@@ -155,12 +153,5 @@ namespace RobotWorkstation
             }
         }
 
-        //校验读取数据的准确性
-        public bool CheckReadData()
-        {
-            bool Re = false;
-
-            return Re;
-        }
     }
 }

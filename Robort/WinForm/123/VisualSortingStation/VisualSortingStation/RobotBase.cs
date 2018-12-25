@@ -347,6 +347,36 @@ namespace RobotWorkstation
             m_Robot.GotoMovP(p);
         }
 
+        public void MovP(cPoint p)
+        {
+            if (!m_IsConnected)
+            {
+                return;
+            }
+
+            m_Robot.MovP(p);
+        }
+
+        public void StartContinuousMovP(cPoint p)
+        {
+            if (!m_IsConnected)
+            {
+                return;
+            }
+
+            m_Robot.StartContinuousMovP(p);
+        }
+
+        public void EndContinuousMovP(cPoint p)
+        {
+            if (!m_IsConnected)
+            {
+                return;
+            }
+
+            m_Robot.EndContinuousMovP(p);
+        }
+
         public void MovStop()
         {
             if (!m_IsConnected)
@@ -365,6 +395,16 @@ namespace RobotWorkstation
             }
 
             m_Robot.TechGlobalPoint(index);
+        }
+
+        public void SetGlobalPoint(int index, cPoint p)
+        {
+            if (!m_IsConnected)
+            {
+                return;
+            }
+
+            m_Robot.SetGlobalPoint(index, p);
         }
 
         public void SetOutputState(int index, bool TOnFOff)

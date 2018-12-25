@@ -16,8 +16,26 @@ using RABD.DROE.SystemDefine;
 
 namespace VisionInspection
 {
+
     public partial class FormMain : System.Windows.Forms.Form
     {
+
+        PointMeas P1Grap = new PointMeas(0, 0, 0, 0);
+        PointMeas P1Put = new PointMeas(0, 0, 0, 0);
+
+        PointMeas P2Grap = new PointMeas(0, 0, 0, 0);
+        PointMeas P2Put = new PointMeas(0, 0, 0, 0);
+
+        PointMeas P3Grap = new PointMeas(0, 0, 0, 0);
+        PointMeas P3Put = new PointMeas(0, 0, 0, 0);
+
+        PointMeas P4Grap = new PointMeas(0, 0, 0, 0);
+        PointMeas P4Put = new PointMeas(0, 0, 0, 0);
+
+        PointMeas P5Grap = new PointMeas(0, 0, 0, 0);
+        PointMeas P5Put = new PointMeas(0, 0, 0, 0);
+
+
         VisionCamera m_VisionCamera = new VisionCamera();
 
         private const string m_DefaultImage = "image.bmp";
@@ -86,7 +104,7 @@ namespace VisionInspection
                 textBox_Exposure.Text = param.Exposure.ToString("F1");
                 textBox_Gain.Text = param.Gain.ToString("F1");
                 textBox_FrameRate.Text = param.FramRate.ToString("F1");
-            }          
+            }
         }
 
         private void button_LoadPicture_Click(object sender, EventArgs e)
@@ -121,7 +139,7 @@ namespace VisionInspection
                 m_BitmapBak = new Bitmap(CameraPictureBox.Image, CameraPictureBox.Width * 2, CameraPictureBox.Height * 2);
 
             m_StartPoint.X = e.X;
-            m_StartPoint.Y = e.Y; 
+            m_StartPoint.Y = e.Y;
 
             textBox_TestStartX.Text = e.X.ToString();
             textBox_TestStartY.Text = e.Y.ToString();
@@ -202,7 +220,8 @@ namespace VisionInspection
 
         public void InitRobot()
         {
-            bool bRe = m_RobotDevice.Open("192.168.1.124");
+
+            bool bRe = m_RobotDevice.Open("192.168.1.1");
             if (bRe)
             {
                 m_RobotDevice.ServoOn();
@@ -280,9 +299,60 @@ namespace VisionInspection
             Debug.WriteLine("Down");
 
 
-            //m_RobotDevice.TechGlobalPoint(209);
-          //  GetSystemPoint();
+            //  //m_RobotDevice.TechGlobalPoint(209);
+            ////  GetSystemPoint();
 
+            //  if (m_RobotDevice.HasAlarm())
+            //  {
+            //      m_RobotDevice.ResetAlarm();
+            //      MessageBox.Show("HasAlarm And ResetAlarm");
+            //      return;
+            //  }
+
+            //  if(m_MovePoint == null)
+            //      m_MovePoint = m_RobotDevice.GetGlobalPoint(304);
+
+
+            //  if (m_MovePoint != null)
+            //  {
+            //      //Debug.WriteLine("改变前:");
+            //      //Debug.WriteLine($"p[eAxisName.X] = {p[eAxisName.X]}");
+            //      //Debug.WriteLine($"p[eAxisName.Y] = {p[eAxisName.Y]}");
+            //      //Debug.WriteLine($"p[eAxisName.Z] = {p[eAxisName.Z]}");
+            //      //Debug.WriteLine($"p[eAxisName.RZ] = {p[eAxisName.RZ]}");
+
+            //      m_MovePoint[eAxisName.X] = double.Parse(textBox_Robot_X.Text) * 1000;
+            //      m_MovePoint[eAxisName.Y] = double.Parse(textBox_Robot_Y.Text) * 1000;
+            //      m_MovePoint[eAxisName.Z] = double.Parse(textBox_Robot_Z.Text) * 1000;
+            //      m_MovePoint[eAxisName.RZ] = double.Parse(textBox_Robot_RZ.Text) * 1000;
+
+            //      // m_RobotDevice.TechGlobalPoint(208);
+            //      if (m_MovePoint != null)
+            //      {
+            //          //Debug.WriteLine("改变后:");
+            //          //Debug.WriteLine($"p[eAxisName.X] = {p[eAxisName.X]}");
+            //          //Debug.WriteLine($"p[eAxisName.Y] = {p[eAxisName.Y]}");
+            //          //Debug.WriteLine($"p[eAxisName.Z] = {p[eAxisName.Z]}");
+            //          //Debug.WriteLine($"p[eAxisName.RZ] = {p[eAxisName.RZ]}");
+
+            //          m_RobotDevice.GotoMovP(m_MovePoint);
+            //          //cPoint StartPoint = m_RobotDevice.GetPos();
+            //          //m_RobotDevice.StartContinuousMovP(StartPoint);
+            //          //m_RobotDevice.EndContinuousMovP(p);
+            //      }
+            //  }       
+        }
+
+        private void button_RobotRun_MouseUp(object sender, MouseEventArgs e)
+        {
+            //if (m_RobotDevice != null)
+            //    m_RobotDevice.MovStop();
+
+            //Debug.WriteLine("up");
+        }
+
+        private void button_RobotRun_Click(object sender, EventArgs e)
+        {
             if (m_RobotDevice.HasAlarm())
             {
                 m_RobotDevice.ResetAlarm();
@@ -290,51 +360,49 @@ namespace VisionInspection
                 return;
             }
 
-            if(m_MovePoint == null)
-                m_MovePoint = m_RobotDevice.GetGlobalPoint(304);
-            
+            m_RobotDevice.RunSelectProgram(3);
+
+            if (m_MovePoint == null)
+                m_MovePoint = m_RobotDevice.GetGlobalPoint(300);
+        }
+
+
+        public void SetPoints(int PointIndex, PointMeas GarptPoint, PointMeas PutPoint)
+        {
+            if (m_MovePoint == null)
+                m_MovePoint = m_RobotDevice.GetGlobalPoint(300); //300是原点
+
+            const int Z_distance = 50;
 
             if (m_MovePoint != null)
             {
-                //Debug.WriteLine("改变前:");
-                //Debug.WriteLine($"p[eAxisName.X] = {p[eAxisName.X]}");
-                //Debug.WriteLine($"p[eAxisName.Y] = {p[eAxisName.Y]}");
-                //Debug.WriteLine($"p[eAxisName.Z] = {p[eAxisName.Z]}");
-                //Debug.WriteLine($"p[eAxisName.RZ] = {p[eAxisName.RZ]}");
 
-                m_MovePoint[eAxisName.X] = double.Parse(textBox_Robot_X.Text) * 1000;
-                m_MovePoint[eAxisName.Y] = double.Parse(textBox_Robot_Y.Text) * 1000;
-                m_MovePoint[eAxisName.Z] = double.Parse(textBox_Robot_Z.Text) * 1000;
-                m_MovePoint[eAxisName.RZ] = double.Parse(textBox_Robot_RZ.Text) * 1000;
+                m_MovePoint[eAxisName.X] = GarptPoint.X * 1000;
+                m_MovePoint[eAxisName.Y] = GarptPoint.Y * 1000;
+                m_MovePoint[eAxisName.Z] = (GarptPoint.Z + Z_distance) * 1000;
+                m_MovePoint[eAxisName.RZ] = GarptPoint.RZ * 1000;
 
-                // m_RobotDevice.TechGlobalPoint(208);
-                if (m_MovePoint != null)
-                {
-                    //Debug.WriteLine("改变后:");
-                    //Debug.WriteLine($"p[eAxisName.X] = {p[eAxisName.X]}");
-                    //Debug.WriteLine($"p[eAxisName.Y] = {p[eAxisName.Y]}");
-                    //Debug.WriteLine($"p[eAxisName.Z] = {p[eAxisName.Z]}");
-                    //Debug.WriteLine($"p[eAxisName.RZ] = {p[eAxisName.RZ]}");
+                m_RobotDevice.SetGlobalPoint(PointIndex, m_MovePoint);
 
-                    m_RobotDevice.GotoMovP(m_MovePoint);
-                    //cPoint StartPoint = m_RobotDevice.GetPos();
-                    //m_RobotDevice.StartContinuousMovP(StartPoint);
-                    //m_RobotDevice.EndContinuousMovP(p);
-                }
-            }       
-        }
+                m_MovePoint[eAxisName.X] = GarptPoint.X * 1000;
+                m_MovePoint[eAxisName.Y] = GarptPoint.Y * 1000;
+                m_MovePoint[eAxisName.Z] = (GarptPoint.Z) * 1000;
+                m_MovePoint[eAxisName.RZ] = GarptPoint.RZ * 1000;
+                m_RobotDevice.SetGlobalPoint(PointIndex + 1, m_MovePoint);
 
-        private void button_RobotRun_MouseUp(object sender, MouseEventArgs e)
-        {            
-            if (m_RobotDevice != null)
-                m_RobotDevice.MovStop();
+                m_MovePoint[eAxisName.X] = PutPoint.X * 1000;
+                m_MovePoint[eAxisName.Y] = PutPoint.Y * 1000;
+                m_MovePoint[eAxisName.Z] = (PutPoint.Z + Z_distance) * 1000;
+                m_MovePoint[eAxisName.RZ] = PutPoint.RZ * 1000;
+                m_RobotDevice.SetGlobalPoint(PointIndex + 2, m_MovePoint);
 
-            Debug.WriteLine("up");
-        }
+                m_MovePoint[eAxisName.X] = PutPoint.X * 1000;
+                m_MovePoint[eAxisName.Y] = PutPoint.Y * 1000;
+                m_MovePoint[eAxisName.Z] = (PutPoint.Z) * 1000;
+                m_MovePoint[eAxisName.RZ] = PutPoint.RZ * 1000;
+                m_RobotDevice.SetGlobalPoint(PointIndex + 3, m_MovePoint);
 
-        private void button_RobotRun_Click(object sender, EventArgs e)
-        {
-
+            }
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
@@ -363,6 +431,30 @@ namespace VisionInspection
             textBox_CurX.Text = "";
             textBox_CurY.Text = "";
             textBox_CurZ.Text = "";
+        }
+
+        private void BtnSetPoints_Click(object sender, EventArgs e)
+        {
+            SetPoints(300, P1Grap, P1Put);
+            SetPoints(304, P2Grap, P2Put);
+            SetPoints(308, P3Grap, P3Put);
+            SetPoints(312, P4Grap, P4Put);
+        }
+    }
+
+    public class PointMeas
+    {
+        public double X = 0;
+        public double Y = 0;
+        public double Z = 0;
+        public double RZ = 0;
+
+        public PointMeas(double x, double y, double z, double rz)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            RZ = rz;
         }
     }
 }
