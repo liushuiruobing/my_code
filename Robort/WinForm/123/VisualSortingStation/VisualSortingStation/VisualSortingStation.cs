@@ -18,7 +18,7 @@ namespace RobotWorkstation
 
     }
 
-    class VisualSortingStation  //视觉分拣业务类
+    public class VisualSortingStation  //视觉分拣业务类
     {
         public static IO m_IO = IO.GetInstance();               
         public static int m_DevicesTotal = 0;
@@ -27,10 +27,9 @@ namespace RobotWorkstation
         private volatile static bool m_ShouldExit = false;
 
         private static RobotDevice m_Robot = RobotDevice.GetInstance();
-        QRCode m_QRCode = QRCode.GetInstance();
+        private static QRCode m_QRCode = QRCode.GetInstance();
         private static bool m_ScanQRCode = false;
         public static List<string> m_QRCodeStr = new List<string>();
-        public event EventHandler m_StationQRCodeRecvDataEvent;
 
         public static bool ShouldExit
         {
@@ -44,16 +43,13 @@ namespace RobotWorkstation
             }
         }
 
-        public VisualSortingStation()
-        {
-            m_StationQRCodeRecvDataEvent += new EventHandler(QRCodeRecvData); 
-        }
 
         public static void MainThreadFunc()
         {
             DataStruct.InitSysStat();
             DataStruct.InitSysAlarm();
             m_QRCodeStr.Clear();
+            m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
 
             //创建Server端线程
 
@@ -126,7 +122,7 @@ namespace RobotWorkstation
                         //m_IO.SetRobotIo();
 
                         //吸嘴真空检查是否真的抓取成功 Grap = true
-                        if (DataStruct.SysStat.RobotVacuoCheck)
+                        if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
                             m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
                         else
                             m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;
@@ -281,7 +277,7 @@ namespace RobotWorkstation
             }
         }
 
-        private void QRCodeRecvData(object sender, EventArgs e)
+        public static void QRCodeRecvData(object sender, EventArgs e)
         {
             if (e is QRCodeEventArgers)
             {
@@ -295,7 +291,7 @@ namespace RobotWorkstation
         }
 
         //校验读取数据的准确性
-        public bool CheckAndSaveReadData(string Code)
+        public static bool CheckAndSaveReadData(string Code)
         {
             bool Check = false;
             string temp = String.Copy(Code);
