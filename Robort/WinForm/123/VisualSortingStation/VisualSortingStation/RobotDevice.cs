@@ -79,5 +79,10 @@ namespace RobotWorkstation
                 }
             }
         }
+
+        public void ReadMulitModbus(ushort Addr, short ReadCount, ref short[] InBuf)
+        {
+            InBuf = m_Robot.ReadMulitModbus(Addr, ReadCount);
+        }
     }
 }

@@ -27,6 +27,9 @@ namespace RobotWorkstation
         private volatile static bool m_ShouldExit = false;
 
         private static RobotDevice m_Robot = RobotDevice.GetInstance();
+        private static short[] m_RobotRead = new short[RobotBase.COM_LEN];
+        private static RFID m_RFID = RFID.GetInstance();
+        public static string m_RfidRead = "";
         private static QRCode m_QRCode = QRCode.GetInstance();
         private static bool m_ScanQRCode = false;
         public static List<string> m_QRCodeStr = new List<string>();
@@ -43,17 +46,12 @@ namespace RobotWorkstation
             }
         }
 
-
         public static void MainThreadFunc()
         {
             DataStruct.InitSysStat();
             DataStruct.InitSysAlarm();
             m_QRCodeStr.Clear();
             m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
-
-            //创建Server端线程
-
-            //创建Client线程
 
             //创建网络共享文件
 
@@ -80,6 +78,36 @@ namespace RobotWorkstation
             //创建客户端处理与单片机的消息，让工作站不知道是谁的消息，只知道和某个Server端的消息
         }
 
+        //处理Robot和Rfid的消息，两个都是Modbus通信
+        public static void RobotAndRfidListeningThreadFunc()
+        {
+            while (!m_ShouldExit)
+            {
+                if (m_Robot != null && m_Robot.m_IsConnected)
+                {
+                    Array.Clear(m_RobotRead, 0, m_RobotRead.Length);
+                    m_Robot.ReadMulitModbus(RobotBase.MODBUS_ADDR, RobotBase.COM_LEN, ref m_RobotRead);
+                    
+                    //校验协议，并给DataStruct.SysStat中的各状态赋值
+                }
+
+                if (m_RFID != null && m_RFID.m_IsConnected)
+                {
+                    m_RFID.Read(m_RFID.m_CurCh);
+                    Thread.Sleep(1);
+                    if (m_RFID.m_QueueRead.Count > 0)
+                    {
+                        m_RfidRead = m_RFID.m_QueueRead.Dequeue();  //读取到盘，并设置盘到位
+                        DataStruct.SysStat.ReceivePanelArrive = true;
+                    }                      
+                }
+
+                Thread.Sleep(10);
+            }
+
+            m_ShouldExit = false;
+        }
+
         public static void AutoSortingRun()
         {
             //执行各动作
@@ -90,8 +118,11 @@ namespace RobotWorkstation
                         bool Start = false;
                         //检查各盘是否到位，都无误后 Start = true
 
-                        if(Start)
+                        if (Start)
+                        {
                             m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
+                        }
+                            
                     }break;
                 case AutoRunAction.AutoRunGetGrapCoords:        //获得抓取坐标
                     {
@@ -184,7 +215,9 @@ namespace RobotWorkstation
 
                                     m_AutoRunAction = AutoRunAction.AuoRunStart;
                                     m_DevicesTotal += m_OnePanelDevicesMax;
-                                }                         
+
+                                    //清除掉之前的各到位信号，在AuoRunStart时重新检查
+                                }
                             }
                         }                     
                     }break;

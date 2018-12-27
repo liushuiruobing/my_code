@@ -948,10 +948,10 @@ namespace RobotWorkstation
         private void CBtnRfidRead_Click(object sender, EventArgs e)
         {
             cTextBoxRfidSn.Text = "";
-            m_RFID.m_StrRead = "";
             m_RFID.Read((ushort)ComBoxRfidCh.SelectedIndex);
             Thread.Sleep(1);
-            cTextBoxRfidSn.Text = m_RFID.m_StrRead;
+            if(m_RFID.m_QueueRead.Count > 0)
+                cTextBoxRfidSn.Text = m_RFID.m_QueueRead.Dequeue();
         }
 
         #region   // 二维码扫描器

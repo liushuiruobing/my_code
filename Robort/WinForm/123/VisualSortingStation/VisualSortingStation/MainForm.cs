@@ -6,24 +6,30 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RobotWorkstation
-{
-    
+{   
     public partial class MainForm : Form
     {
-        public RobotDevice m_Robot = null;  //机械臂            
-        public VisionCamera m_Camera = null;  //视觉相机     
-        public RFID m_RFID = null;   //RFID      
-        public QRCode m_QRCode = null; //二维码
+        //UI
+        private LoginForm m_LoginForm = null;
+        private RunForm m_RunForm = null;
+        private ManualDebugForm m_ManualDebugForm = null;  //手动调试对话框
+        private SystemSetingForm m_SystemSetingForm = null;
+        private UserLimitsForm m_UserLimitsForm = null;
 
-        LoginForm m_LoginForm = null;
-        RunForm m_RunForm = null;
-        ManualDebugForm m_ManualDebugForm = null;  //手动调试对话框
-        SystemSetingForm m_SystemSetingForm = null;
-        UserLimitsForm m_UserLimitsForm = null;
+        //所需模块
+        private RobotDevice m_Robot = null;  //机械臂            
+        private VisionCamera m_Camera = null;  //视觉相机     
+        private RFID m_RFID = null;   //RFID      
+        private QRCode m_QRCode = null; //二维码
+
+        //线程
+        private Thread m_MainThread = null;
+        private Thread m_RobotAndRfidListeningThread = null;
 
         //防止闪屏
         protected override CreateParams CreateParams
@@ -43,39 +49,8 @@ namespace RobotWorkstation
             this.CenterToScreen();           
             Profile.LoadConfigFile();
 
-            //检查各模块的状态
-            SysAlarm sysAlarm = SysAlarm.GetInstance();
-            m_Robot = RobotDevice.GetInstance();  //机械臂
-            bool Re = m_Robot.InitRobot();
-            if (!Re)
-            {
-                DataStruct.SysStat.Robot = 1;
-                sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
-            }
-
-            //m_Camera = VisionCamera.GetInstance();  //视觉相机  
-            //Re = m_Camera.InitCamera();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.Camera = 1;
-            //    sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
-            //}
-                
-            //m_RFID = RFID.GetInstance();   //RFID    
-            //Re = m_RFID.InitRFID();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.RFID = 1;
-            //    sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
-            //}
-                
-            m_QRCode = QRCode.GetInstance(); //二维码
-            Re = m_QRCode.QRCodeInit();
-            if (!Re)
-            {
-                DataStruct.SysStat.QRCode = 1;
-                sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
-            }
+            //检查各模块的状态并启动主线程
+            InitWorkstatiionAndStart();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -239,6 +214,8 @@ namespace RobotWorkstation
                     break;
                 case "Exit":
                     {
+                        VisualSortingStation.ShouldExit = true;
+
                         CloseForm();
                     }
                     break;
@@ -261,5 +238,53 @@ namespace RobotWorkstation
             this.Close();
         }
 
+        public void InitWorkstatiionAndStart()
+        {
+            SysAlarm sysAlarm = SysAlarm.GetInstance();
+            m_Robot = RobotDevice.GetInstance();  //机械臂
+            bool Re = m_Robot.InitRobot();
+            if (!Re)
+            {
+                DataStruct.SysStat.Robot = 1;
+                sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
+            }
+
+            //m_Camera = VisionCamera.GetInstance();  //视觉相机  
+            //Re = m_Camera.InitCamera();
+            //if (!Re)
+            //{
+            //    DataStruct.SysStat.Camera = 1;
+            //    sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
+            //}
+
+            //m_RFID = RFID.GetInstance();   //RFID    
+            //Re = m_RFID.InitRFID();
+            //if (!Re)
+            //{
+            //    DataStruct.SysStat.RFID = 1;
+            //    sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
+            //}
+
+            m_QRCode = QRCode.GetInstance(); //二维码
+            Re = m_QRCode.QRCodeInit();
+            if (!Re)
+            {
+                DataStruct.SysStat.QRCode = 1;
+                sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
+            }
+
+            //创建Server端线程
+
+            //创建Client线程
+
+            //创建Robot和RFID的侦听线程
+            m_RobotAndRfidListeningThread = new Thread(new ThreadStart(VisualSortingStation.RobotAndRfidListeningThreadFunc));
+            m_RobotAndRfidListeningThread.IsBackground = true;
+            m_RobotAndRfidListeningThread.Start();
+
+            m_MainThread = new Thread(new ThreadStart(VisualSortingStation.MainThreadFunc));
+            m_MainThread.IsBackground = true;
+            m_MainThread.Start();
+        }
     }
 }

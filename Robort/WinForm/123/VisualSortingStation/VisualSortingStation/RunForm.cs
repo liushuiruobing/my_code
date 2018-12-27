@@ -16,7 +16,6 @@ namespace RobotWorkstation
     {
         private SysAlarm m_SysAlarm = SysAlarm.GetInstance();
         private bool[] m_SysAlarmState = new bool[(int)SysAlarm.Type.Max];  //报警状态备份
-        private Thread m_MainThread = null;
 
         public RunForm()
         {
@@ -29,9 +28,6 @@ namespace RobotWorkstation
 
             TimerCheckAllStatus.Start();
 
-            m_MainThread = new Thread(new ThreadStart(VisualSortingStation.MainThreadFunc));
-            m_MainThread.IsBackground = true;
-            m_MainThread.Start();
         }
 
         private void RunForm_Load(object sender, EventArgs e)

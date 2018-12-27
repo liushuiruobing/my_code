@@ -43,11 +43,11 @@ namespace RobotWorkstation
         private byte[] data;
         private byte cmdByte;
         public string m_StrReadTemp = null;
-        public string m_StrRead = null;
+        public Queue<string> m_QueueRead = new Queue<string>();
         private System.Timers.Timer m_CheckStatusTimer = new System.Timers.Timer();
         private readonly ushort m_Ch0Addr = 2048;
 
-        public bool RfidConnect
+        public bool m_IsConnected
         {
             get
             {
@@ -436,7 +436,7 @@ namespace RobotWorkstation
                             tmp1[i] = (char)data[i];
                             m_StrReadTemp = m_StrReadTemp + tmp1[i].ToString();
                         }
-                        m_StrRead = m_StrReadTemp;
+                        m_QueueRead.Enqueue(m_StrReadTemp);
                         m_StrReadTemp = "";
                     }
                     break;
