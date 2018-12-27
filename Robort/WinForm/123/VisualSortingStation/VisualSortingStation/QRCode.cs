@@ -22,7 +22,7 @@ namespace RobotWorkstation
         public SerialPort m_SerialPort = null;
         public Queue<string> m_ReadQueue = new Queue<string>();
         private string m_ReadNone = "None";
-        public string m_StrPort = "COM3";
+        public string m_StrPort = "COM1";
         public int m_BaudRate = 115200;
         public Parity m_Parity = Parity.None;
         public int m_DataBits = 8;

@@ -666,10 +666,38 @@ namespace RobotWorkstation
                         TimerMotionControlGetState.Stop();
                     }
                     break;
+                case 3:  //二维码读码器
+                    {
+                        if (m_QRCode.QRCodeConnect)
+                        {
+                            ComBoxQRCodeConnect.Enabled = false;
+                            ComBoxQRCodeDisconnect.Enabled = true;
+                        }
+                        else
+                        {
+                            ComBoxQRCodeConnect.Enabled = true;
+                            ComBoxQRCodeDisconnect.Enabled = false;
+                        }
+                    }
+                    break;
+                case 4:  //RFID
+                    {
+
+                    }break;
+                case 5://PLC
+                    {
+
+                    }
+                    break;
                 default: break;
             }
-        }
 
+            if (tabControlManualDebug.SelectedIndex == 3)  //选择二维码读码器页时
+                m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
+            else
+                m_QRCode.QRCodeRecvDataEvent -= new EventHandler(QRCodeRecvData);
+
+        }
 
         //三轴机械臂
         private void CButtonMotionControlDeviceLoadCfg_Click(object sender, EventArgs e)
@@ -880,7 +908,7 @@ namespace RobotWorkstation
             ComBoxQRCodeStopBit.SelectedIndex = 0;
             ComBoxQRCodeParity.SelectedIndex = 0;
 
-            m_SyncContext = SynchronizationContext.Current;
+            m_SyncContext = SynchronizationContext.Current;       
         }
 
         private void CBtnRfidConnect_Click(object sender, EventArgs e)
@@ -930,20 +958,22 @@ namespace RobotWorkstation
 
         private void ComBoxQRCodeConnect_Click(object sender, EventArgs e)
         {
-            string Port = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
-            string BandRate = (string)ComBoxQRCodeBandRate.Items[ComBoxQRCodeBandRate.SelectedIndex];
-            string DataBits = (string)ComBoxQRCodeDataBit.Items[ComBoxQRCodeDataBit.SelectedIndex];
-            string StopBits = (string)ComBoxQRCodeStopBit.Items[ComBoxQRCodeStopBit.SelectedIndex];
-            string Parity = (string)ComBoxQRCodeParity.Items[ComBoxQRCodeParity.SelectedIndex];
-
-            m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
-            m_QRCode.QRCodeInit();
-            
-            if (m_QRCode.QRCodeConnect)
+            if (!m_QRCode.QRCodeConnect)
             {
-                m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
-                ComBoxQRCodeConnect.Enabled = false;
-                ComBoxQRCodeDisconnect.Enabled = true;
+                string Port = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
+                string BandRate = (string)ComBoxQRCodeBandRate.Items[ComBoxQRCodeBandRate.SelectedIndex];
+                string DataBits = (string)ComBoxQRCodeDataBit.Items[ComBoxQRCodeDataBit.SelectedIndex];
+                string StopBits = (string)ComBoxQRCodeStopBit.Items[ComBoxQRCodeStopBit.SelectedIndex];
+                string Parity = (string)ComBoxQRCodeParity.Items[ComBoxQRCodeParity.SelectedIndex];
+
+                m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
+                m_QRCode.QRCodeInit();
+
+                if (m_QRCode.QRCodeConnect)
+                {
+                    ComBoxQRCodeConnect.Enabled = false;
+                    ComBoxQRCodeDisconnect.Enabled = true;
+                }
             }
         }
 
@@ -982,5 +1012,20 @@ namespace RobotWorkstation
 
         #endregion
 
+        private void ComBoxQRCodeConnect_EnabledChanged(object sender, EventArgs e)
+        {
+            if (ComBoxQRCodeConnect.Enabled)
+                ComBoxQRCodeConnect.BackColor = CustomColor.BtnGreenColor;
+            else
+                ComBoxQRCodeConnect.BackColor = Color.Gray;
+        }
+
+        private void ComBoxQRCodeDisconnect_EnabledChanged(object sender, EventArgs e)
+        {
+            if (ComBoxQRCodeDisconnect.Enabled)
+                ComBoxQRCodeDisconnect.BackColor = Color.Red;
+            else
+                ComBoxQRCodeDisconnect.BackColor = Color.Gray;
+        }
     }
 }

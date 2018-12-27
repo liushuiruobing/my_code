@@ -10,13 +10,13 @@ namespace RobotWorkstation
 {
     public struct CustomColor
     {
-        public Color BackGroundColor;
-        public Color BtnColor;
-        public Color BtnGreenColor;
-        public Color TxtBoxColor;
-        public Color TreeViewColor;
+        public static Color BackGroundColor;
+        public static Color BtnColor;
+        public static Color BtnGreenColor;
+        public static Color TxtBoxColor;
+        public static Color TreeViewColor;
 
-        public void InitColor()
+        public static void InitColor()
         {
             BackGroundColor = Color.FromArgb(33, 33, 33);
             BtnColor = Color.FromArgb(74, 74, 74);

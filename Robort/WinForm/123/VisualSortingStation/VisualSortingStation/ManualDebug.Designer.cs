@@ -2449,6 +2449,7 @@
             this.ComBoxQRCodeDisconnect.TabIndex = 11;
             this.ComBoxQRCodeDisconnect.Text = "断开";
             this.ComBoxQRCodeDisconnect.UseVisualStyleBackColor = false;
+            this.ComBoxQRCodeDisconnect.EnabledChanged += new System.EventHandler(this.ComBoxQRCodeDisconnect_EnabledChanged);
             this.ComBoxQRCodeDisconnect.Click += new System.EventHandler(this.ComBoxQRCodeDisconnect_Click);
             // 
             // ComBoxQRCodeReadShow
@@ -2476,6 +2477,7 @@
             this.ComBoxQRCodeConnect.TabIndex = 10;
             this.ComBoxQRCodeConnect.Text = "连接";
             this.ComBoxQRCodeConnect.UseVisualStyleBackColor = false;
+            this.ComBoxQRCodeConnect.EnabledChanged += new System.EventHandler(this.ComBoxQRCodeConnect_EnabledChanged);
             this.ComBoxQRCodeConnect.Click += new System.EventHandler(this.ComBoxQRCodeConnect_Click);
             // 
             // ComBoxQRCodeCom

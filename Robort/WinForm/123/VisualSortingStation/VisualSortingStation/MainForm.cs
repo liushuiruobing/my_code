@@ -19,7 +19,6 @@ namespace RobotWorkstation
         public RFID m_RFID = null;   //RFID      
         public QRCode m_QRCode = null; //二维码
 
-        CustomColor m_CustomColor;
         LoginForm m_LoginForm = null;
         RunForm m_RunForm = null;
         ManualDebugForm m_ManualDebugForm = null;  //手动调试对话框
@@ -81,7 +80,7 @@ namespace RobotWorkstation
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            m_CustomColor.InitColor();
+            CustomColor.InitColor();
             InitWindowSize();
             InitCtrlColor();
 
@@ -102,7 +101,7 @@ namespace RobotWorkstation
 
         public void InitCtrlColor()
         {
-            CmdTreeView.BackColor = m_CustomColor.TreeViewColor;
+            CmdTreeView.BackColor = CustomColor.TreeViewColor;
         }
 
         //创建其他窗体的实例对象
