@@ -160,6 +160,7 @@
       <DependentUpon>ManualDebug.cs</DependentUpon>
     </Compile>
     <Compile Include="Master.cs" />
+    <Compile Include="Message.cs" />
     <Compile Include="MotionControl.cs" />
     <Compile Include="MultiLanguage.cs" />
     <Compile Include="NetShareClass.cs" />

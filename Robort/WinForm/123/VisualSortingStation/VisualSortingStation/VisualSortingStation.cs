@@ -42,6 +42,9 @@ namespace RobotWorkstation
         private static bool m_ScanQRCode = false;
         public static List<string> m_QRCodeStr = new List<string>();
 
+        private static MyTcpClient m_MyTcpClient = MyTcpClient.GetInstance();
+        private static MyTcpServer m_MyTcpServer = MyTcpServer.GetInstance();
+
         public static bool ShouldExit
         {
             set
@@ -72,18 +75,33 @@ namespace RobotWorkstation
 
                 Thread.Sleep(100);
             }
-
-            m_ShouldExit = false;
         }
 
-        public static void TcpServerRun()
+        public static void MessageProcessThreadFunc()
         {
-            //创建TCP服务端分别处理PLC和MIS系统的消息，让工作站不知道是谁的消息，只知道是某个Client的消息
-        }
+            while (!m_ShouldExit)
+            {
+                //作为客户端处理和单片机控制板的消息队列
+                if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
+                {
+                    while(m_MyTcpClient.m_RecvMeasQueue.Count != 0)
+                    {
+                        TcpMeas tempMeas = m_MyTcpClient.m_RecvMeasQueue.Dequeue();
+                        //解析消息 并作相应的处理
+                    }
+                }
 
-        public static void TcpClientRun()
-        {
-            //创建客户端处理与单片机的消息，让工作站不知道是谁的消息，只知道和某个Server端的消息
+                //作为服务端处理和MIS及PLC之间的消息
+                if (m_MyTcpServer != null)
+                {
+                    while (m_MyTcpServer.m_RecvMeasQueue.Count != 0)
+                    {
+                        TcpMeas tempMeas = m_MyTcpServer.m_RecvMeasQueue.Dequeue();
+                        //解析消息 并作相应的处理
+                    }
+                }
+                Thread.Sleep(100);
+            }
         }
 
         //处理Robot和Rfid的消息，两个都是Modbus通信
@@ -98,8 +116,8 @@ namespace RobotWorkstation
                     m_Robot.ReadMulitModbus(RobotBase.MODBUS_ADDR, ReadLen, ref m_RobotRead);
 
                     //校验协议，并给DataStruct.SysStat中的各状态赋值
-                    if ((m_RobotRead[0] == 0x7e) && (m_RobotRead[ReadLen - 1] == 0x0d) 
-                        && (m_RobotRead[1] == 0x54) && (m_RobotRead[2] == 0x44) && (m_RobotRead[3] == 0x06) && (m_RobotRead[4] == 0x01))
+                    if ((m_RobotRead[0] == Message.MessStartCode) && (m_RobotRead[ReadLen - 1] == Message.MessEndCode) 
+                        && (m_RobotRead[1] == Message.MessRobotVID1) && (m_RobotRead[2] == Message.MessRobotVID2) && (m_RobotRead[3] == Message.MessRobotAxle6) && (m_RobotRead[4] == Message.MessRobotAddr))
                     {
                         short Io = m_RobotRead[5];
                         short IoState = m_RobotRead[6];
@@ -132,8 +150,6 @@ namespace RobotWorkstation
 
                 Thread.Sleep(100);
             }
-
-            m_ShouldExit = false;
         }
 
         public static void AutoSortingRun()
@@ -360,6 +376,6 @@ namespace RobotWorkstation
             }
 
             return Check;
-        }
+        } 
     }
 }

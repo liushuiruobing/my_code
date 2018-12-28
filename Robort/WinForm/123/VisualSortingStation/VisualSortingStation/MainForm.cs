@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,9 +27,12 @@ namespace RobotWorkstation
         private VisionCamera m_Camera = null;  //视觉相机     
         private RFID m_RFID = null;   //RFID      
         private QRCode m_QRCode = null; //二维码
+        private MyTcpClient m_MyTcpClient = null;
+        private MyTcpServer m_MyTcpServer = null;
 
         //线程
         private Thread m_MainThread = null;
+        private Thread m_MeassageProcessThread = null;
         private Thread m_RobotAndRfidListeningThread = null;
 
         //防止闪屏
@@ -51,6 +55,7 @@ namespace RobotWorkstation
 
             //检查各模块的状态并启动主线程
             InitWorkstatiionAndStart();
+            InitTcp();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -215,6 +220,8 @@ namespace RobotWorkstation
                 case "Exit":
                     {
                         VisualSortingStation.ShouldExit = true;
+                        if (m_MyTcpServer != null)
+                            m_MyTcpServer.CloseServer();
 
                         CloseForm();
                     }
@@ -274,10 +281,6 @@ namespace RobotWorkstation
                 sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
             }
 
-            //创建Server端线程
-
-            //创建Client线程
-
             //创建Robot和RFID的侦听线程
             m_RobotAndRfidListeningThread = new Thread(new ThreadStart(VisualSortingStation.RobotAndRfidListeningThreadFunc));
             m_RobotAndRfidListeningThread.IsBackground = true;
@@ -286,6 +289,32 @@ namespace RobotWorkstation
             m_MainThread = new Thread(new ThreadStart(VisualSortingStation.MainThreadFunc));
             m_MainThread.IsBackground = true;
             m_MainThread.Start();
+        }
+
+        public void InitTcp()
+        {
+            SysAlarm sysAlarm = SysAlarm.GetInstance();
+            m_MyTcpClient = MyTcpClient.GetInstance();
+            if (m_MyTcpClient != null)
+            {
+                m_MyTcpClient.InitClient();
+
+                //从配置中获取单片机控制板的IP和端口号
+                m_MyTcpClient.CreateConnect(IPAddress.Parse("192.168.81.109"), 5025);
+            }
+
+            m_MyTcpServer = MyTcpServer.GetInstance();
+            if (m_MyTcpServer != null)
+            {
+                m_MyTcpServer.CreatServer();
+            }
+
+            if ((m_MyTcpClient != null && m_MyTcpClient.IsConnected) || m_MyTcpServer != null)
+            {
+                m_MeassageProcessThread = new Thread(new ThreadStart(VisualSortingStation.MessageProcessThreadFunc));
+                m_MeassageProcessThread.IsBackground = true;
+                m_MeassageProcessThread.Start();
+            }
         }
     }
 }

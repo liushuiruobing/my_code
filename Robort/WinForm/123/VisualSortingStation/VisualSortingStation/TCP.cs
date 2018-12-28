@@ -48,27 +48,58 @@ namespace RobotWorkstation
     //Tcp Client Class
     public partial class MyTcpClient
     {
-        public TcpClient m_TcpClient = null;
+        private static MyTcpClient m_UniqueTcpClient = null;
+        private static readonly object m_Locker = new object();
+
+        private TcpClient m_TcpClient = null;
         public TcpParam m_TcpParam;
-        public int RecvTimeOut = 100; 
-        public int SendTimeOut = 100;        
+
+        private bool Connected = false;
+        private int RecvTimeOut = 100;
+        private int SendTimeOut = 100;        
         public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
         public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
 
         private Byte[] m_RecvBytes = new Byte[8192];
         public const int m_SendBytesMax = 1024;
 
-        public MyTcpClient()
+        private MyTcpClient()
         {
             m_TcpParam.InitTcpParam();
+            m_TcpClient = new TcpClient();
+        }
+
+        public bool IsConnected
+       {
+            get
+            {
+                return m_TcpClient.Connected;
+            }
+       }
+
+        /// <summary>
+        /// 定义公有方法提供一个全局访问点,同时你也可以定义公有属性来提供全局访问点
+        /// </summary>
+        /// <returns></returns>
+        public static MyTcpClient GetInstance()
+        {
+            if (m_UniqueTcpClient == null)
+            {
+                lock (m_Locker)
+                {
+                    if (m_UniqueTcpClient == null)
+                        m_UniqueTcpClient = new MyTcpClient();
+                }
+            }
+
+            return m_UniqueTcpClient;
         }
 
         public void InitClient()
         {
             //IPEndPoint EndPoint = new IPEndPoint(m_TcpParam.nIpAddress, m_TcpParam.nPort);
             //m_TcpClient = new TcpClient(EndPoint);
-
-            m_TcpClient = new TcpClient();
+          
             m_TcpClient.ReceiveTimeout = RecvTimeOut;
             m_TcpClient.SendTimeout = SendTimeOut;
         }
@@ -133,13 +164,9 @@ namespace RobotWorkstation
             bool CheckData = false;
             TcpMeasType MeasType = TcpMeasType.MEAS_TYPE_NONE;
             int MeasCode = 0;
-
-            //根据制定的协议校验数据
-            //..........
-            CheckData = true;
-
-            //分析数据，把数据添加到队列m_TcpMeas
-            if (CheckData)
+        
+            CheckData = Message.CheckMessage(RecvBytes);  //根据制定的协议校验数据         
+            if (CheckData)  //分析数据，把数据添加到队列m_TcpMeas
             {
                 TcpMeas TempMeas = new TcpMeas();
                 TempMeas.Client = m_TcpClient;
@@ -181,7 +208,9 @@ namespace RobotWorkstation
     //Tcp Server Class
     public partial class MyTcpServer
     {
-        public TcpListener m_TcpListener = null;
+        private static MyTcpServer m_UniqueTcpServer = null;
+        private static readonly object m_Locker = new object();
+        private TcpListener m_TcpListener = null;
         public TcpParam m_TcpParam;
         public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
         public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
@@ -191,9 +220,27 @@ namespace RobotWorkstation
         private Thread m_TcpServerListenThread = null;      
         private Byte[] m_RecvBytes = new Byte[8192];
 
-        public MyTcpServer()
+        private MyTcpServer()
         {
             m_TcpParam.InitTcpParam();
+        }
+
+        /// <summary>
+        /// 定义公有方法提供一个全局访问点,同时你也可以定义公有属性来提供全局访问点
+        /// </summary>
+        /// <returns></returns>
+        public static MyTcpServer GetInstance()
+        {
+            if (m_UniqueTcpServer == null)
+            {
+                lock (m_Locker)
+                {
+                    if (m_UniqueTcpServer == null)
+                        m_UniqueTcpServer = new MyTcpServer();
+                }
+            }
+
+            return m_UniqueTcpServer;
         }
 
         public bool CreatServer()
@@ -291,11 +338,8 @@ namespace RobotWorkstation
             int MeasCode = 0;
 
             //根据制定的协议校验数据
-            //..........
-            CheckData = true;
-
-            //分析数据，把数据添加到队列m_TcpMeas
-            if (CheckData)
+            CheckData = Message.CheckMessage(RecvBytes);            
+            if (CheckData)  //分析数据，把数据添加到队列m_TcpMeas
             {
                 TcpMeas TempMeas = new TcpMeas();
                 TempMeas.Client = Client;

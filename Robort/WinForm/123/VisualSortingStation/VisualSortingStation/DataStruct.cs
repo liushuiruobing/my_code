@@ -42,11 +42,11 @@ namespace RobotWorkstation
             public static bool ReceivePanelArrive;      //翻转后接收托盘到位
 
             //机械臂
-            public static bool RobotCylinder;           //机械臂抓手气缸
-            public static bool RobotCylGoArrive;        //机械臂抓手气缸进到位
-            public static bool RobotCylBackArrive;      //机械臂抓手气缸退到位
-            public static bool RobotNozzleInhale;       //吸嘴吸
-            public static bool RobotNozzleBlow;         //吸嘴吹
+            //public static bool RobotCylinder;           //机械臂抓手气缸
+            //public static bool RobotCylGoArrive;        //机械臂抓手气缸进到位
+            //public static bool RobotCylBackArrive;      //机械臂抓手气缸退到位
+            //public static bool RobotNozzleInhale;       //吸嘴吸
+            //public static bool RobotNozzleBlow;         //吸嘴吹
             public static bool RobotVacuoCheck;         //真空检测
 			
         }
@@ -87,11 +87,11 @@ namespace RobotWorkstation
             SysStat.OverturnPanelArrive = false;
             SysStat.ReceivePanelArrive = false;
 
-            SysStat.RobotCylinder = false;
-            SysStat.RobotCylGoArrive = false;
-            SysStat.RobotCylBackArrive = false;
-            SysStat.RobotNozzleInhale = false;
-            SysStat.RobotNozzleBlow = false;
+            //SysStat.RobotCylinder = false;
+            //SysStat.RobotCylGoArrive = false;
+            //SysStat.RobotCylBackArrive = false;
+            //SysStat.RobotNozzleInhale = false;
+            //SysStat.RobotNozzleBlow = false;
             SysStat.RobotVacuoCheck = false;
 
         }

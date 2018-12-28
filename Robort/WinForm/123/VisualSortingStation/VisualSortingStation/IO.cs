@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RobotWorkstation
 {
-    public enum IOType  //具体编号要等电气连接图出来之后与之相对应
+    public enum IOType  //具体编号要等电气连接图出来之后与之相对应，机械臂的IO由机械臂的脚本处理，上位机只查询标志
     {
         //In
         IOTypeKeyRun = 0,
@@ -16,10 +16,7 @@ namespace RobotWorkstation
         IOTypeEmptyPanelUpArrive,       //空盘气缸上升到位
         IOTypeEmptyPanelDownArrive,     //空盘气缸下降到位
         IOTypeOverturnPanelArrive,      //翻转托盘到位
-        IOTypeRobotCylGoArrive,         //机械臂抓手气缸进到位
-        IOTypeRobotCylBackArrive,       //机械臂抓手气缸退到位
-        IOTypeRobotVacuoCheck,          //真空检测
-
+      
         //Out
         IOTypeLedRed,
         IOTypeLedYellow,
@@ -28,9 +25,6 @@ namespace RobotWorkstation
         IOTypeBeep,
         IOTypeEmptyPanelUp,         //空盘气缸上升
         IOTypeEmptyPanelDown,       //空盘气缸下降
-        IOTypeRobotCylinder,        //机械臂抓手气缸
-        IOTypeRobotNozzleInhale,    //吸嘴吸
-        IOTypeRobotNozzleBlow,      //吸嘴吹
     }
 
     public enum IOValue
@@ -64,11 +58,6 @@ namespace RobotWorkstation
                 }
             }
             return m_UniqueIo;
-        }
-
-        public void SetRobotIo(IOType Type, IOValue Value)
-        {
-            //给机械臂发送消息
         }
 
         public void SetControlBoardIo(IOType Type, IOValue Value)
