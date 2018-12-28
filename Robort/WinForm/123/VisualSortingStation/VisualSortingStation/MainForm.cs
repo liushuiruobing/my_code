@@ -247,6 +247,7 @@ namespace RobotWorkstation
             {
                 DataStruct.SysStat.Robot = 1;
                 sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
+                MessageBox.Show("机械臂初始化错误！");
             }
 
             //m_Camera = VisionCamera.GetInstance();  //视觉相机  

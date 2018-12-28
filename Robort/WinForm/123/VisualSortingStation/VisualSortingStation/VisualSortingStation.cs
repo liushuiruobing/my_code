@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -7,6 +8,13 @@ using System.Threading.Tasks;
 
 namespace RobotWorkstation
 {
+    public enum RobotAction
+    {
+        Action_Grap = 0,
+        Action_QRCodeScan,
+        Action_Put
+    }
+	
     public enum AutoRunAction
     {
         AuoRunStart = 0,              //开始
@@ -27,7 +35,7 @@ namespace RobotWorkstation
         private volatile static bool m_ShouldExit = false;
 
         private static RobotDevice m_Robot = RobotDevice.GetInstance();
-        private static short[] m_RobotRead = new short[RobotBase.COM_LEN];
+        private static short[] m_RobotRead = new short[RobotBase.MODBUS_RD_LEN];
         private static RFID m_RFID = RFID.GetInstance();
         public static string m_RfidRead = "";
         private static QRCode m_QRCode = QRCode.GetInstance();
@@ -85,10 +93,30 @@ namespace RobotWorkstation
             {
                 if (m_Robot != null && m_Robot.m_IsConnected)
                 {
+                    const short ReadLen = RobotBase.MODBUS_RD_LEN;
                     Array.Clear(m_RobotRead, 0, m_RobotRead.Length);
-                    m_Robot.ReadMulitModbus(RobotBase.MODBUS_ADDR, RobotBase.COM_LEN, ref m_RobotRead);
-                    
+                    m_Robot.ReadMulitModbus(RobotBase.MODBUS_ADDR, ReadLen, ref m_RobotRead);
+
                     //校验协议，并给DataStruct.SysStat中的各状态赋值
+                    if ((m_RobotRead[0] == 0x7e) && (m_RobotRead[ReadLen - 1] == 0x0d) 
+                        && (m_RobotRead[1] == 0x54) && (m_RobotRead[2] == 0x44) && (m_RobotRead[3] == 0x06) && (m_RobotRead[4] == 0x01))
+                    {
+                        short Io = m_RobotRead[5];
+                        short IoState = m_RobotRead[6];
+                        switch (Io)
+                        {
+                            case 0x03: //吸嘴真空检测
+                                {
+                                    if (IoState == 0x01)  
+                                        DataStruct.SysStat.RobotVacuoCheck = true;
+                                    else
+                                        DataStruct.SysStat.RobotVacuoCheck = false;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
 
                 if (m_RFID != null && m_RFID.m_IsConnected)
@@ -102,7 +130,7 @@ namespace RobotWorkstation
                     }                      
                 }
 
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
 
             m_ShouldExit = false;
@@ -121,8 +149,7 @@ namespace RobotWorkstation
                         if (Start)
                         {
                             m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
-                        }
-                            
+                        }                            
                     }break;
                 case AutoRunAction.AutoRunGetGrapCoords:        //获得抓取坐标
                     {
@@ -135,11 +162,8 @@ namespace RobotWorkstation
                         double rz = 0;
 
                         //检查坐标范围,正确则Coords = true
-                        if (true)
-                        {
-                            m_Robot.SetGrapPointCoords(x, y, z, rz);
-                            Coords = true;
-                        }
+                        m_Robot.SetGrapPointCoords(x, y, z, rz);
+                        Coords = true;
 
                         if (Coords)
                             m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;
@@ -151,8 +175,9 @@ namespace RobotWorkstation
                     {
                         //移动到指定位置抓手气缸进到位，后吸起器件，上位机发指令，机械臂脚本解析，执行动作
                         //m_IO.SetRobotIo();
+                        m_Robot.RunAction((short)RobotAction.Action_Grap);
 
-                        //吸嘴真空检查是否真的抓取成功 Grap = true
+                        //吸嘴真空检查，true为吸气抓取，false 为放气放下
                         if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
                             m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
                         else
@@ -160,40 +185,36 @@ namespace RobotWorkstation
 
                     }break;
                 case AutoRunAction.AutoRunMoveToScanQRCode:     //移动到位并扫码,检查扫码格式，不正确则依然执行此动作v          
-                    {                       
-                        //移动到位
+                    {                      
+                        m_Robot.RunAction((short)RobotAction.Action_QRCodeScan);  //移动到位,读取二维码
 
-                        //读取二维码
-
-                        //检查二维码，不为None,格式正确，则ScanQRCode = true,否则重新识别
-
-                        if (m_ScanQRCode)
+                        if (m_ScanQRCode)  //二维码格式检查在QRCodeRecvData中
                             m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;
                         else
                             m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
                     }break;
-                case AutoRunAction.AutoRunMoveToPut:            //移动到位并放下，计数后开始下一件，满总数后下一步    
+                case AutoRunAction.AutoRunMoveToPut:    //移动到位并放下，计数后开始下一个，满总数后下一步    
                     {
-                        bool Put = false;
                         int TempCount = 0;
+                        m_Robot.RunAction((short)RobotAction.Action_Put);
 
-                        //放下件
-
-                        //检查真空是否真的放下，真放下则Put = true, TempCount+1;
-                        if (Put)
+                        if (!DataStruct.SysStat.RobotVacuoCheck) //检查真空是否真的放下，真放下则TempCount+1;                        
+                        {                            
                             TempCount++;
-                        else
-                            m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;
-
-                        if (TempCount >= m_OnePanelDevicesMax)
-                        {
-                            m_AutoRunAction = AutoRunAction.AutoRunTurnOverPanel;
-                            TempCount = 0;
+                            if (TempCount >= m_OnePanelDevicesMax)
+                            {
+                                m_AutoRunAction = AutoRunAction.AutoRunTurnOverPanel;
+                                TempCount = 0;
+                            }
+                            else
+                            {
+                                m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
+                            }
                         }
                         else
                         {
-                            m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
-                        }                           
+                            m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;
+                        }                                                  
                     }break;
                 case AutoRunAction.AutoRunTurnOverPanel:        //计数满则翻盘运走，从头开始
                     {

@@ -15,14 +15,15 @@ namespace RobotWorkstation
     public abstract class RobotBase
     {
         public const ushort MODBUS_ADDR = 0x1110;
-        public const short COM_LEN = 13;
+        public const short MODBUS_WR_LEN = 13;
+        public const short MODBUS_RD_LEN = 10;
         public const short TIMEOUT = 6000;  // 6000 * 10ms
         public const short MAX_GLOBAL_POINTS = 1000;  //最大1000个全局点位
 
         public const short MIN_SPEED = 0;  //最小速度
         public const short MAX_SPEED = 100;  //最大速度
         
-        public short[] m_SendBuf = new short[13];
+        public short[] m_SendBuf = new short[MODBUS_WR_LEN];
 
         public Robot m_Robot = new Robot();
         public bool m_IsConnected = false;

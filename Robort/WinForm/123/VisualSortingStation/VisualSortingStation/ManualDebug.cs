@@ -528,7 +528,7 @@ namespace RobotWorkstation
             }
 
            
-            if (m_QRCode != null)
+            if (m_QRCode != null && m_QRCode.m_IsConnect)
             {
                 lock (this)
                 {
@@ -572,8 +572,6 @@ namespace RobotWorkstation
             PageRobotTestToolFrame.Parent = null;
             PageRobotTestWorkSpace.Parent = null;
             ComBoxRobotActions.SelectedIndex = 0;
-
-            m_ManualRobot.InitRobot();  //台达机械臂
         }
 
         public void InitCamera()
@@ -668,7 +666,7 @@ namespace RobotWorkstation
                     break;
                 case 3:  //二维码读码器
                     {
-                        if (m_QRCode.QRCodeConnect)
+                        if (m_QRCode.m_IsConnect)
                         {
                             ComBoxQRCodeConnect.Enabled = false;
                             ComBoxQRCodeDisconnect.Enabled = true;
@@ -958,7 +956,7 @@ namespace RobotWorkstation
 
         private void ComBoxQRCodeConnect_Click(object sender, EventArgs e)
         {
-            if (!m_QRCode.QRCodeConnect)
+            if (!m_QRCode.m_IsConnect)
             {
                 string Port = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
                 string BandRate = (string)ComBoxQRCodeBandRate.Items[ComBoxQRCodeBandRate.SelectedIndex];
@@ -969,7 +967,7 @@ namespace RobotWorkstation
                 m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
                 m_QRCode.QRCodeInit();
 
-                if (m_QRCode.QRCodeConnect)
+                if (m_QRCode.m_IsConnect)
                 {
                     ComBoxQRCodeConnect.Enabled = false;
                     ComBoxQRCodeDisconnect.Enabled = true;
