@@ -17,7 +17,7 @@ namespace RobotWorkstation
 
         public void InitTcpParam()
         {
-            nIpAddress = IPAddress.Parse("127.0.0.1");
+            nIpAddress = IPAddress.Parse("192.168.81.11");
             nPort = 20000;
         }
     }
@@ -41,8 +41,13 @@ namespace RobotWorkstation
     {
         public TcpClient Client;
         public TcpMeasType MeasType;
-        public int MeasCode;
-        public byte[] Param;       
+        public byte MeasCode;
+        public byte[] Param = new byte[Message.MessageLength];
+
+        public TcpMeas()
+        {
+            Array.Clear(Param, 0, Param.Length);
+        }
     }
 
     //Tcp Client Class
@@ -54,11 +59,9 @@ namespace RobotWorkstation
         private TcpClient m_TcpClient = null;
         public TcpParam m_TcpParam;
 
-        private bool Connected = false;
         private int RecvTimeOut = 100;
         private int SendTimeOut = 100;        
         public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
-        public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
 
         private Byte[] m_RecvBytes = new Byte[8192];
         public const int m_SendBytesMax = 1024;
@@ -129,20 +132,20 @@ namespace RobotWorkstation
         {
             NetworkStream stream = (NetworkStream)(Client);
             int RecvCount = 0;
+            int parseCount = 0;  //解析计数器
+            byte[] arrayParse = new byte[Message.MessageLength];  //解析缓冲区
+
             while (true)
             {
                 try
                 {
                     while ((RecvCount = stream.Read(m_RecvBytes, 0, m_RecvBytes.Length)) != 0)
                     {
-                        bool Process = false;
                         lock (this)
                         {
-                            //主线程创建1个任务来处理客户端接收到的数据
-                            Process = ProcessAndAddMessageToQueue(m_RecvBytes);                           
-                            if(Process)
-                                stream.Write(m_SendBack, 0, m_SendBack.Length);
-                        }                                         
+                            //主线程创建消息处理的线程处理消息
+                            ParseAndAddMessageToQueue(m_RecvBytes, RecvCount, m_TcpClient, ref parseCount, arrayParse);
+                        }
                     }
 
                     // Shutdown and end connection
@@ -150,37 +153,74 @@ namespace RobotWorkstation
                     m_TcpClient.Close();
                     break;
                 }
-                catch (Exception e)
+                catch 
                 {
-                    MessageBox.Show(e.Message);
+                    //MessageBox.Show(e.Message);
                     continue;
                 }
             }
         }
 
-        public bool ProcessAndAddMessageToQueue(byte[] RecvBytes)
+        public void ParseAndAddMessageToQueue(byte[] RecvBytes, int RecvCount, TcpClient Client, ref int parseCount, byte[] arrayParse)
         {
-            bool Re = false;
-            bool CheckData = false;
-            TcpMeasType MeasType = TcpMeasType.MEAS_TYPE_NONE;
-            int MeasCode = 0;
-        
-            CheckData = Message.CheckMessage(RecvBytes);  //根据制定的协议校验数据         
-            if (CheckData)  //分析数据，把数据添加到队列m_TcpMeas
+            //匹配比较数组, -1表示不需要比较,忽略
+            int[] arrayCompare = new int[Message.MessageLength]
             {
-                TcpMeas TempMeas = new TcpMeas();
-                TempMeas.Client = m_TcpClient;
-                TempMeas.MeasType = MeasType;
-                TempMeas.MeasCode = MeasCode;
-                TempMeas.Param = System.Text.Encoding.ASCII.GetBytes("Just for test !");
+                Message.MessStartCode, Message.MessVID1, Message.MessVID2, -1, Message.MessRightState, -1, -1, -1,
+                -1, -1, -1, -1, -1, -1, -1, -1,
+                -1, -1, -1, -1, -1, -1, -1, -1,
+                -1, -1, -1, -1, -1, -1, -1, Message.MessEndCode,
+            };
 
-                if (TempMeas != null)
-                    m_RecvMeasQueue.Enqueue(TempMeas);
+            for (int i = 0; i < RecvCount; i++)
+            {
+                if (arrayCompare[parseCount] != -1)  //需要匹配
+                {
+                    if (RecvBytes[i] == arrayCompare[parseCount])  //相等
+                    {
+                        arrayParse[parseCount++] = RecvBytes[i];
+                    }
+                    else  //不相等,复位计数器
+                    {
+                        parseCount = 0;
+                    }
+                }
+                else  //不需要比较,直接赋值,并更新计数器
+                {
+                    arrayParse[parseCount++] = RecvBytes[i];
+                }
 
-                Re = true;
+                if (parseCount >= Message.MessageLength)
+                {
+                    parseCount = 0; //和校验
+
+                    if (MyMath.CheckSum(arrayParse, Message.MessageLength))  //分析数据，把数据添加到队列m_TcpMeas
+                    {
+                        TcpMeasType MeasType = TcpMeasType.MEAS_TYPE_ARM;
+                        byte MeasCode = arrayParse[Message.MessageCommandIndex]; ;
+
+                        TcpMeas TempMeas = new TcpMeas();
+                        if (TempMeas != null)
+                        {
+                            TempMeas.Client = Client;
+                            TempMeas.MeasType = MeasType;
+                            TempMeas.MeasCode = MeasCode;
+                            Array.Copy(RecvBytes, TempMeas.Param, TempMeas.Param.Length);
+                            m_RecvMeasQueue.Enqueue(TempMeas);
+                        }
+
+                        Array.Clear(arrayParse, 0, arrayParse.Length);
+                    }
+                    else  //校验和错误,则更新错误码后发回
+                    {
+                        arrayParse[Message.MessageStateIndex] = Message.MessErrorState;
+                        using (NetworkStream stream = Client.GetStream())
+                        {
+                            stream.Write(arrayParse, 0, arrayParse.Length);
+                        }
+                    }
+                }
             }
-
-            return Re;
         }
 
         public async void ClientWrite(string line)
@@ -213,9 +253,7 @@ namespace RobotWorkstation
         private TcpListener m_TcpListener = null;
         public TcpParam m_TcpParam;
         public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
-        public byte[] m_SendBack = System.Text.Encoding.ASCII.GetBytes("Received:OK");
-        public const int m_SendBytesMax = 1024;
-
+        
         private bool m_ThreadExit = false;
         private Thread m_TcpServerListenThread = null;      
         private Byte[] m_RecvBytes = new Byte[8192];
@@ -301,20 +339,20 @@ namespace RobotWorkstation
             TcpClient CurClient = (TcpClient)Client;
             NetworkStream stream = CurClient.GetStream();
             int RecvCount = 0;
+            int parseCount = 0;  //解析计数器
+            byte[] arrayParse = new byte[Message.MessageLength];  //解析缓冲区
+
             while (true)
             {
                 try
                 {
                     while ((RecvCount = stream.Read(m_RecvBytes, 0, m_RecvBytes.Length)) != 0)
                     {
-                        bool Process = false;
                         lock (this)
                         {
                             //接收到数据之后把消息存放到消息队列，
                             //主线程创建不同的线程来分别异步的方式处理不同类型的消息
-                            Process = ProcessAndAddMessageToQueue(m_RecvBytes, CurClient);
-                            if (Process)
-                                stream.Write(m_SendBack, 0, m_SendBack.Length);
+                            ParseAndAddMessageToQueue(m_RecvBytes, RecvCount, CurClient, ref parseCount, arrayParse);
                         }
                     }
                                       
@@ -330,30 +368,70 @@ namespace RobotWorkstation
             }
         }
 
-        public bool ProcessAndAddMessageToQueue(byte[] RecvBytes, TcpClient Client)
+        public void ParseAndAddMessageToQueue(byte[] RecvBytes, int RecvCount, TcpClient Client, ref int parseCount, byte[] arrayParse)
         {
-            bool Re = false;
-            bool CheckData = false;
-            TcpMeasType MeasType = TcpMeasType.MEAS_TYPE_NONE;
-            int MeasCode = 0;
-
-            //根据制定的协议校验数据
-            CheckData = Message.CheckMessage(RecvBytes);            
-            if (CheckData)  //分析数据，把数据添加到队列m_TcpMeas
+            //匹配比较数组, -1表示不需要比较,忽略
+            int[] arrayCompare = new int[Message.MessageLength]
             {
-                TcpMeas TempMeas = new TcpMeas();
-                TempMeas.Client = Client;
-                TempMeas.MeasType = MeasType;
-                TempMeas.MeasCode = MeasCode;
-                TempMeas.Param = System.Text.Encoding.ASCII.GetBytes("Just for test !");
+                Message.MessStartCode, Message.MessVID1, Message.MessVID2, -1, Message.MessRightState, -1, Message.MessStationCode, -1,
+                -1, -1, -1, -1, -1, -1, -1, -1,
+                -1, -1, -1, -1, -1, -1, -1, -1,
+                -1, -1, -1, -1, -1, -1, -1, Message.MessEndCode,
+            };
 
-                if (TempMeas != null)
-                    m_RecvMeasQueue.Enqueue(TempMeas);
+            for (int i = 0; i < RecvCount; i++)
+            {
+                if (arrayCompare[parseCount] != -1)  //需要匹配
+                {
+                    if (RecvBytes[i] == arrayCompare[parseCount])  //相等
+                    {
+                        arrayParse[parseCount++] = RecvBytes[i];
+                    }
+                    else  //不相等,复位计数器
+                    {
+                        parseCount = 0;
+                    }
+                }
+                else  //不需要比较,直接赋值,并更新计数器
+                {
+                    arrayParse[parseCount++] = RecvBytes[i];
+                }
 
-                Re = true;
+                if (parseCount >= Message.MessageLength)
+                {                   
+                    parseCount = 0; //和校验
+
+                    if (MyMath.CheckSum(arrayParse, Message.MessageLength))  //分析数据，把数据添加到队列m_TcpMeas
+                    {
+                        TcpMeasType MeasType = TcpMeasType.MEAS_TYPE_NONE;
+                        byte MeasCode = 0;
+
+                        if (arrayParse[Message.MessageCommandIndex] == (byte)Message.MessageCodePLC.GetCurStationState)  //根据命令码区分消息类型
+                        {
+                            MeasType = TcpMeasType.MEAS_TYPE_PLC;
+                            MeasCode = arrayParse[Message.MessageCommandIndex];
+                        }
+
+                        TcpMeas TempMeas = new TcpMeas();
+                        if (TempMeas != null)
+                        {
+                            TempMeas.Client = Client;
+                            TempMeas.MeasType = MeasType;
+                            TempMeas.MeasCode = MeasCode;
+                            Array.Copy(RecvBytes, TempMeas.Param, TempMeas.Param.Length);                                           
+                            m_RecvMeasQueue.Enqueue(TempMeas);
+                        }
+                    }
+                    else  //校验和错误,则更新错误码后发回
+                    {
+                        arrayParse[Message.MessageStateIndex] = Message.MessErrorState;
+                        using (NetworkStream stream = Client.GetStream())
+                        {
+                            stream.Write(arrayParse, 0, arrayParse.Length);
+                        }                                                    
+                    }
+                }
             }
-
-            return Re;
         }
     }
 }

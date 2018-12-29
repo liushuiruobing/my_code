@@ -163,6 +163,7 @@
     <Compile Include="Message.cs" />
     <Compile Include="MotionControl.cs" />
     <Compile Include="MultiLanguage.cs" />
+    <Compile Include="MyMath.cs" />
     <Compile Include="NetShareClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

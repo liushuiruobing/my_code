@@ -12,11 +12,13 @@ namespace RobotWorkstation
         IOTypeKeyRun = 0,
         IOTypeKeyPause,
         IOTypeKeyStop,
+        IOTypeKeyScram,
         IOTypeKeyReset,
-        IOTypeEmptyPanelUpArrive,       //空盘气缸上升到位
-        IOTypeEmptyPanelDownArrive,     //空盘气缸下降到位
-        IOTypeOverturnPanelArrive,      //翻转托盘到位
-      
+        IOTypeEmptyPlateUpArrive,       //空盘气缸上升到位
+        IOTypeEmptyPlateDownArrive,     //空盘气缸下降到位
+        IOTypeOverturnPlateArrive,      //翻转托盘到位
+        IOTypeReceivePlateArrive,
+
         //Out
         IOTypeLedRed,
         IOTypeLedYellow,
@@ -25,6 +27,13 @@ namespace RobotWorkstation
         IOTypeBeep,
         IOTypeEmptyPanelUp,         //空盘气缸上升
         IOTypeEmptyPanelDown,       //空盘气缸下降
+    }
+
+    public enum RobotIo  //要与实际的接线对应
+    {
+        RobotIoCylGoArrive = 0x01,  //抓手气缸进到位
+        RobotIoCylBackArrive,       //抓手气缸退到位
+        RobotIoVacuoCheck           //吸嘴真空检测
     }
 
     public enum IOValue

@@ -45,7 +45,7 @@ namespace RobotWorkstation
         public string m_StrReadTemp = null;
         public Queue<string> m_QueueRead = new Queue<string>();
         private System.Timers.Timer m_CheckStatusTimer = new System.Timers.Timer();
-        private readonly ushort m_Ch0Addr = 2048;
+        //private readonly ushort m_Ch0Addr = 2048;
 
         public bool m_IsConnected
         {

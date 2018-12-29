@@ -33,7 +33,6 @@ namespace RobotWorkstation
         //线程
         private Thread m_MainThread = null;
         private Thread m_MeassageProcessThread = null;
-        private Thread m_RobotAndRfidListeningThread = null;
 
         //防止闪屏
         protected override CreateParams CreateParams
@@ -53,9 +52,12 @@ namespace RobotWorkstation
             this.CenterToScreen();           
             Profile.LoadConfigFile();
 
-            //检查各模块的状态并启动主线程
-            InitWorkstatiionAndStart();
+            //检查各模块的状态
             InitTcp();
+            InitWorkstatiionAndStart();
+
+            //创建所有线程
+            InitAndCreateAllThread();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -249,13 +251,13 @@ namespace RobotWorkstation
         {
             SysAlarm sysAlarm = SysAlarm.GetInstance();
             m_Robot = RobotDevice.GetInstance();  //机械臂
-            bool Re = m_Robot.InitRobot();
-            if (!Re)
-            {
-                DataStruct.SysStat.Robot = 1;
-                sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
-                MessageBox.Show("机械臂初始化错误！");
-            }
+            //bool Re = m_Robot.InitRobot();
+            //if (!Re)
+            //{
+            //    DataStruct.SysStat.Robot = 1;
+            //    sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
+            //    MessageBox.Show("机械臂初始化错误！");
+            //}
 
             //m_Camera = VisionCamera.GetInstance();  //视觉相机  
             //Re = m_Camera.InitCamera();
@@ -273,22 +275,13 @@ namespace RobotWorkstation
             //    sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
             //}
 
-            m_QRCode = QRCode.GetInstance(); //二维码
-            Re = m_QRCode.QRCodeInit();
-            if (!Re)
-            {
-                DataStruct.SysStat.QRCode = 1;
-                sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
-            }
-
-            //创建Robot和RFID的侦听线程
-            m_RobotAndRfidListeningThread = new Thread(new ThreadStart(VisualSortingStation.RobotAndRfidListeningThreadFunc));
-            m_RobotAndRfidListeningThread.IsBackground = true;
-            m_RobotAndRfidListeningThread.Start();
-
-            m_MainThread = new Thread(new ThreadStart(VisualSortingStation.MainThreadFunc));
-            m_MainThread.IsBackground = true;
-            m_MainThread.Start();
+            //m_QRCode = QRCode.GetInstance(); //二维码
+            //Re = m_QRCode.QRCodeInit();
+            //if (!Re)
+            //{
+            //    DataStruct.SysStat.QRCode = 1;
+            //    sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
+            //}
         }
 
         public void InitTcp()
@@ -300,7 +293,7 @@ namespace RobotWorkstation
                 m_MyTcpClient.InitClient();
 
                 //从配置中获取单片机控制板的IP和端口号
-                m_MyTcpClient.CreateConnect(IPAddress.Parse("192.168.81.109"), 5025);
+                m_MyTcpClient.CreateConnect(IPAddress.Parse("192.168.81.114"), 8080);
             }
 
             m_MyTcpServer = MyTcpServer.GetInstance();
@@ -308,13 +301,19 @@ namespace RobotWorkstation
             {
                 m_MyTcpServer.CreatServer();
             }
+        }
 
-            if ((m_MyTcpClient != null && m_MyTcpClient.IsConnected) || m_MyTcpServer != null)
-            {
-                m_MeassageProcessThread = new Thread(new ThreadStart(VisualSortingStation.MessageProcessThreadFunc));
-                m_MeassageProcessThread.IsBackground = true;
-                m_MeassageProcessThread.Start();
-            }
+        public void InitAndCreateAllThread()
+        {
+            //创建主线程
+            m_MainThread = new Thread(new ThreadStart(VisualSortingStation.MainThreadFunc));
+            m_MainThread.IsBackground = true;
+            m_MainThread.Start();
+
+            //创建消息处理线程
+            m_MeassageProcessThread = new Thread(new ThreadStart(VisualSortingStation.MessageProcessThreadFunc));
+            m_MeassageProcessThread.IsBackground = true;
+            m_MeassageProcessThread.Start();
         }
     }
 }

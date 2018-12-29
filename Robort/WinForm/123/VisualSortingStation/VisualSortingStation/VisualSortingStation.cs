@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +25,20 @@ namespace RobotWorkstation
         AutoRunMoveToPut,             //移动到位并放下，计数后开始下一件，满总数后下一步
         AutoRunTurnOverPanel,         //计数满则翻盘运走，从头开始
 
+    }
+
+    public enum StationState
+    {
+        Stop = 0x00,
+        Run,
+        Pause,
+        Scram  //急停
+    }
+
+    public enum PlateState
+    {
+        NoPlate = 0x00,
+        HavePlate,
     }
 
     public class VisualSortingStation  //视觉分拣业务类
@@ -81,74 +96,178 @@ namespace RobotWorkstation
         {
             while (!m_ShouldExit)
             {
+                //处理Robot消息
+                if (m_Robot != null && m_Robot.m_IsConnected)
+                    ProcessRobotMessage();
+
+                //处理RFID的数据
+                if (m_RFID != null && m_RFID.m_IsConnected)
+                    ProcessRFIDMessage();
+
                 //作为客户端处理和单片机控制板的消息队列
                 if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
-                {
-                    while(m_MyTcpClient.m_RecvMeasQueue.Count != 0)
-                    {
-                        TcpMeas tempMeas = m_MyTcpClient.m_RecvMeasQueue.Dequeue();
-                        //解析消息 并作相应的处理
-                    }
-                }
+                    ProcessTcpClientMessage();
 
                 //作为服务端处理和MIS及PLC之间的消息
                 if (m_MyTcpServer != null)
-                {
-                    while (m_MyTcpServer.m_RecvMeasQueue.Count != 0)
-                    {
-                        TcpMeas tempMeas = m_MyTcpServer.m_RecvMeasQueue.Dequeue();
-                        //解析消息 并作相应的处理
-                    }
-                }
+                    ProcessTcpServerMessage();
+
                 Thread.Sleep(100);
             }
         }
 
-        //处理Robot和Rfid的消息，两个都是Modbus通信
-        public static void RobotAndRfidListeningThreadFunc()
+        public static void ProcessRobotMessage()
         {
-            while (!m_ShouldExit)
+            if (m_Robot != null && m_Robot.m_IsConnected)
             {
-                if (m_Robot != null && m_Robot.m_IsConnected)
-                {
-                    const short ReadLen = RobotBase.MODBUS_RD_LEN;
-                    Array.Clear(m_RobotRead, 0, m_RobotRead.Length);
-                    m_Robot.ReadMulitModbus(RobotBase.MODBUS_ADDR, ReadLen, ref m_RobotRead);
+                const short ReadLen = RobotBase.MODBUS_RD_LEN;
+                Array.Clear(m_RobotRead, 0, m_RobotRead.Length);
+                m_Robot.ReadMulitModbus(RobotBase.MODBUS_ADDR, ReadLen, ref m_RobotRead);
 
-                    //校验协议，并给DataStruct.SysStat中的各状态赋值
-                    if ((m_RobotRead[0] == Message.MessStartCode) && (m_RobotRead[ReadLen - 1] == Message.MessEndCode) 
-                        && (m_RobotRead[1] == Message.MessRobotVID1) && (m_RobotRead[2] == Message.MessRobotVID2) && (m_RobotRead[3] == Message.MessRobotAxle6) && (m_RobotRead[4] == Message.MessRobotAddr))
+                //校验协议，并给DataStruct.SysStat中的各状态赋值
+                if (Message.CheckRobotMessage(m_RobotRead, ReadLen))
+                {
+                    RobotIo Io = (RobotIo)m_RobotRead[5];
+                    IOValue IoState = (IOValue)m_RobotRead[6];
+                    switch (Io)
                     {
-                        short Io = m_RobotRead[5];
-                        short IoState = m_RobotRead[6];
-                        switch (Io)
+                        case RobotIo.RobotIoCylGoArrive: //抓手气缸进到位，正确在机械臂处理，错误在上位机处理进行重试
+                            {
+                                if (IoState == IOValue.IOValueHigh)
+                                    DataStruct.SysStat.RobotCylGoArrive = true;
+                                else
+                                    DataStruct.SysStat.RobotCylGoArrive = false;
+                            }
+                            break;
+                        case RobotIo.RobotIoCylBackArrive: //抓手气缸退到位，正确在机械臂处理，错误在上位机处理进行重试
+                            {
+                                if (IoState == IOValue.IOValueHigh)
+                                    DataStruct.SysStat.RobotCylBackArrive = true;
+                                else
+                                    DataStruct.SysStat.RobotCylBackArrive = false;
+                            }
+                            break;
+                        case RobotIo.RobotIoVacuoCheck: //吸嘴真空检测
+                            {
+                                if (IoState == IOValue.IOValueHigh)
+                                    DataStruct.SysStat.RobotVacuoCheck = true;
+                                else
+                                    DataStruct.SysStat.RobotVacuoCheck = false;
+                            }break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        public static void ProcessRFIDMessage()
+        {
+            if (m_RFID != null && m_RFID.m_IsConnected)
+            {
+                m_RFID.Read(m_RFID.m_CurCh);
+                Thread.Sleep(1);
+                if (m_RFID.m_QueueRead.Count > 0)
+                {
+                    m_RfidRead = m_RFID.m_QueueRead.Dequeue();  //读取到盘，并设置盘到位
+
+                    //检查数据格式正确，则设置标志
+                    DataStruct.SysStat.ReceivePlateArrive = true;
+                }
+            }
+        }
+
+        public static void ProcessTcpClientMessage()
+        {
+            if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
+            {
+                while (m_MyTcpClient.m_RecvMeasQueue.Count != 0)
+                {
+                    TcpMeas TempMeas = m_MyTcpClient.m_RecvMeasQueue.Dequeue();
+                    if (TempMeas != null && TempMeas.Client != null)
+                    {
+                        if (TempMeas.MeasType == TcpMeasType.MEAS_TYPE_ARM)  // 处理和ARM之间的消息
                         {
-                            case 0x03: //吸嘴真空检测
-                                {
-                                    if (IoState == 0x01)  
-                                        DataStruct.SysStat.RobotVacuoCheck = true;
-                                    else
-                                        DataStruct.SysStat.RobotVacuoCheck = false;
-                                }
-                                break;
-                            default:
-                                break;
+                            ProcessArmMessage(TempMeas);
                         }
                     }
                 }
+            }
+        }
 
-                if (m_RFID != null && m_RFID.m_IsConnected)
+        public static void ProcessTcpServerMessage()
+        {
+            if (m_MyTcpServer != null)
+            {
+                while (m_MyTcpServer.m_RecvMeasQueue.Count != 0)
                 {
-                    m_RFID.Read(m_RFID.m_CurCh);
-                    Thread.Sleep(1);
-                    if (m_RFID.m_QueueRead.Count > 0)
+                    TcpMeas TempMeas = m_MyTcpServer.m_RecvMeasQueue.Dequeue();
+                    if (TempMeas != null && TempMeas.Client != null)
                     {
-                        m_RfidRead = m_RFID.m_QueueRead.Dequeue();  //读取到盘，并设置盘到位
-                        DataStruct.SysStat.ReceivePanelArrive = true;
-                    }                      
-                }
+                        if (TempMeas.MeasType == TcpMeasType.MEAS_TYPE_PLC)  // 处理和PLC之间的消息
+                        {
+                            if (TempMeas.MeasCode == (byte)Message.MessageCodePLC.GetCurStationState)
+                            {
+                                using (NetworkStream stream = TempMeas.Client.GetStream())
+                                {
+                                    TempMeas.Param[7] = GetStationCurState();       //工作站运行状态
+                                    TempMeas.Param[8] = GetStationPlateState();     //物料盘的状态
+                                    TempMeas.Param[TempMeas.Param.Length - 2] = MyMath.CalculateSum(TempMeas.Param, TempMeas.Param.Length); //校验和
+                                    stream.Write(TempMeas.Param, 0, TempMeas.Param.Length);
+                                }
+                            }
+                        }
+                        else if (TempMeas.MeasType == TcpMeasType.MEAS_TYPE_MIS)  //处理和MIS之间的消息
+                        {
 
-                Thread.Sleep(100);
+                        }
+                    }
+                }
+            }
+        }
+
+        //处理和单片机控制板的消息
+        public static void ProcessArmMessage(TcpMeas meassage)
+        {
+            if (meassage != null)
+            {
+                Message.MessageCodeARM Code = (Message.MessageCodeARM)meassage.MeasCode;
+                switch (Code)
+                {
+                    case Message.MessageCodeARM.GetOutIo:   //读取输出口缓冲区数据
+                        {
+                            byte data1 = meassage.Param[Message.MessageCommandIndex + 1];
+                            byte data2 = meassage.Param[Message.MessageCommandIndex + 2];
+                            byte data3 = meassage.Param[Message.MessageCommandIndex + 3];
+                            byte data4 = meassage.Param[Message.MessageCommandIndex + 4];
+
+                            //根据实际的接线解析所需IO的状态,对SysStat中的相应标志进行设置
+                            /*
+                            //气缸
+                            DataStruct.SysStat.EmptyPlateUp;            //空盘气缸上升
+                            DataStruct.SysStat.EmptyPlateUpArrive;      //空盘气缸上升到位
+                            DataStruct.SysStat.EmptyPlateDown;          //空盘气缸下降
+                            DataStruct.SysStat.EmptyPlateDownArrive;    //空盘气缸下降到位
+
+                            //托盘
+                            DataStruct.SysStat.OverturnPlateArrive;     //翻转托盘到位
+                            DataStruct.SysStat.ReceivePlateArrive;      //翻转后接收托盘到位
+                            */
+                        }
+                        break;
+                    case Message.MessageCodeARM.GetInIo:    //读取输入口的IO
+                        {                         
+                            byte data1 = meassage.Param[Message.MessageCommandIndex + 1];
+                            byte data2 = meassage.Param[Message.MessageCommandIndex + 2];
+                            byte data3 = meassage.Param[Message.MessageCommandIndex + 3];
+                            byte data4 = meassage.Param[Message.MessageCommandIndex + 4];
+
+                            //根据实际的接线解析所需IO的状态,对SysStat中的相应标志进行设置
+
+                        }
+                        break;
+                    default: break;
+                }
             }
         }
 
@@ -261,6 +380,32 @@ namespace RobotWorkstation
                 default:
                     break;
             }
+        }
+
+        //获取工作站当前的运行状态
+        public static byte GetStationCurState()    
+        {
+            StationState State = StationState.Stop;
+
+            if (DataStruct.SysStat.Run)
+                State = StationState.Run;
+            else if (DataStruct.SysStat.Pause)
+                State = StationState.Pause;
+            else if (DataStruct.SysStat.Stop)
+                State = StationState.Stop;
+            else if (DataStruct.SysStat.Scram)
+                State = StationState.Scram;
+
+            return (byte)State;
+        }
+
+        public static byte GetStationPlateState()
+        {
+            PlateState State = PlateState.NoPlate;
+            if (DataStruct.SysStat.ReceivePlateArrive)
+                State = PlateState.HavePlate;
+
+            return (byte)State;
         }
 
         // 0 -- run , 1 -- stop , 2 -- pause

@@ -20,6 +20,7 @@ namespace RobotWorkstation
             public static bool Run;
             public static bool Pause;
             public static bool Stop;
+            public static bool Scram; //急停
             public static bool Reset;
 
             //塔灯
@@ -32,19 +33,19 @@ namespace RobotWorkstation
             public static bool Beep;
 
             //气缸
-            public static bool EmptyPanelUp;            //空盘气缸上升
-            public static bool EmptyPanelUpArrive;      //空盘气缸上升到位
-            public static bool EmptyPanelDown;          //空盘气缸下降
-            public static bool EmptyPanelDownArrive;    //空盘气缸下降到位
+            public static bool EmptyPlateUp;            //空盘气缸上升
+            public static bool EmptyPlateUpArrive;      //空盘气缸上升到位
+            public static bool EmptyPlateDown;          //空盘气缸下降
+            public static bool EmptyPlateDownArrive;    //空盘气缸下降到位
 
             //托盘
-            public static bool OverturnPanelArrive;     //翻转托盘到位
-            public static bool ReceivePanelArrive;      //翻转后接收托盘到位
+            public static bool OverturnPlateArrive;     //翻转托盘到位
+            public static bool ReceivePlateArrive;      //翻转后接收托盘到位
 
             //机械臂
             //public static bool RobotCylinder;           //机械臂抓手气缸
-            //public static bool RobotCylGoArrive;        //机械臂抓手气缸进到位
-            //public static bool RobotCylBackArrive;      //机械臂抓手气缸退到位
+            public static bool RobotCylGoArrive;        //机械臂抓手气缸进到位
+            public static bool RobotCylBackArrive;      //机械臂抓手气缸退到位
             //public static bool RobotNozzleInhale;       //吸嘴吸
             //public static bool RobotNozzleBlow;         //吸嘴吹
             public static bool RobotVacuoCheck;         //真空检测
@@ -71,6 +72,7 @@ namespace RobotWorkstation
             SysStat.Run = false;
             SysStat.Pause = false;
             SysStat.Stop = true;
+            SysStat.Scram = false;
             SysStat.Reset = false;
 
             SysStat.RedAlarm = false;
@@ -79,17 +81,17 @@ namespace RobotWorkstation
             SysStat.LedBlue = false;
             SysStat.Beep = false;
 
-            SysStat.EmptyPanelUp = false;
-            SysStat.EmptyPanelUpArrive = false;
-            SysStat.EmptyPanelDown = false;
-            SysStat.EmptyPanelDownArrive = false;
+            SysStat.EmptyPlateUp = false;
+            SysStat.EmptyPlateUpArrive = false;
+            SysStat.EmptyPlateDown = false;
+            SysStat.EmptyPlateDownArrive = false;
 
-            SysStat.OverturnPanelArrive = false;
-            SysStat.ReceivePanelArrive = false;
+            SysStat.OverturnPlateArrive = false;
+            SysStat.ReceivePlateArrive = false;
 
             //SysStat.RobotCylinder = false;
-            //SysStat.RobotCylGoArrive = false;
-            //SysStat.RobotCylBackArrive = false;
+            SysStat.RobotCylGoArrive = false;
+            SysStat.RobotCylBackArrive = false;
             //SysStat.RobotNozzleInhale = false;
             //SysStat.RobotNozzleBlow = false;
             SysStat.RobotVacuoCheck = false;
