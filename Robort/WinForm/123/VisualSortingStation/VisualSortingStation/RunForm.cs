@@ -188,7 +188,6 @@ namespace RobotWorkstation
 
             //轮询单片机的状态
             m_IO.ReadControlBoardIo((byte)Message.MessageCodeARM.GetInIo, ref SendMeas);
-            m_IO.SetControlBoardIo((IO_OUT)12, IOValue.IOValueHigh);
         }
 
     }

@@ -83,7 +83,7 @@ namespace RobotWorkstation
             int data4 = 32;
 
             //给单片机控制板发送消息
-            if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
+            //if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
             {
                 byte[] SendMeas = new byte[Message.MessageLength];
                 const int CommandIndex = Message.MessageCommandIndex;
@@ -105,29 +105,35 @@ namespace RobotWorkstation
                 int TempIo = (int)Io;
                 int ControlIndex = CommandIndex + 1;
                 byte ControlValue = 0;
+                byte IoData = 0;
+
                 if (TempIo <= data1)
                 {
                     ControlIndex = CommandIndex + 1;
-                    ControlValue = (byte)(TempIo);
+                    ControlValue = (byte)(0x01 << (TempIo - 1));
+                    IoData = (byte)(((byte)Value) << (TempIo - 1));
                 }
                 else if (TempIo > data1 && TempIo <= data2)
                 {
                     ControlIndex = CommandIndex + 2;
-                    ControlValue = (byte)(TempIo - data1);
+                    ControlValue = (byte)(0x01 << (TempIo - data1 - 1));
+                    IoData = (byte)(((byte)Value) << (TempIo - data1 - 1));
                 }
                 else if (TempIo > data2 && TempIo <= data3)
                 {
                     ControlIndex = CommandIndex + 3;
-                    ControlValue = (byte)(TempIo - data2);
+                    ControlValue = (byte)(0x01 << (TempIo - data2 - 1));
+                    IoData = (byte)(((byte)Value) << (TempIo - data2 - 1));
                 }
                 else if (TempIo > data3 && TempIo <= data4)
                 {
                     ControlIndex = CommandIndex + 4;
-                    ControlValue = (byte)(TempIo - data3);
+                    ControlValue = (byte)(0x01 << (TempIo - data3 - 1));
+                    IoData = (byte)(((byte)Value) << (TempIo - data3 - 1));
                 }
 
                 SendMeas[ControlIndex] = ControlValue;
-                SendMeas[ControlIndex + 4] = (byte)((byte)Value << ControlValue);
+                SendMeas[ControlIndex + 4] = IoData;
 
                 SendMeas[Message.MessageLength - 1] = Message.MessEndCode;
 
