@@ -76,11 +76,11 @@ namespace RobotWorkstation
             //改变所有打开窗体的语言
             foreach (Form form in Application.OpenForms)
             {
-                ChangeOpenedForm(form);
+                ChangeOpenedFormLanguage(form);
             }
         }
 
-        private void ChangeOpenedForm(Form form)
+        private void ChangeOpenedFormLanguage(Form form)
         {
             switch (form.Name)
             {

@@ -11,27 +11,73 @@ namespace RobotWorkstation
     //配置类
     public class Configuration
     {
-        //机械臂
+        //Visual Sorting Station
+        public string VisualStationClientIp;
+        public string VisualStationServerIp;
+        public int VisualStationServerPort;
+
+        //Robot
         public string RobotIp;
         public int RobotMoveSpeed;
         public int RobotMoveDistance;
         public int RobotMoveDistanceUm;
 
-        //相机
+        //Camera
+        public string CameraIp;
         public float CameraExposure;
         public float CameraGain;
         public float CameraFramRate;
 
+        //QRCode
+        public string QRCodePort;
+        public string QRCodeBandRate;
+        public string QRCodeDataBits;
+        public string QRCodeStopBits;
+        public string QRCodeParity;
+
+        //RFID
+        public string RfidIp;
+        public int RfidCh;
+        public string RfidSn;
+
+        //Controler Arm
+        public string ControlerArmIp;
+        public int ControlerArmPort;
+
         public Configuration()
         {
-            RobotIp = "192.168.1.1";
+            //Visual Sorting Station
+            VisualStationClientIp = "192.168.1.40";
+            VisualStationServerIp = "192.168.1.10";
+            VisualStationServerPort = 20000;
+
+            //Robot
+            RobotIp = "192.168.1.48";
             RobotMoveSpeed = 20;
             RobotMoveDistance = 1000;
             RobotMoveDistanceUm = 1000;
 
+            //Camera
+            CameraIp = "192.168.1.46";
             CameraExposure = 1000;
             CameraGain = 1000;
             CameraFramRate = 1000;
+
+            //QRCode
+            QRCodePort = "COM1";
+            QRCodeBandRate = "115200";
+            QRCodeDataBits = "8";
+            QRCodeStopBits = "1";
+            QRCodeParity = "None";
+
+            //RFID
+            RfidIp = "192.168.1.24";
+            RfidCh = 0;
+            RfidSn = "00000000000000001";
+
+            //Controler Arm
+            ControlerArmIp = "192.168.1.42";
+            ControlerArmPort = 20001;
         }
     }
 
@@ -45,16 +91,14 @@ namespace RobotWorkstation
         {
             string strFile = AppDomain.CurrentDomain.BaseDirectory + m_FileName;
             if (!File.Exists(strFile))
-            {
-                return;
-            }
+                return;           
 
             using (FileStream fStream = new FileStream(strFile, FileMode.Open))
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Configuration));
                 try
                 {
-                    m_Config = (Configuration)xmlSerializer.Deserialize(fStream);
+                    m_Config = xmlSerializer.Deserialize(fStream) as Configuration;
                 }
                 catch //(InvalidOperationException)
                 {
@@ -67,12 +111,7 @@ namespace RobotWorkstation
         public static void SaveConfigFile()
         {
             string strFile = AppDomain.CurrentDomain.BaseDirectory + m_FileName;
-            if (!File.Exists(strFile))
-            {
-                return;
-            }
-
-            using(FileStream fStream = new FileStream(strFile, FileMode.OpenOrCreate))
+            using(FileStream fStream = new FileStream(strFile, FileMode.Create))
             {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Configuration));
                 try

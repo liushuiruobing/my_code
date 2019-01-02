@@ -217,12 +217,11 @@
             this.CBtnRfidConnect = new RobotWorkstation.CustomButton();
             this.CBtnRfidWrite = new RobotWorkstation.CustomButton();
             this.ComBoxRfidCh = new System.Windows.Forms.ComboBox();
-            this.cTextBoxRfidSn = new RobotWorkstation.CustomTextBox();
+            this.CTextBoxRfidSn = new RobotWorkstation.CustomTextBox();
             this.customLabel45 = new RobotWorkstation.CustomLabel();
             this.CBtnRfidInit = new RobotWorkstation.CustomButton();
             this.CBtnRfidEnable = new RobotWorkstation.CustomButton();
             this.CBtnRfidDisable = new RobotWorkstation.CustomButton();
-            this.tabPagePLC = new System.Windows.Forms.TabPage();
             this.tabControlManualDebug.SuspendLayout();
             this.tabPageRobot.SuspendLayout();
             this.groupBoxRobot.SuspendLayout();
@@ -276,10 +275,9 @@
             // 
             this.tabControlManualDebug.Controls.Add(this.tabPageRobot);
             this.tabControlManualDebug.Controls.Add(this.tabPageCamera);
-            this.tabControlManualDebug.Controls.Add(this.tabPageThreeAxisRobot);
             this.tabControlManualDebug.Controls.Add(this.tabPageTwoDimensionalCodeScanner);
             this.tabControlManualDebug.Controls.Add(this.tabPageRfidScanner);
-            this.tabControlManualDebug.Controls.Add(this.tabPagePLC);
+            this.tabControlManualDebug.Controls.Add(this.tabPageThreeAxisRobot);
             this.tabControlManualDebug.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tabControlManualDebug.ItemSize = new System.Drawing.Size(120, 26);
             this.tabControlManualDebug.Location = new System.Drawing.Point(12, 12);
@@ -2411,6 +2409,7 @@
             this.ComBoxQRCodeBandRate.Name = "ComBoxQRCodeBandRate";
             this.ComBoxQRCodeBandRate.Size = new System.Drawing.Size(121, 29);
             this.ComBoxQRCodeBandRate.TabIndex = 3;
+            this.ComBoxQRCodeBandRate.SelectedIndexChanged += new System.EventHandler(this.ComBoxQRCodeBandRate_SelectedIndexChanged);
             // 
             // ComBoxQRCodeClear
             // 
@@ -2501,6 +2500,7 @@
             this.ComBoxQRCodeCom.Name = "ComBoxQRCodeCom";
             this.ComBoxQRCodeCom.Size = new System.Drawing.Size(121, 29);
             this.ComBoxQRCodeCom.TabIndex = 1;
+            this.ComBoxQRCodeCom.SelectedIndexChanged += new System.EventHandler(this.ComBoxQRCodeCom_SelectedIndexChanged);
             // 
             // customLabel48
             // 
@@ -2538,6 +2538,7 @@
             this.ComBoxQRCodeParity.Name = "ComBoxQRCodeParity";
             this.ComBoxQRCodeParity.Size = new System.Drawing.Size(121, 29);
             this.ComBoxQRCodeParity.TabIndex = 9;
+            this.ComBoxQRCodeParity.SelectedIndexChanged += new System.EventHandler(this.ComBoxQRCodeParity_SelectedIndexChanged);
             // 
             // customLabel50
             // 
@@ -2564,6 +2565,7 @@
             this.ComBoxQRCodeStopBit.Name = "ComBoxQRCodeStopBit";
             this.ComBoxQRCodeStopBit.Size = new System.Drawing.Size(121, 29);
             this.ComBoxQRCodeStopBit.TabIndex = 8;
+            this.ComBoxQRCodeStopBit.SelectedIndexChanged += new System.EventHandler(this.ComBoxQRCodeStopBit_SelectedIndexChanged);
             // 
             // customLabel51
             // 
@@ -2591,6 +2593,7 @@
             this.ComBoxQRCodeDataBit.Name = "ComBoxQRCodeDataBit";
             this.ComBoxQRCodeDataBit.Size = new System.Drawing.Size(121, 29);
             this.ComBoxQRCodeDataBit.TabIndex = 7;
+            this.ComBoxQRCodeDataBit.SelectedIndexChanged += new System.EventHandler(this.ComBoxQRCodeDataBit_SelectedIndexChanged);
             // 
             // tabPageRfidScanner
             // 
@@ -2612,7 +2615,7 @@
             this.customGroupBox8.Controls.Add(this.CBtnRfidConnect);
             this.customGroupBox8.Controls.Add(this.CBtnRfidWrite);
             this.customGroupBox8.Controls.Add(this.ComBoxRfidCh);
-            this.customGroupBox8.Controls.Add(this.cTextBoxRfidSn);
+            this.customGroupBox8.Controls.Add(this.CTextBoxRfidSn);
             this.customGroupBox8.Controls.Add(this.customLabel45);
             this.customGroupBox8.Controls.Add(this.CBtnRfidInit);
             this.customGroupBox8.Controls.Add(this.CBtnRfidEnable);
@@ -2659,6 +2662,7 @@
             this.CTextBoxRfidIp.Size = new System.Drawing.Size(176, 29);
             this.CTextBoxRfidIp.TabIndex = 1;
             this.CTextBoxRfidIp.Text = "192.168.81.113";
+            this.CTextBoxRfidIp.TextChanged += new System.EventHandler(this.CTextBoxRfidIp_TextChanged);
             // 
             // CBtnRfidRead
             // 
@@ -2715,19 +2719,21 @@
             this.ComBoxRfidCh.Name = "ComBoxRfidCh";
             this.ComBoxRfidCh.Size = new System.Drawing.Size(176, 29);
             this.ComBoxRfidCh.TabIndex = 3;
+            this.ComBoxRfidCh.SelectedIndexChanged += new System.EventHandler(this.ComBoxRfidCh_SelectedIndexChanged);
             // 
-            // cTextBoxRfidSn
+            // CTextBoxRfidSn
             // 
-            this.cTextBoxRfidSn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.cTextBoxRfidSn.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.cTextBoxRfidSn.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.cTextBoxRfidSn.ForeColor = System.Drawing.Color.White;
-            this.cTextBoxRfidSn.Location = new System.Drawing.Point(76, 131);
-            this.cTextBoxRfidSn.Multiline = true;
-            this.cTextBoxRfidSn.Name = "cTextBoxRfidSn";
-            this.cTextBoxRfidSn.Size = new System.Drawing.Size(176, 32);
-            this.cTextBoxRfidSn.TabIndex = 8;
-            this.cTextBoxRfidSn.Text = "1111111111111111";
+            this.CTextBoxRfidSn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.CTextBoxRfidSn.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.CTextBoxRfidSn.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CTextBoxRfidSn.ForeColor = System.Drawing.Color.White;
+            this.CTextBoxRfidSn.Location = new System.Drawing.Point(76, 131);
+            this.CTextBoxRfidSn.Multiline = true;
+            this.CTextBoxRfidSn.Name = "CTextBoxRfidSn";
+            this.CTextBoxRfidSn.Size = new System.Drawing.Size(176, 32);
+            this.CTextBoxRfidSn.TabIndex = 8;
+            this.CTextBoxRfidSn.Text = "0000000000000001";
+            this.CTextBoxRfidSn.TextChanged += new System.EventHandler(this.CTextBoxRfidSn_TextChanged);
             // 
             // customLabel45
             // 
@@ -2781,16 +2787,6 @@
             this.CBtnRfidDisable.Text = "禁能";
             this.CBtnRfidDisable.UseVisualStyleBackColor = false;
             this.CBtnRfidDisable.Click += new System.EventHandler(this.CBtnRfidDisable_Click);
-            // 
-            // tabPagePLC
-            // 
-            this.tabPagePLC.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.tabPagePLC.ForeColor = System.Drawing.Color.White;
-            this.tabPagePLC.Location = new System.Drawing.Point(0, 29);
-            this.tabPagePLC.Name = "tabPagePLC";
-            this.tabPagePLC.Size = new System.Drawing.Size(1248, 789);
-            this.tabPagePLC.TabIndex = 5;
-            this.tabPagePLC.Text = "PLC 通信";
             // 
             // ManualDebugForm
             // 
@@ -3010,7 +3006,6 @@
         private CustomLabel customLabel41;
         private System.Windows.Forms.TabPage tabPageTwoDimensionalCodeScanner;
         private System.Windows.Forms.TabPage tabPageRfidScanner;
-        private System.Windows.Forms.TabPage tabPagePLC;
         private System.Windows.Forms.ComboBox ComBoxRobotActions;
         private CustomLabel customLabel42;
         private CustomButton CBtnRobotTestRunAction;
@@ -3025,7 +3020,7 @@
         private CustomLabel customLabel46;
         private CustomButton CBtnRfidRead;
         private CustomButton CBtnRfidWrite;
-        private CustomTextBox cTextBoxRfidSn;
+        private CustomTextBox CTextBoxRfidSn;
         private System.Windows.Forms.ComboBox ComBoxQRCodeParity;
         private System.Windows.Forms.ComboBox ComBoxQRCodeStopBit;
         private System.Windows.Forms.ComboBox ComBoxQRCodeDataBit;

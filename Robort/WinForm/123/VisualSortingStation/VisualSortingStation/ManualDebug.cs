@@ -60,6 +60,7 @@ namespace RobotWorkstation
             CTextBoxRobotMoveSpeed.Text = Profile.m_Config.RobotMoveSpeed.ToString();
             CTextBoxJogDistance.Text = Profile.m_Config.RobotMoveDistance.ToString();
             CTextBoxJogDistanceUm.Text = Profile.m_Config.RobotMoveDistanceUm.ToString();
+            m_ManualRobot.SetRobotPamram(int.Parse(CTextBoxRobotMoveSpeed.Text), int.Parse(CTextBoxJogDistance.Text), int.Parse(CTextBoxJogDistanceUm.Text));
 
             //加载机械臂全局点位
             DGV_RobotGlobalPoint.Rows.Clear();
@@ -633,6 +634,7 @@ namespace RobotWorkstation
                         CTextBoxRobotMoveSpeed.Text = Profile.m_Config.RobotMoveSpeed.ToString();
                         CTextBoxJogDistance.Text = Profile.m_Config.RobotMoveDistance.ToString();
                         CTextBoxJogDistanceUm.Text = Profile.m_Config.RobotMoveDistanceUm.ToString();
+                        m_ManualRobot.SetRobotPamram(int.Parse(CTextBoxRobotMoveSpeed.Text), int.Parse(CTextBoxJogDistance.Text), int.Parse(CTextBoxJogDistanceUm.Text));
 
                         TimerMotionControlGetState.Stop();
                     }
@@ -694,7 +696,6 @@ namespace RobotWorkstation
                 m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
             else
                 m_QRCode.QRCodeRecvDataEvent -= new EventHandler(QRCodeRecvData);
-
         }
 
         //三轴机械臂
@@ -878,79 +879,6 @@ namespace RobotWorkstation
                 
         }
 
-        //RFID
-        public void InitRfid()
-        {
-            ComBoxRfidCh.SelectedIndex = 0;
-        }
-
-        //二维码读取器
-        public void InitQRCode()
-        {
-            ComBoxQRCodeDisconnect.Enabled = false;
-
-            //获取当前的串口设备
-            string[] CurPorts = SerialPort.GetPortNames();
-            if (CurPorts.Length > 0)
-            {
-                ComBoxQRCodeCom.Items.Clear();
-                foreach (string port in CurPorts)
-                {
-                    ComBoxQRCodeCom.Items.Add(port);
-                }
-            }
-            
-            ComBoxQRCodeCom.SelectedIndex = 0;
-            ComBoxQRCodeBandRate.SelectedIndex = 0;
-            ComBoxQRCodeDataBit.SelectedIndex = 0;
-            ComBoxQRCodeStopBit.SelectedIndex = 0;
-            ComBoxQRCodeParity.SelectedIndex = 0;
-
-            m_SyncContext = SynchronizationContext.Current;       
-        }
-
-        private void CBtnRfidConnect_Click(object sender, EventArgs e)
-        {
-            m_RFID.m_Ip = CTextBoxRfidIp.Text;
-            bool bCon = m_RFID.Connect();
-            if (bCon)
-            {
-                MessageBox.Show("RFID 连接成功！");
-            } 
-            else
-            {
-                MessageBox.Show("RFID 连接失败！");
-            }
-        }
-
-        private void CBtnRfidInit_Click(object sender, EventArgs e)
-        {
-            m_RFID.Init((ushort)ComBoxRfidCh.SelectedIndex);
-        }
-
-        private void CBtnRfidEnable_Click(object sender, EventArgs e)
-        {
-            m_RFID.Enable((ushort)ComBoxRfidCh.SelectedIndex);
-        }
-
-        private void CBtnRfidDisable_Click(object sender, EventArgs e)
-        {
-            m_RFID.Disable((ushort)ComBoxRfidCh.SelectedIndex);
-        }
-
-        private void CBtnRfidWrite_Click(object sender, EventArgs e)
-        {
-            m_RFID.Write((ushort)ComBoxRfidCh.SelectedIndex, "1111111111111111");
-        }
-
-        private void CBtnRfidRead_Click(object sender, EventArgs e)
-        {
-            cTextBoxRfidSn.Text = "";
-            m_RFID.Read((ushort)ComBoxRfidCh.SelectedIndex);
-            Thread.Sleep(1);
-            if(m_RFID.m_QueueRead.Count > 0)
-                cTextBoxRfidSn.Text = m_RFID.m_QueueRead.Dequeue();
-        }
 
         #region   // 二维码扫描器
 
@@ -993,10 +921,10 @@ namespace RobotWorkstation
         private void QRCodeRecvData(object sender, EventArgs e)
         {
             if (e is QRCodeEventArgers)
-            { 
+            {
                 QRCodeEventArgers Temp = e as QRCodeEventArgers;
                 m_SyncContext.Post(SetQRCodeTextSafePost, Temp.QRCodeRecv);
-            }         
+            }
         }
 
         private void SetQRCodeTextSafePost(object text)
@@ -1007,8 +935,6 @@ namespace RobotWorkstation
             ComBoxQRCodeReadShow.Select(ComBoxQRCodeReadShow.TextLength, 0);//光标定位到文本最后
             ComBoxQRCodeReadShow.ScrollToCaret();//滚动到光标处
         }
-
-        #endregion
 
         private void ComBoxQRCodeConnect_EnabledChanged(object sender, EventArgs e)
         {
@@ -1025,5 +951,126 @@ namespace RobotWorkstation
             else
                 ComBoxQRCodeDisconnect.BackColor = Color.Gray;
         }
+
+        private void ComBoxQRCodeCom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Profile.m_Config.QRCodePort = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
+        }
+
+        private void ComBoxQRCodeBandRate_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Profile.m_Config.QRCodeBandRate = (string)ComBoxQRCodeBandRate.Items[ComBoxQRCodeBandRate.SelectedIndex];
+        }
+
+        private void ComBoxQRCodeDataBit_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Profile.m_Config.QRCodeDataBits = (string)ComBoxQRCodeDataBit.Items[ComBoxQRCodeDataBit.SelectedIndex];
+        }
+
+        private void ComBoxQRCodeStopBit_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Profile.m_Config.QRCodeStopBits = (string)ComBoxQRCodeStopBit.Items[ComBoxQRCodeStopBit.SelectedIndex];
+        }
+
+        private void ComBoxQRCodeParity_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Profile.m_Config.QRCodeParity = (string)ComBoxQRCodeParity.Items[ComBoxQRCodeParity.SelectedIndex];
+        }
+
+        #endregion
+
+        #region  //RFID
+
+        //RFID
+        public void InitRfid()
+        {
+            ComBoxRfidCh.SelectedIndex = 0;
+        }
+
+        //二维码读取器
+        public void InitQRCode()
+        {
+            ComBoxQRCodeDisconnect.Enabled = false;
+
+            //获取当前的串口设备
+            string[] CurPorts = SerialPort.GetPortNames();
+            if (CurPorts.Length > 0)
+            {
+                ComBoxQRCodeCom.Items.Clear();
+                foreach (string port in CurPorts)
+                {
+                    ComBoxQRCodeCom.Items.Add(port);
+                }
+            }
+
+            ComBoxQRCodeCom.SelectedIndex = 0;
+            ComBoxQRCodeBandRate.SelectedIndex = 0;
+            ComBoxQRCodeDataBit.SelectedIndex = 0;
+            ComBoxQRCodeStopBit.SelectedIndex = 0;
+            ComBoxQRCodeParity.SelectedIndex = 0;
+
+            m_SyncContext = SynchronizationContext.Current;
+        }
+
+        private void CBtnRfidConnect_Click(object sender, EventArgs e)
+        {
+            bool bCon = m_RFID.InitRFID(CTextBoxRfidIp.Text);
+            if (bCon)
+            {
+                MessageBox.Show("RFID 连接成功！");
+            }
+            else
+            {
+                MessageBox.Show("RFID 连接失败！");
+            }
+        }
+
+        private void CBtnRfidInit_Click(object sender, EventArgs e)
+        {
+            m_RFID.Init((ushort)ComBoxRfidCh.SelectedIndex);
+        }
+
+        private void CBtnRfidEnable_Click(object sender, EventArgs e)
+        {
+            m_RFID.Enable((ushort)ComBoxRfidCh.SelectedIndex);
+        }
+
+        private void CBtnRfidDisable_Click(object sender, EventArgs e)
+        {
+            m_RFID.Disable((ushort)ComBoxRfidCh.SelectedIndex);
+        }
+
+        private void CBtnRfidWrite_Click(object sender, EventArgs e)
+        {
+            m_RFID.Write((ushort)ComBoxRfidCh.SelectedIndex, "0000000000000001");
+        }
+
+        private void CBtnRfidRead_Click(object sender, EventArgs e)
+        {
+            CTextBoxRfidSn.Text = "";
+            m_RFID.Read((ushort)ComBoxRfidCh.SelectedIndex);
+            Thread.Sleep(1);
+            if (m_RFID.m_QueueRead.Count > 0)
+                CTextBoxRfidSn.Text = m_RFID.m_QueueRead.Dequeue();
+        }
+
+        private void CTextBoxRfidIp_TextChanged(object sender, EventArgs e)
+        {
+            Profile.m_Config.RfidIp = CTextBoxRfidIp.Text;
+        }
+
+        private void ComBoxRfidCh_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Profile.m_Config.RfidCh = ComBoxRfidCh.SelectedIndex;
+        }
+
+        private void CTextBoxRfidSn_TextChanged(object sender, EventArgs e)
+        {
+            Profile.m_Config.RfidSn = CTextBoxRfidSn.Text;
+        }
+
+        #endregion
+
+
     }
 }

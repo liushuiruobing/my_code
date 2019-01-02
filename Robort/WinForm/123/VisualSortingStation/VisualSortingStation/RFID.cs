@@ -36,7 +36,7 @@ namespace RobotWorkstation
         private static readonly object m_Locker = new object();
 
         public Master m_ModbusMaster;
-        public string m_Ip = "192.168.1.21";
+        private string m_Ip = "192.168.1.21";
         private readonly ushort m_Port = 502;  //默认502不允许修改
         public ushort m_CurCh = 0;
         RFID_STATUS[] m_RfidStatus = new RFID_STATUS[2];  //两个通道
@@ -86,8 +86,9 @@ namespace RobotWorkstation
             return m_UniqueRFID;
         }
 
-        public bool InitRFID()
+        public bool InitRFID(string Ip)
         {
+            m_Ip = Ip;
             return Connect();             
         }
 

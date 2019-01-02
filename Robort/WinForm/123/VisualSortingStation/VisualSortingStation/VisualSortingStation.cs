@@ -468,27 +468,27 @@ namespace RobotWorkstation
         {
             if (AlarmType == 0)
             {
-                m_IO.SetControlBoardIo(IOType.IOTypeLedGreen, IOValue.IOValueHigh);
-                m_IO.SetControlBoardIo(IOType.IOTypeLedYellow, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(IOType.IOTypeLedRed, IOValue.IOValueLow);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedYellow, IOValue.IOValueLow);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
             }
             else if (AlarmType == 1)
             {
-                m_IO.SetControlBoardIo(IOType.IOTypeLedGreen, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(IOType.IOTypeLedYellow, IOValue.IOValueHigh);
-                m_IO.SetControlBoardIo(IOType.IOTypeLedRed, IOValue.IOValueLow);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedYellow, IOValue.IOValueHigh);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
             }
             else if (AlarmType == 2)
             {
-                m_IO.SetControlBoardIo(IOType.IOTypeLedGreen, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(IOType.IOTypeLedYellow, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(IOType.IOTypeLedRed, IOValue.IOValueHigh);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedYellow, IOValue.IOValueLow);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
             }
             else if (AlarmType == 3)
             {
-                m_IO.SetControlBoardIo(IOType.IOTypeLedGreen, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(IOType.IOTypeLedYellow, IOValue.IOValueHigh);
-                m_IO.SetControlBoardIo(IOType.IOTypeLedRed, IOValue.IOValueHigh);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedYellow, IOValue.IOValueHigh);
+                m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
             }
         }
 

@@ -6,27 +6,31 @@ using System.Threading.Tasks;
 
 namespace RobotWorkstation
 {
-    public enum IOType  //具体编号要等电气连接图出来之后与之相对应，机械臂的IO由机械臂的脚本处理，上位机只查询标志
+    public enum IO_IN  //具体编号要等电气连接图出来之后与之相对应，机械臂的IO由机械臂的脚本处理，上位机只查询标志
     {
         //In
-        IOTypeKeyRun = 0,
-        IOTypeKeyPause,
-        IOTypeKeyStop,
-        IOTypeKeyScram,
-        IOTypeKeyReset,
-        IOTypeEmptyPlateUpArrive,       //空盘气缸上升到位
-        IOTypeEmptyPlateDownArrive,     //空盘气缸下降到位
-        IOTypeOverturnPlateArrive,      //翻转托盘到位
-        IOTypeReceivePlateArrive,
+        IO_IN_KeyRun = 0,
+        IO_IN_KeyPause,
+        IO_IN_KeyStop,
+        IO_IN_KeyScram,
+        IO_IN_KeyReset,
+        IO_IN_EmptyPlateUpArrive,       //空盘气缸上升到位
+        IO_IN_EmptyPlateDownArrive,     //空盘气缸下降到位
+        IO_IN_OverturnPlateArrive,      //翻转托盘到位
+        IO_IN_ReceivePlateArrive,
 
+    }
+
+    public enum IO_OUT   //具体编号要等电气连接图出来之后与之相对应，
+    {
         //Out
-        IOTypeLedRed,
-        IOTypeLedYellow,
-        IOTypeLedGreen,
-        IOTypeLedBlue,
-        IOTypeBeep,
-        IOTypeEmptyPanelUp,         //空盘气缸上升
-        IOTypeEmptyPanelDown,       //空盘气缸下降
+        IO_OUT_LedRed = 0,
+        IO_OUT_LedYellow,
+        IO_OUT_LedGreen,
+        IO_OUT_LedBlue,
+        IO_OUT_Beep,
+        IO_OUT_EmptyPanelUp,         //空盘气缸上升
+        IO_OUT_EmptyPanelDown,       //空盘气缸下降
     }
 
     public enum RobotIo  //要与实际的接线对应
@@ -46,6 +50,8 @@ namespace RobotWorkstation
     {
         private static IO m_UniqueIo = null;
         private static readonly object m_Locker = new object();
+        private static MyTcpClient m_MyTcpClient = MyTcpClient.GetInstance();
+
 
         private IO()
         {
@@ -69,19 +75,80 @@ namespace RobotWorkstation
             return m_UniqueIo;
         }
 
-        public void SetControlBoardIo(IOType Type, IOValue Value)
+        public void SetControlBoardIo(IO_OUT Io, IOValue Value)
         {
+            int data1 = 8;  //1~8输出口使能控制字节, 最大是0x80
+            int data2 = 16;
+            int data3 = 24;
+            int data4 = 32;
+
             //给单片机控制板发送消息
+            if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
+            {
+                byte[] SendMeas = new byte[Message.MessageLength];
+                const int CommandIndex = Message.MessageCommandIndex;
+
+                SendMeas[0] = Message.MessStartCode;
+                SendMeas[1] = Message.MessVID1;
+                SendMeas[2] = Message.MessVID2;
+                SendMeas[3] = Message.MessVer;
+                SendMeas[Message.MessageStateIndex] = Message.MessRightState;
+                SendMeas[CommandIndex] = (byte)Message.MessageCodeARM.SetOutIo;
+
+                //其余位先填充0x00
+                for (int i = CommandIndex + 1; i < Message.MessageLength - 1; i++)
+                {
+                    SendMeas[i] = 0x00;
+                }
+
+                //根据Type， Value 设置使能位和数据
+                int TempIo = (int)Io;
+                int ControlIndex = CommandIndex + 1;
+                byte ControlValue = 0;
+                if (TempIo <= data1)
+                {
+                    ControlIndex = CommandIndex + 1;
+                    ControlValue = (byte)(TempIo);
+                }
+                else if (TempIo > data1 && TempIo <= data2)
+                {
+                    ControlIndex = CommandIndex + 2;
+                    ControlValue = (byte)(TempIo - data1);
+                }
+                else if (TempIo > data2 && TempIo <= data3)
+                {
+                    ControlIndex = CommandIndex + 3;
+                    ControlValue = (byte)(TempIo - data2);
+                }
+                else if (TempIo > data3 && TempIo <= data4)
+                {
+                    ControlIndex = CommandIndex + 4;
+                    ControlValue = (byte)(TempIo - data3);
+                }
+
+                SendMeas[ControlIndex] = ControlValue;
+                SendMeas[ControlIndex + 4] = (byte)((byte)Value << ControlValue);
+
+                SendMeas[Message.MessageLength - 1] = Message.MessEndCode;
+
+                byte Sum = 0;
+                foreach (byte Temp in SendMeas)
+                {
+                    Sum += Temp;
+                }
+
+                SendMeas[Message.MessageLength - 2] = (byte)(0 - Sum);  //校验和
+    
+                m_MyTcpClient.ClientWrite(SendMeas);
+            }
         }
 
-        //在与IO控制板的通信线程中调用此函数，从单片机读取到的是4个byte数据
-        public void ProcessIoMeassage(byte[] data)
+        public void ReadControlBoardIo(byte Code, ref byte[] SendMeas)
         {
-            for (int i = 0; i < data.Length; i++)
+            if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
             {
-                byte temp = data[i];
-
-                //根据解析的数据 设置不同的状态 DataStruct.SysStat 中不同的状态                
+                Message.MakeSendArrayByCode(Code, ref SendMeas);
+                m_MyTcpClient.ClientWrite(SendMeas);
             }
         }
     }

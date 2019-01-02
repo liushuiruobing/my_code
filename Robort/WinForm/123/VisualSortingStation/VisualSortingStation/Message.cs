@@ -81,5 +81,35 @@ namespace RobotWorkstation
             return Re;
         }
 
+        public static void MakeSendArrayByCode(byte Code, ref byte[] SendMeas)
+        {
+            Array.Clear(SendMeas, 0, SendMeas.Length);
+
+            if (SendMeas.Length >= Message.MessageLength)
+            {
+                SendMeas[0] = Message.MessStartCode;
+                SendMeas[1] = Message.MessVID1;
+                SendMeas[2] = Message.MessVID2;
+                SendMeas[3] = Message.MessVer;
+                SendMeas[Message.MessageStateIndex] = Message.MessRightState;
+                SendMeas[Message.MessageCommandIndex] = Code;
+
+                //其余位填充0x00
+                for (int i = Message.MessageCommandIndex + 1; i < Message.MessageLength - 1; i++)
+                {
+                    SendMeas[i] = 0;
+                }
+
+                SendMeas[Message.MessageLength - 1] = Message.MessEndCode;
+
+                byte Sum = 0;
+                foreach (byte Temp in SendMeas)
+                {
+                    Sum += Temp;
+                }
+
+                SendMeas[Message.MessageLength - 2] = (byte)(0 - Sum);  //校验和
+            }
+        }
     }
 }

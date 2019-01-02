@@ -47,11 +47,11 @@ namespace RobotWorkstation
 
         public MainForm()
         {
-            InitializeComponent();
-            InitOtherForm();
-            this.CenterToScreen();           
             Profile.LoadConfigFile();
 
+            InitializeComponent();
+            InitOtherForm();
+                                
             //检查各模块的状态
             InitTcp();
             InitWorkstatiionAndStart();
@@ -62,11 +62,12 @@ namespace RobotWorkstation
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            this.CenterToScreen();
             CustomColor.InitColor();
             InitWindowSize();
             InitCtrlColor();
 
-           MultiLanguage.LoadLanguage(this, typeof(MainForm));
+            MultiLanguage.LoadLanguage(this, typeof(MainForm));
         }
 
         public void InitWindowSize()
@@ -250,38 +251,50 @@ namespace RobotWorkstation
         public void InitWorkstatiionAndStart()
         {
             SysAlarm sysAlarm = SysAlarm.GetInstance();
-            m_Robot = RobotDevice.GetInstance();  //机械臂
-            //bool Re = m_Robot.InitRobot();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.Robot = 1;
-            //    sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
-            //    MessageBox.Show("机械臂初始化错误！");
-            //}
 
-            //m_Camera = VisionCamera.GetInstance();  //视觉相机  
-            //Re = m_Camera.InitCamera();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.Camera = 1;
-            //    sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
-            //}
+            //Robot
+            m_Robot = RobotDevice.GetInstance();  
+            bool Re = m_Robot.InitRobot();
+            if (!Re)
+            {
+                DataStruct.SysStat.Robot = 1;
+                sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
+                //MessageBox.Show("机械臂初始化错误！");
+            }
 
-            //m_RFID = RFID.GetInstance();   //RFID    
-            //Re = m_RFID.InitRFID();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.RFID = 1;
-            //    sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
-            //}
+            //Crmera  
+            m_Camera = VisionCamera.GetInstance();  
+            Re = m_Camera.InitCamera();
+            if (!Re)
+            {
+                DataStruct.SysStat.Camera = 1;
+                sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
+            }
 
-            //m_QRCode = QRCode.GetInstance(); //二维码
-            //Re = m_QRCode.QRCodeInit();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.QRCode = 1;
-            //    sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
-            //}
+            //RFID    
+            m_RFID = RFID.GetInstance();   
+            Re = m_RFID.InitRFID(Profile.m_Config.RfidIp);
+            if (!Re)
+            {
+                DataStruct.SysStat.RFID = 1;
+                sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
+            }
+
+            //二维码
+            m_QRCode = QRCode.GetInstance(); 
+            string Port = Profile.m_Config.QRCodePort;
+            string BandRate = Profile.m_Config.QRCodeBandRate;
+            string DataBits = Profile.m_Config.QRCodeDataBits;
+            string StopBits = Profile.m_Config.QRCodeStopBits;
+            string Parity = Profile.m_Config.QRCodeParity;
+
+            m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
+            Re = m_QRCode.QRCodeInit();
+            if (!Re)
+            {
+                DataStruct.SysStat.QRCode = 1;
+                sysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
+            }
         }
 
         public void InitTcp()
@@ -293,13 +306,17 @@ namespace RobotWorkstation
                 m_MyTcpClient.InitClient();
 
                 //从配置中获取单片机控制板的IP和端口号
-                m_MyTcpClient.CreateConnect(IPAddress.Parse("192.168.81.114"), 8080);
+                IPAddress Ip = IPAddress.Parse(Profile.m_Config.ControlerArmIp);
+                int Port = Profile.m_Config.ControlerArmPort;
+                m_MyTcpClient.CreateConnect(Ip, Port);
             }
 
             m_MyTcpServer = MyTcpServer.GetInstance();
             if (m_MyTcpServer != null)
             {
-                m_MyTcpServer.CreatServer();
+                IPAddress ServerIp = IPAddress.Parse(Profile.m_Config.VisualStationServerIp);
+                int ServerPort = Profile.m_Config.VisualStationServerPort;
+                m_MyTcpServer.CreatServer(ServerIp, ServerPort);
             }
         }
 

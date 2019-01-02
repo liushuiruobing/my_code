@@ -10,18 +10,6 @@ using System.Windows.Forms;
 
 namespace RobotWorkstation
 {
-    public struct TcpParam
-    {
-        public IPAddress nIpAddress;
-        public int nPort;
-
-        public void InitTcpParam()
-        {
-            nIpAddress = IPAddress.Parse("192.168.81.11");
-            nPort = 20000;
-        }
-    }
-
     public enum TcpMeasType
     {
         MEAS_TYPE_NONE = 0,
@@ -57,18 +45,14 @@ namespace RobotWorkstation
         private static readonly object m_Locker = new object();
 
         private TcpClient m_TcpClient = null;
-        public TcpParam m_TcpParam;
 
         private int RecvTimeOut = 100;
         private int SendTimeOut = 100;        
         public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
-
         private Byte[] m_RecvBytes = new Byte[8192];
-        public const int m_SendBytesMax = 1024;
 
         private MyTcpClient()
         {
-            m_TcpParam.InitTcpParam();
             m_TcpClient = new TcpClient();
         }
 
@@ -223,18 +207,15 @@ namespace RobotWorkstation
             }
         }
 
-        public async void ClientWrite(string line)
+        public async void ClientWrite(byte[] WriteBytes)
         {
             if (m_TcpClient.Connected)
             {
                 try
                 {
                     NetworkStream stream = m_TcpClient.GetStream();
-                    using (var writer = new StreamWriter(stream, Encoding.ASCII, m_SendBytesMax, leaveOpen: true))
-                    {
-                        writer.AutoFlush = true;
-                        await writer.WriteLineAsync(line);
-                    }
+                    await stream.WriteAsync(WriteBytes, 0, WriteBytes.Length);
+                    await stream.FlushAsync();
                 }
                 catch (System.Exception ex)
                 {
@@ -251,7 +232,6 @@ namespace RobotWorkstation
         private static MyTcpServer m_UniqueTcpServer = null;
         private static readonly object m_Locker = new object();
         private TcpListener m_TcpListener = null;
-        public TcpParam m_TcpParam;
         public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
         
         private bool m_ThreadExit = false;
@@ -260,7 +240,7 @@ namespace RobotWorkstation
 
         private MyTcpServer()
         {
-            m_TcpParam.InitTcpParam();
+
         }
 
         /// <summary>
@@ -281,11 +261,11 @@ namespace RobotWorkstation
             return m_UniqueTcpServer;
         }
 
-        public bool CreatServer()
+        public bool CreatServer(IPAddress ServerIp, int ServerPort)
         {
             try
             {
-                m_TcpListener = new TcpListener(m_TcpParam.nIpAddress, m_TcpParam.nPort);
+                m_TcpListener = new TcpListener(ServerIp, ServerPort);
                 m_TcpListener.Start();
 
                 m_TcpServerListenThread = new Thread(new ThreadStart(TcpListenThread));

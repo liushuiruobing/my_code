@@ -16,10 +16,15 @@ namespace RobotWorkstation
     {
         private SysAlarm m_SysAlarm = SysAlarm.GetInstance();
         private bool[] m_SysAlarmState = new bool[(int)SysAlarm.Type.Max];  //报警状态备份
+        private MyTcpClient m_MyTcpClient = null;
+        public static IO m_IO = null;
+        private byte[] SendMeas = new byte[Message.MessageLength];
 
         public RunForm()
         {
             InitializeComponent();
+            m_MyTcpClient = MyTcpClient.GetInstance();
+            m_IO = IO.GetInstance();
 
             for (int i = 0; i < (int)SysAlarm.Type.Max; i++)
             {
@@ -136,7 +141,7 @@ namespace RobotWorkstation
             //运行状态更新
             Bitmap bmpGreen = Properties.Resources.SmallGreen;
             Bitmap bmpRed = Properties.Resources.SmallRed;
-            if (DataStruct.SysStat.Robot == 0)  
+            if (DataStruct.SysStat.Robot == 0)
                 PicRobot.Image = bmpGreen;
             else
                 PicRobot.Image = bmpRed;
@@ -156,6 +161,16 @@ namespace RobotWorkstation
             else
                 PicRfid.Image = bmpRed;
 
+            //设置报警灯的状态
+            if (DataStruct.SysStat.Run)
+                VisualSortingStation.SetSysAlarm(0);
+            else if (DataStruct.SysStat.Pause && !DataStruct.SysStat.Stop)
+                VisualSortingStation.SetSysAlarm(1);
+            else if (!DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
+                VisualSortingStation.SetSysAlarm(2);
+            else if (DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
+                VisualSortingStation.SetSysAlarm(3);
+
             //添加报警信息
             for (int i = 0; i < (int)SysAlarm.Type.Max; i++)
             {
@@ -171,17 +186,9 @@ namespace RobotWorkstation
                 m_SysAlarmState[i] = data.IsAlarm;
             }
 
-            //蜂鸣器报警
-
-            //设置报警灯的状态
-            if (DataStruct.SysStat.Run)
-                VisualSortingStation.SetSysAlarm(0);
-            else if (DataStruct.SysStat.Pause && !DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarm(1);
-            else if (!DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarm(2);
-            else if (DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarm(3);
+            //轮询单片机的状态
+            m_IO.ReadControlBoardIo((byte)Message.MessageCodeARM.GetInIo, ref SendMeas);
+            m_IO.SetControlBoardIo((IO_OUT)12, IOValue.IOValueHigh);
         }
 
     }

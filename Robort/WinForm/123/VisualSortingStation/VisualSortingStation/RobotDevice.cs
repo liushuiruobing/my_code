@@ -51,16 +51,19 @@ namespace RobotWorkstation
 
         public bool InitRobot()
         {
-            bool openRet = m_UniqueRobot.Open(Profile.m_Config.RobotIp);
-            if (openRet)
-            {
-                //读取xml配置文件然后设置机械臂
-                //m_ManualRobot.SetSpeed(40);
-                //m_ManualRobot.SetJointDistance(1000);
-                //m_ManualRobot.SetCartesianDistance(1000);
-            }
+            bool bOpen = m_UniqueRobot.Open(Profile.m_Config.RobotIp);
 
-            return openRet;
+            return bOpen;
+        }
+
+        public void SetRobotPamram(int Speed, int JointDistance, int CartesianDistance)
+        {
+            if (m_UniqueRobot.IsConnected())
+            {
+                m_UniqueRobot.SetSpeed(Speed);
+                m_UniqueRobot.SetJointDistance(JointDistance);
+                m_UniqueRobot.SetCartesianDistance(CartesianDistance);
+            }
         }
 
         public void SetGrapPointCoords(double x, double y, double z, double rz)
