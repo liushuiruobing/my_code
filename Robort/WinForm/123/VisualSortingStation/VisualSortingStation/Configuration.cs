@@ -24,6 +24,7 @@ namespace RobotWorkstation
 
         //Camera
         public string CameraIp;
+        public int CameraPort;
         public float CameraExposure;
         public float CameraGain;
         public float CameraFramRate;
@@ -59,6 +60,7 @@ namespace RobotWorkstation
 
             //Camera
             CameraIp = "192.168.1.46";
+            CameraPort = 20002;
             CameraExposure = 1000;
             CameraGain = 1000;
             CameraFramRate = 1000;

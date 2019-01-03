@@ -28,6 +28,10 @@ namespace RobotWorkstation
         public const byte MessRobotAxle6 = 0x06;     //6轴机械臂
         public const byte MessRobotAddr  = 0x01;     //机械臂地址
 
+        //Camera相关
+        public const byte MessCameraGrapPoint = 0x00;     //相机发送抓取点标志
+        public const byte MessCameraPutPoint = 0x01;     //相机发送放置点标志
+
         public enum MessageCodePLC
         {
             GetCurStationState = 0x10,
@@ -65,6 +69,11 @@ namespace RobotWorkstation
             SendControlerUpdateFileLength = 0x60,   //系统升级--发送升级文件长度数据
             SendControlerUpdateFileData             //系统升级--发送升级文件
 
+        }
+
+        public enum MessageCodeCamera  //与相机之间的指令
+        {
+            GetCameraCoords = 0x90,
         }
 
         public static bool CheckRobotMessage(short[] message, int MessageLength)

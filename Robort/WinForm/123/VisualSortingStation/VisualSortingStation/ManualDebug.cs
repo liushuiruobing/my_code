@@ -18,15 +18,15 @@ namespace RobotWorkstation
     public partial class ManualDebugForm : Form
     {
         //机械臂
-        public RobotDevice m_ManualRobot = RobotDevice.GetInstance();
+        private RobotDevice m_ManualRobot = RobotDevice.GetInstance();
         private const int RobotGlobalPointsBefore = 30;  //先加载前30个点，其余的在定时器中加载，来解决刷新缓慢的问题
         private int m_ManualRobotGlobalPointIndex = 0;  //选中的全局点位索引
 
-        //三轴机械手
-        MotionControl m_MotionControl = MotionControl.GetInstance();
-        VisionCamera m_Camera = VisionCamera.GetInstance();
-        RFID m_RFID = RFID.GetInstance();
-        QRCode m_QRCode = QRCode.GetInstance();
+        private MotionControl m_MotionControl = MotionControl.GetInstance(); //三轴机械手
+        private VisionCamera m_Camera = VisionCamera.GetInstance();
+        private RFID m_RFID = RFID.GetInstance();
+        private QRCode m_QRCode = QRCode.GetInstance();
+        private IO m_IO = IO.GetInstance();
 
         SynchronizationContext m_SyncContext = null;
 
@@ -503,6 +503,10 @@ namespace RobotWorkstation
             if (m_ManualRobot.IsConnected())
             {
                 m_ManualRobot.RunAction(ComBoxRobotActions.SelectedIndex);
+                if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
+                    m_ManualRobot.RunAction((int)AutoRunAction.AutoRunMoveToScanQRCode);
+                if (VisualSortingStation.m_ScanQRCode)  //二维码格式检查在QRCodeRecvData中
+                    m_ManualRobot.RunAction((int)AutoRunAction.AutoRunMoveToPut);
             }
         }
 
@@ -527,8 +531,7 @@ namespace RobotWorkstation
             {
                 m_ManualRobot.m_PointList = m_ManualRobot.GetGlobalPointData();
             }
-
-           
+         
             if (m_QRCode != null && m_QRCode.m_IsConnect)
             {
                 lock (this)
@@ -536,7 +539,18 @@ namespace RobotWorkstation
                     if (m_QRCode.m_ReadQueue.Count > 0)
                         ComBoxQRCodeReadShow.Text += m_QRCode.m_ReadQueue.Dequeue();
                 }
-            }    
+            }
+
+            //IO 控制板指示灯更新
+            Bitmap bmpYellow = Properties.Resources.SmallYellow;
+            Bitmap bmpBlue = Properties.Resources.SmallBlue;
+
+            PicBoxEmptyPlateUpArrive.Image = DataStruct.SysStat.EmptyPlateUpArrive ? bmpRed : bmpDarkGreen;
+            PicBoxEmptyPlateDownArrive.Image = DataStruct.SysStat.EmptyPlateDownArrive ? bmpRed : bmpDarkGreen;
+            PicBoxIoRedLed.Image = DataStruct.SysStat.RedAlarm ? bmpRed : bmpDarkGreen;
+            PicBoxIoYellowLed.Image = DataStruct.SysStat.YellowAlarm ? bmpYellow : bmpDarkGreen;
+            PicBoxIoGreenLed.Image = DataStruct.SysStat.LedGreen ? bmpGreen : bmpDarkGreen;
+            PicBoxIoBlueLed.Image = DataStruct.SysStat.LedBlue ? bmpBlue : bmpDarkGreen;
         }
 
         private void ManualDebugForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -1069,8 +1083,42 @@ namespace RobotWorkstation
             Profile.m_Config.RfidSn = CTextBoxRfidSn.Text;
         }
 
+
         #endregion
 
+        #region  //IO 控制
+
+        private void CButtonIoEmptyPlateUp_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_EmptyPanelUp, IOValue.IOValueHigh);
+        }
+
+        private void CButtonIoEmptyPlateDown_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_EmptyPanelDown, IOValue.IOValueHigh);
+        }
+
+        private void CButtonIoRedLed_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
+        }
+
+        private void CButtonIoYellowLed_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedYellow, IOValue.IOValueHigh);
+        }
+
+        private void CButtonIoGreenLed_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
+        }
+
+        private void CButtonIoBlueLed_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedBlue, IOValue.IOValueHigh);
+        }
+
+        #endregion
 
     }
 }

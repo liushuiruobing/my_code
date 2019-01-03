@@ -298,6 +298,7 @@
     <None Include="Resources\image\LightGreen.ico" />
     <None Include="Resources\image\LightRed.ico" />
     <None Include="Resources\image\LightYellow.ico" />
+    <Content Include="Resources\image\SmallBlue.png" />
     <Content Include="Resources\image\SmallGreen.png" />
     <None Include="Resources\image\SmallYellow.png" />
     <None Include="Resources\image\SmallRed.png" />

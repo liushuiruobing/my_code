@@ -27,7 +27,8 @@ namespace RobotWorkstation
         private VisionCamera m_Camera = null;  //视觉相机     
         private RFID m_RFID = null;   //RFID      
         private QRCode m_QRCode = null; //二维码
-        private MyTcpClient m_MyTcpClient = null;
+        private static MyTcpClient m_MyTcpClientArm = null;
+        private static MyTcpClient m_MyTcpClientCamera = null;
         private MyTcpServer m_MyTcpServer = null;
 
         //线程
@@ -44,6 +45,7 @@ namespace RobotWorkstation
                 return cp;
             }
         }
+
 
         public MainForm()
         {
@@ -68,6 +70,16 @@ namespace RobotWorkstation
             InitCtrlColor();
 
             MultiLanguage.LoadLanguage(this, typeof(MainForm));
+        }
+
+        public static MyTcpClient GetMyTcpClientArm()
+        {
+            return m_MyTcpClientArm;
+        }
+
+        public static MyTcpClient GetMyTcpClientCamera()
+        {
+            return m_MyTcpClientCamera;
         }
 
         public void InitWindowSize()
@@ -300,15 +312,27 @@ namespace RobotWorkstation
         public void InitTcp()
         {
             SysAlarm sysAlarm = SysAlarm.GetInstance();
-            m_MyTcpClient = MyTcpClient.GetInstance();
-            if (m_MyTcpClient != null)
-            {
-                m_MyTcpClient.InitClient();
 
-                //从配置中获取单片机控制板的IP和端口号
-                IPAddress Ip = IPAddress.Parse(Profile.m_Config.ControlerArmIp);
-                int Port = Profile.m_Config.ControlerArmPort;
-                m_MyTcpClient.CreateConnect(Ip, Port);
+            //和单片机通信
+            m_MyTcpClientArm = new MyTcpClient();
+            if (m_MyTcpClientArm != null)
+            {
+                m_MyTcpClientArm.InitClient();
+
+                IPAddress ControlIp = IPAddress.Parse(Profile.m_Config.ControlerArmIp);
+                int ControlPort = Profile.m_Config.ControlerArmPort;
+                m_MyTcpClientArm.CreateConnect(ControlIp, ControlPort);
+            }
+
+            //和Camera通信
+            m_MyTcpClientCamera = new MyTcpClient();
+            if (m_MyTcpClientCamera != null)
+            {
+                m_MyTcpClientArm.InitClient();
+
+                IPAddress CameraIp = IPAddress.Parse(Profile.m_Config.CameraIp);
+                int CameraPort = Profile.m_Config.CameraPort;
+                m_MyTcpClientCamera.CreateConnect(CameraIp, CameraPort);
             }
 
             m_MyTcpServer = MyTcpServer.GetInstance();

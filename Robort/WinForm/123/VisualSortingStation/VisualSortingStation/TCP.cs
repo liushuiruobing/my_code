@@ -15,7 +15,8 @@ namespace RobotWorkstation
         MEAS_TYPE_NONE = 0,
         MEAS_TYPE_MIS,
         MEAS_TYPE_PLC,
-        MEAS_TYPE_ARM
+        MEAS_TYPE_ARM,
+        MEAS_TYPE_CAMERA
     }
 
     public enum TcpMeasCode
@@ -41,9 +42,6 @@ namespace RobotWorkstation
     //Tcp Client Class
     public partial class MyTcpClient
     {
-        private static MyTcpClient m_UniqueTcpClient = null;
-        private static readonly object m_Locker = new object();
-
         private TcpClient m_TcpClient = null;
 
         private int RecvTimeOut = 100;
@@ -51,7 +49,7 @@ namespace RobotWorkstation
         public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
         private Byte[] m_RecvBytes = new Byte[8192];
 
-        private MyTcpClient()
+        public MyTcpClient()
         {
             m_TcpClient = new TcpClient();
         }
@@ -63,24 +61,6 @@ namespace RobotWorkstation
                 return m_TcpClient.Connected;
             }
        }
-
-        /// <summary>
-        /// 定义公有方法提供一个全局访问点,同时你也可以定义公有属性来提供全局访问点
-        /// </summary>
-        /// <returns></returns>
-        public static MyTcpClient GetInstance()
-        {
-            if (m_UniqueTcpClient == null)
-            {
-                lock (m_Locker)
-                {
-                    if (m_UniqueTcpClient == null)
-                        m_UniqueTcpClient = new MyTcpClient();
-                }
-            }
-
-            return m_UniqueTcpClient;
-        }
 
         public void InitClient()
         {
@@ -180,8 +160,13 @@ namespace RobotWorkstation
 
                     if (MyMath.CheckSum(arrayParse, Message.MessageLength))  //分析数据，把数据添加到队列m_TcpMeas
                     {
+
                         TcpMeasType MeasType = TcpMeasType.MEAS_TYPE_ARM;
-                        byte MeasCode = arrayParse[Message.MessageCommandIndex]; ;
+                        byte MeasCode = arrayParse[Message.MessageCommandIndex];
+                        if (MeasCode == (byte)Message.MessageCodeCamera.GetCameraCoords)
+                        {
+                            MeasType = TcpMeasType.MEAS_TYPE_CAMERA;
+                        }
 
                         TcpMeas TempMeas = new TcpMeas();
                         if (TempMeas != null)

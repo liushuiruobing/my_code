@@ -16,14 +16,14 @@ namespace RobotWorkstation
     {
         private SysAlarm m_SysAlarm = SysAlarm.GetInstance();
         private bool[] m_SysAlarmState = new bool[(int)SysAlarm.Type.Max];  //报警状态备份
-        private MyTcpClient m_MyTcpClient = null;
-        public static IO m_IO = null;
+        private MyTcpClient m_MyTcpClientArm = null;
+        private IO m_IO = null;
         private byte[] SendMeas = new byte[Message.MessageLength];
 
         public RunForm()
         {
             InitializeComponent();
-            m_MyTcpClient = MyTcpClient.GetInstance();
+            m_MyTcpClientArm = MainForm.GetMyTcpClientArm();
             m_IO = IO.GetInstance();
 
             for (int i = 0; i < (int)SysAlarm.Type.Max; i++)

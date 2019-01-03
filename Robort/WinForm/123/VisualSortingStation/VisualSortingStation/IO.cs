@@ -50,8 +50,7 @@ namespace RobotWorkstation
     {
         private static IO m_UniqueIo = null;
         private static readonly object m_Locker = new object();
-        private static MyTcpClient m_MyTcpClient = MyTcpClient.GetInstance();
-
+        private static MyTcpClient m_MyTcpClientArm = MainForm.GetMyTcpClientArm();
 
         private IO()
         {
@@ -83,7 +82,7 @@ namespace RobotWorkstation
             int data4 = 32;
 
             //给单片机控制板发送消息
-            //if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
+            if (m_MyTcpClientArm != null && m_MyTcpClientArm.IsConnected)
             {
                 byte[] SendMeas = new byte[Message.MessageLength];
                 const int CommandIndex = Message.MessageCommandIndex;
@@ -145,16 +144,16 @@ namespace RobotWorkstation
 
                 SendMeas[Message.MessageLength - 2] = (byte)(0 - Sum);  //校验和
     
-                m_MyTcpClient.ClientWrite(SendMeas);
+                m_MyTcpClientArm.ClientWrite(SendMeas);
             }
         }
 
         public void ReadControlBoardIo(byte Code, ref byte[] SendMeas)
         {
-            if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
+            if (m_MyTcpClientArm != null && m_MyTcpClientArm.IsConnected)
             {
                 Message.MakeSendArrayByCode(Code, ref SendMeas);
-                m_MyTcpClient.ClientWrite(SendMeas);
+                m_MyTcpClientArm.ClientWrite(SendMeas);
             }
         }
     }

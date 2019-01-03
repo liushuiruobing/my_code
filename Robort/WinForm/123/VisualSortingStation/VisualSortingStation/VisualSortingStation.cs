@@ -11,7 +11,23 @@ namespace RobotWorkstation
 {
     public enum RobotAction
     {
-        Action_Grap = 0,
+        Action_Manual_Grap_1 = 0,
+        Action_Manual_Grap_2,
+        Action_Manual_Grap_3,
+        Action_Manual_Grap_4,
+        Action_Manual_Grap_5,
+        Action_Manual_Grap_6,
+        Action_Manual_Grap_7,
+        Action_Manual_Grap_8,
+        Action_Manual_Grap_9,
+        Action_Manual_Grap_10,
+        Action_Manual_Grap_11,
+        Action_Manual_Grap_12,
+        Action_Manual_Grap_13,
+        Action_Manual_Grap_14,
+        Action_Manual_Grap_15,
+        Action_Manual_Grap_16,
+        Action_Auto_Grap,
         Action_QRCodeScan,
         Action_Put
     }
@@ -54,11 +70,14 @@ namespace RobotWorkstation
         private static RFID m_RFID = RFID.GetInstance();
         public static string m_RfidRead = "";
         private static QRCode m_QRCode = QRCode.GetInstance();
-        private static bool m_ScanQRCode = false;
+        public static bool m_ScanQRCode = false;
         public static List<string> m_QRCodeStr = new List<string>();
 
-        private static MyTcpClient m_MyTcpClient = MyTcpClient.GetInstance();
+        private static MyTcpClient m_MyTcpClientArm = MainForm.GetMyTcpClientArm();
+        private static MyTcpClient m_MyTcpClientCamera = MainForm.GetMyTcpClientCamera();
         private static MyTcpServer m_MyTcpServer = MyTcpServer.GetInstance();
+        private static byte[] SendMeas = new byte[Message.MessageLength];
+        private static bool m_GetNextGrapPoint = false;
 
         public static bool ShouldExit
         {
@@ -104,8 +123,8 @@ namespace RobotWorkstation
                 if (m_RFID != null && m_RFID.m_IsConnected)
                     ProcessRFIDMessage();
 
-                //作为客户端处理和单片机控制板的消息队列
-                if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
+                //作为客户端处理和单片机控制板、相机的消息队列
+                if ((m_MyTcpClientArm != null && m_MyTcpClientArm.IsConnected) || (m_MyTcpClientCamera != null && m_MyTcpClientCamera.IsConnected))
                     ProcessTcpClientMessage();
 
                 //作为服务端处理和MIS及PLC之间的消息
@@ -179,16 +198,31 @@ namespace RobotWorkstation
 
         public static void ProcessTcpClientMessage()
         {
-            if (m_MyTcpClient != null && m_MyTcpClient.IsConnected)
+            if (m_MyTcpClientArm != null && m_MyTcpClientArm.IsConnected)
             {
-                while (m_MyTcpClient.m_RecvMeasQueue.Count != 0)
+                while (m_MyTcpClientArm.m_RecvMeasQueue.Count != 0)
                 {
-                    TcpMeas TempMeas = m_MyTcpClient.m_RecvMeasQueue.Dequeue();
+                    TcpMeas TempMeas = m_MyTcpClientArm.m_RecvMeasQueue.Dequeue();
                     if (TempMeas != null && TempMeas.Client != null)
                     {
                         if (TempMeas.MeasType == TcpMeasType.MEAS_TYPE_ARM)  // 处理和ARM之间的消息
                         {
                             ProcessArmMessage(TempMeas);
+                        }
+                    }
+                }
+            }
+
+            if (m_MyTcpClientCamera != null && m_MyTcpClientCamera.IsConnected)
+            {
+                while (m_MyTcpClientCamera.m_RecvMeasQueue.Count != 0)
+                {
+                    TcpMeas TempMeas = m_MyTcpClientCamera.m_RecvMeasQueue.Dequeue();
+                    if (TempMeas != null && TempMeas.Client != null)
+                    {
+                        if (TempMeas.MeasType == TcpMeasType.MEAS_TYPE_CAMERA)  // 处理和相机之间的消息
+                        {
+                            ProcessCameraMessage(TempMeas);
                         }
                     }
                 }
@@ -271,6 +305,49 @@ namespace RobotWorkstation
             }
         }
 
+        //处理和相机机控制板的消息
+        public static void ProcessCameraMessage(TcpMeas meassage)
+        {
+            if (meassage != null)
+            {
+                Message.MessageCodeCamera Code = (Message.MessageCodeCamera)meassage.MeasCode;
+                switch (Code)
+                {
+                    case Message.MessageCodeCamera.GetCameraCoords:
+                        {
+                            bool Coords = true;
+
+                            float x = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 1);
+                            float y = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 5);
+                            float z = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 9);
+                            float rz = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 13);
+
+                            //检查坐标范围,正确则Coords = true
+                            if (Coords)
+                            {
+                                if (meassage.Param[Message.MessageCommandIndex + 2] == Message.MessCameraGrapPoint)  //抓取点
+                                {
+                                    m_Robot.SetGrapPointCoords(RobotDevice.m_GrapStartPoint + (int)RobotAction.Action_Auto_Grap, x, y, z, rz);
+                                }
+                                else if (meassage.Param[Message.MessageCommandIndex + 2] == Message.MessCameraPutPoint)  //放置点
+                                {
+                                    m_Robot.SetGrapPointCoords(RobotDevice.m_PutStartPoint + (int)RobotAction.Action_Auto_Grap, x, y, z, rz);
+                                    m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;
+                                    m_GetNextGrapPoint = true;
+                                }
+                            }
+                            else
+                            {
+                                m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
+                            }                              
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         public static void AutoSortingRun()
         {
             //执行各动作
@@ -283,34 +360,26 @@ namespace RobotWorkstation
 
                         if (Start)
                         {
+                            m_GetNextGrapPoint = false;
                             m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
                         }                            
                     }break;
                 case AutoRunAction.AutoRunGetGrapCoords:        //获得抓取坐标
                     {
-                        bool Coords = false;
+                        if (m_MyTcpClientCamera != null && m_MyTcpClientCamera.IsConnected)
+                        {
+                            Message.MakeSendArrayByCode((byte)Message.MessageCodeCamera.GetCameraCoords, ref SendMeas);
+                            if (m_GetNextGrapPoint)
+                                SendMeas[Message.MessageCommandIndex + 1] = Message.MessCameraPutPoint;
 
-                        //调用视觉算法获取坐标
-                        double x = 0;
-                        double y = 0;
-                        double z = 0;
-                        double rz = 0;
-
-                        //检查坐标范围,正确则Coords = true
-                        m_Robot.SetGrapPointCoords(x, y, z, rz);
-                        Coords = true;
-
-                        if (Coords)
-                            m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;
-                        else
-                            m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
-
+                            m_MyTcpClientCamera.ClientWrite(SendMeas);
+                        }
                     }break;
                 case AutoRunAction.AutoRunMoveToGrap:           //移动到位并抓取   
                     {
                         //移动到指定位置抓手气缸进到位，后吸起器件，上位机发指令，机械臂脚本解析，执行动作
                         //m_IO.SetRobotIo();
-                        m_Robot.RunAction((short)RobotAction.Action_Grap);
+                        m_Robot.RunAction((short)RobotAction.Action_Auto_Grap);
 
                         //吸嘴真空检查，true为吸气抓取，false 为放气放下
                         if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
