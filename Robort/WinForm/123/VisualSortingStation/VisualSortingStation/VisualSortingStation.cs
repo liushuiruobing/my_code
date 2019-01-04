@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -64,6 +65,7 @@ namespace RobotWorkstation
         private const int m_OnePanelDevicesMax = 16;
         private static AutoRunAction m_AutoRunAction = AutoRunAction.AuoRunStart;
         private volatile static bool m_ShouldExit = false;
+        private static bool m_GetNextGrapPoint = false;
 
         private static RobotDevice m_Robot = RobotDevice.GetInstance();
         private static short[] m_RobotRead = new short[RobotBase.MODBUS_RD_LEN];
@@ -73,11 +75,16 @@ namespace RobotWorkstation
         public static bool m_ScanQRCode = false;
         public static List<string> m_QRCodeStr = new List<string>();
 
+        //Tcp
         private static MyTcpClient m_MyTcpClientArm = MainForm.GetMyTcpClientArm();
         private static MyTcpClient m_MyTcpClientCamera = MainForm.GetMyTcpClientCamera();
         private static MyTcpServer m_MyTcpServer = MyTcpServer.GetInstance();
         private static byte[] SendMeas = new byte[Message.MessageLength];
-        private static bool m_GetNextGrapPoint = false;
+        
+        //网络共享文件
+        private static NsfTrayModule m_NsfTrayModuleFile = NsfTrayModule.GetInstance();
+        private static NetShare m_NetShare = NetShare.GetInstance();
+        private static string m_CreateShare = "CreateShare.bat";
 
         public static bool ShouldExit
         {
@@ -146,11 +153,11 @@ namespace RobotWorkstation
                 //校验协议，并给DataStruct.SysStat中的各状态赋值
                 if (Message.CheckRobotMessage(m_RobotRead, ReadLen))
                 {
-                    RobotIo Io = (RobotIo)m_RobotRead[5];
+                    Robot_IO_IN Io = (Robot_IO_IN)m_RobotRead[5];
                     IOValue IoState = (IOValue)m_RobotRead[6];
                     switch (Io)
                     {
-                        case RobotIo.RobotIoCylGoArrive: //抓手气缸进到位，正确在机械臂处理，错误在上位机处理进行重试
+                        case Robot_IO_IN.Robot_IO_IN_CylGoArrive: //抓手气缸进到位，正确在机械臂处理，错误在上位机处理进行重试
                             {
                                 if (IoState == IOValue.IOValueHigh)
                                     DataStruct.SysStat.RobotCylGoArrive = true;
@@ -158,7 +165,7 @@ namespace RobotWorkstation
                                     DataStruct.SysStat.RobotCylGoArrive = false;
                             }
                             break;
-                        case RobotIo.RobotIoCylBackArrive: //抓手气缸退到位，正确在机械臂处理，错误在上位机处理进行重试
+                        case Robot_IO_IN.Robot_IO_IN_CylBackArrive: //抓手气缸退到位，正确在机械臂处理，错误在上位机处理进行重试
                             {
                                 if (IoState == IOValue.IOValueHigh)
                                     DataStruct.SysStat.RobotCylBackArrive = true;
@@ -166,7 +173,7 @@ namespace RobotWorkstation
                                     DataStruct.SysStat.RobotCylBackArrive = false;
                             }
                             break;
-                        case RobotIo.RobotIoVacuoCheck: //吸嘴真空检测
+                        case Robot_IO_IN.Robot_IO_IN_VacuoCheck: //吸嘴真空检测
                             {
                                 if (IoState == IOValue.IOValueHigh)
                                     DataStruct.SysStat.RobotVacuoCheck = true;
@@ -433,15 +440,30 @@ namespace RobotWorkstation
                             //存储文件，通知运走
                             if (m_QRCodeStr.Count >= m_OnePanelDevicesMax) //
                             {
-                                var temp = m_QRCodeStr.Distinct(); //却掉重复扫描的 
-                                if (temp.Count() == m_OnePanelDevicesMax)
+                                List<string> QRCodeTemp = m_QRCodeStr.Distinct().ToList(); //却掉重复扫描的 
+                                if (QRCodeTemp.Count() == m_OnePanelDevicesMax)
                                 {
-                                    //写入到网络共享文件中
+                                    //检查共享文件夹是否存在，存在则直接存储文件，不存在则创建共享文件夹
+                                    if (!Directory.Exists(NsfTrayModule.m_FileFolder))
+                                    {
+                                        Directory.CreateDirectory(NsfTrayModule.m_FileFolder);
+                                        m_NetShare.CallShareBatFile(m_CreateShare);
+                                    }
 
-                                    m_AutoRunAction = AutoRunAction.AuoRunStart;
-                                    m_DevicesTotal += m_OnePanelDevicesMax;
+                                    //创建共享文件.xml,并写入到文件中
+                                    int TrayNum = m_DevicesTotal / m_OnePanelDevicesMax + 1;  //当前测试为第几盘
+                                    bool Re = m_NsfTrayModuleFile.CreateAndWriteFile(QRCodeTemp, TrayNum);
+                                    if (Re)
+                                    {
+                                        m_AutoRunAction = AutoRunAction.AuoRunStart;
+                                        m_DevicesTotal += m_OnePanelDevicesMax;
 
-                                    //清除掉之前的各到位信号，在AuoRunStart时重新检查
+                                        //清除掉之前的各到位信号，在AuoRunStart时重新检查
+
+                                        //通知运走
+                                    }
+
+
                                 }
                             }
                         }                     
@@ -566,7 +588,7 @@ namespace RobotWorkstation
             if (e is QRCodeEventArgers)
             {
                 QRCodeEventArgers Temp = e as QRCodeEventArgers;
-                bool Check = CheckAndSaveReadData(Temp.QRCodeRecv);
+                bool Check = CheckAndSaveQRCodeReadData(Temp.QRCodeRecv);
                 if (Check)
                     m_ScanQRCode = true;
                 else
@@ -575,9 +597,12 @@ namespace RobotWorkstation
         }
 
         //校验读取数据的准确性
-        public static bool CheckAndSaveReadData(string Code)
+        public static bool CheckAndSaveQRCodeReadData(string Code)
         {
             bool Check = false;
+
+            char[] EndChar = {'\r', '\n'};
+            Code = Code.TrimEnd(EndChar);  //去掉结尾符
             string temp = String.Copy(Code);
 
             //检查读取到的数据格式是否正确 “24个，12个，12个”KR12BN5901313ABPVKBF0238,00C3F413543E,00C3F413543F

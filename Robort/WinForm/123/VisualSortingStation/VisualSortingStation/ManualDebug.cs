@@ -510,6 +510,35 @@ namespace RobotWorkstation
             }
         }
 
+        private void CBtnRobotTestTurnOver_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CBtnRobotGrapGo_Click(object sender, EventArgs e)
+        {
+            m_ManualRobot.SetRobotIo(Robot_IO_OUT.Robot_IO_OUT_Cyl, IOValue.IOValueHigh);
+        }
+
+        private void CBtnRobotGrapBack_Click(object sender, EventArgs e)
+        {
+            m_ManualRobot.SetRobotIo(Robot_IO_OUT.Robot_IO_OUT_Cyl, IOValue.IOValueLow);
+        }
+
+        private void CBtnRobotGrap_Click(object sender, EventArgs e)
+        {
+            if (CBtnRobotGrap.Text == "抓取")
+            {
+                CBtnRobotGrap.Text = "放下";
+                m_ManualRobot.SetRobotIo(Robot_IO_OUT.Robot_IO_OUT_Vacuo, IOValue.IOValueHigh);
+            }
+            else if (CBtnRobotGrap.Text == "放下")
+            {
+                CBtnRobotGrap.Text = "抓取";
+                m_ManualRobot.SetRobotIo(Robot_IO_OUT.Robot_IO_OUT_Vacuo, IOValue.IOValueHigh);
+            }
+        }
+
         private void RefreshTimer_Tick(object sender, EventArgs e)
         {
             Bitmap bmpGreen = Properties.Resources.SmallGreen;
@@ -517,6 +546,7 @@ namespace RobotWorkstation
             Bitmap bmpRed = Properties.Resources.SmallRed;
             Bitmap bmpDarkRed = Properties.Resources.SmallDarkRed;
 
+            //Robot
             pictureBoxRobotAlarm.Image = m_ManualRobot.HasAlarm() ? bmpRed : bmpDarkRed;
             pictureBoxRobotAlarm.Image = m_ManualRobot.HasWarning() ? bmpRed : bmpDarkRed;
             pictureBoxTemperature.Image = (m_ManualRobot.GetTemperatureStateString() == "过载") ? bmpRed : bmpDarkGreen;
@@ -526,12 +556,15 @@ namespace RobotWorkstation
 
             UpdateRobotCurentMeas();
 
-            //读取全局点位信息，只读一次
-            if (m_ManualRobot.IsConnected() && m_ManualRobot.m_PointList == null)
-            {
+            if (m_ManualRobot.IsConnected() && m_ManualRobot.m_PointList == null)  //读取全局点位信息，只读一次
                 m_ManualRobot.m_PointList = m_ManualRobot.GetGlobalPointData();
-            }
-         
+
+            //抓手
+            PicBoxRobotGrapGoArrive.Image = DataStruct.SysStat.RobotCylGoArrive ? bmpRed : bmpDarkGreen;
+            PicBoxRobotGrapBackArrive.Image = DataStruct.SysStat.RobotCylBackArrive ? bmpRed : bmpDarkGreen;
+            PicBoxRobotGrapVacuumCheck.Image = DataStruct.SysStat.RobotVacuoCheck ? bmpRed : bmpDarkGreen;
+
+            //二维码
             if (m_QRCode != null && m_QRCode.m_IsConnect)
             {
                 lock (this)
@@ -653,7 +686,30 @@ namespace RobotWorkstation
                         TimerMotionControlGetState.Stop();
                     }
                     break;
-                case 1:  //三轴机械臂
+                case 1:  //二维码读码器
+                    {
+
+                    }
+                    break;
+                case 2:  //RFID
+                    {
+
+                    }break;
+                case 3:  //IO
+                    {
+
+                    }
+                    break;
+                case 4:  //相机
+                    {
+                        CTextBoxCameraExposure.Text = Profile.m_Config.CameraExposure.ToString("F1");
+                        CTextBoxCameraGain.Text = Profile.m_Config.CameraGain.ToString("F1");
+                        CTextBoxCameraFrameRate.Text = Profile.m_Config.CameraFramRate.ToString("F1");
+
+                        TimerMotionControlGetState.Stop();
+                    }
+                    break;
+                case 5:  //三轴机械臂
                     {
                         if (!m_MotionControl.m_bInitBoard)
                             m_MotionControl.InitMotionControl();
@@ -671,42 +727,10 @@ namespace RobotWorkstation
                         TimerMotionControlGetState.Start();
                     }
                     break;
-                case 2:  //相机
-                    {
-                        CTextBoxCameraExposure.Text = Profile.m_Config.CameraExposure.ToString("F1");
-                        CTextBoxCameraGain.Text = Profile.m_Config.CameraGain.ToString("F1");
-                        CTextBoxCameraFrameRate.Text = Profile.m_Config.CameraFramRate.ToString("F1");
-
-                        TimerMotionControlGetState.Stop();
-                    }
-                    break;
-                case 3:  //二维码读码器
-                    {
-                        if (m_QRCode.m_IsConnect)
-                        {
-                            ComBoxQRCodeConnect.Enabled = false;
-                            ComBoxQRCodeDisconnect.Enabled = true;
-                        }
-                        else
-                        {
-                            ComBoxQRCodeConnect.Enabled = true;
-                            ComBoxQRCodeDisconnect.Enabled = false;
-                        }
-                    }
-                    break;
-                case 4:  //RFID
-                    {
-
-                    }break;
-                case 5://PLC
-                    {
-
-                    }
-                    break;
                 default: break;
             }
 
-            if (tabControlManualDebug.SelectedIndex == 3)  //选择二维码读码器页时
+            if (tabControlManualDebug.SelectedIndex == 1)  //选择二维码读码器页时
                 m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
             else
                 m_QRCode.QRCodeRecvDataEvent -= new EventHandler(QRCodeRecvData);
@@ -898,22 +922,19 @@ namespace RobotWorkstation
 
         private void ComBoxQRCodeConnect_Click(object sender, EventArgs e)
         {
-            if (!m_QRCode.m_IsConnect)
+            string Port = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
+            string BandRate = (string)ComBoxQRCodeBandRate.Items[ComBoxQRCodeBandRate.SelectedIndex];
+            string DataBits = (string)ComBoxQRCodeDataBit.Items[ComBoxQRCodeDataBit.SelectedIndex];
+            string StopBits = (string)ComBoxQRCodeStopBit.Items[ComBoxQRCodeStopBit.SelectedIndex];
+            string Parity = (string)ComBoxQRCodeParity.Items[ComBoxQRCodeParity.SelectedIndex];
+
+            m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
+            m_QRCode.QRCodeInit();
+
+            if (m_QRCode.m_IsConnect)
             {
-                string Port = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
-                string BandRate = (string)ComBoxQRCodeBandRate.Items[ComBoxQRCodeBandRate.SelectedIndex];
-                string DataBits = (string)ComBoxQRCodeDataBit.Items[ComBoxQRCodeDataBit.SelectedIndex];
-                string StopBits = (string)ComBoxQRCodeStopBit.Items[ComBoxQRCodeStopBit.SelectedIndex];
-                string Parity = (string)ComBoxQRCodeParity.Items[ComBoxQRCodeParity.SelectedIndex];
-
-                m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
-                m_QRCode.QRCodeInit();
-
-                if (m_QRCode.m_IsConnect)
-                {
-                    ComBoxQRCodeConnect.Enabled = false;
-                    ComBoxQRCodeDisconnect.Enabled = true;
-                }
+                ComBoxQRCodeConnect.Enabled = false;
+                ComBoxQRCodeDisconnect.Enabled = true;
             }
         }
 
@@ -1119,6 +1140,7 @@ namespace RobotWorkstation
         }
 
         #endregion
+
 
     }
 }

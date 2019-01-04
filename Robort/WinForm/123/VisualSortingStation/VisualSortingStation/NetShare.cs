@@ -9,10 +9,13 @@ using System.Security.AccessControl;
 using System.Diagnostics;
 using System.Threading;
 
-namespace NetShare
+namespace RobotWorkstation
 {
-    class NetShareClass
+    class NetShare
     {
+        private static NetShare m_UniqueNetShare = null;
+        private static readonly object m_Locker = new object();
+
         [DllImport("mpr.dll")]
         public static extern int WNetAddConnection2A(NETRESOURCE[] lpNetResource, string lpPassword, string lpUserName, int dwFlags);
 
@@ -105,6 +108,28 @@ namespace NetShare
 
             [MarshalAs(UnmanagedType.LPStr)]
             public string lpProvider;
+        }
+
+        private NetShare()
+        {
+
+        }
+
+        /// <summary>
+        /// 定义公有方法提供一个全局访问点,同时你也可以定义公有属性来提供全局访问点
+        /// </summary>
+        /// <returns></returns>
+        public static NetShare GetInstance()
+        {
+            if (m_UniqueNetShare == null)
+            {
+                lock (m_Locker)
+                {
+                    if (m_UniqueNetShare == null)
+                        m_UniqueNetShare = new NetShare();
+                }
+            }
+            return m_UniqueNetShare;
         }
 
         public int Connect(string remotePath, string localPath, string username, string password)

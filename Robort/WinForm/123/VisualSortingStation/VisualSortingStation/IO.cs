@@ -33,11 +33,17 @@ namespace RobotWorkstation
         IO_OUT_EmptyPanelDown,       //空盘气缸下降
     }
 
-    public enum RobotIo  //要与实际的接线对应
+    public enum Robot_IO_IN  //要与实际的接线对应
     {
-        RobotIoCylGoArrive = 0x01,  //抓手气缸进到位
-        RobotIoCylBackArrive,       //抓手气缸退到位
-        RobotIoVacuoCheck           //吸嘴真空检测
+        Robot_IO_IN_CylGoArrive = 0x01,  //抓手气缸进到位
+        Robot_IO_IN_CylBackArrive,       //抓手气缸退到位
+        Robot_IO_IN_VacuoCheck           //吸嘴真空检测
+    }
+
+    public enum Robot_IO_OUT  //要与实际的接线对应
+    {
+        Robot_IO_OUT_Cyl = 0x01,    //抓手气缸
+        Robot_IO_OUT_Vacuo          //吸嘴
     }
 
     public enum IOValue

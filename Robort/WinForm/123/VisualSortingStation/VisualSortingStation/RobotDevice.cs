@@ -87,5 +87,11 @@ namespace RobotWorkstation
         {
             InBuf = m_Robot.ReadMulitModbus(Addr, ReadCount);
         }
+
+        public void SetRobotIo(Robot_IO_OUT Io, IOValue Value)
+        {
+            bool State = (Value == IOValue.IOValueLow ? true : false);
+            m_Robot.SetOutputState((int)Io, State);
+        }
     }
 }
