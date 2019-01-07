@@ -13,6 +13,12 @@ using System.Windows.Forms;
 
 namespace RobotWorkstation
 {
+    public enum SortMode
+    {
+        SortWithVisual = 0,
+        SortWithNoVisual
+    }
+
     public partial class SystemSetingForm : Form
     {
         //防止闪屏
@@ -37,6 +43,7 @@ namespace RobotWorkstation
             tabControlSystemSeting.Height = this.Height - tabControlSystemSeting.Location.Y;
 
             CTextBoxSysSetRobotIP.Text = Profile.m_Config.RobotIp;
+            ComBoxSortMode.SelectedIndex = (int)Profile.m_Config.SelectedSortMode ;
 
             //根据默认的属性配置来设置当前语言项
             if (MultiLanguage.GetLanguage() == "zh-CN")
@@ -102,6 +109,11 @@ namespace RobotWorkstation
                 default:
                     break;
             }
+        }
+
+        private void ComBoxSortMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Profile.m_Config.SelectedSortMode = (SortMode)ComBoxSortMode.SelectedIndex;
         }
     }
 }

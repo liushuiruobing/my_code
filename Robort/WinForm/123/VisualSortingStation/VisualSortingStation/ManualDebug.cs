@@ -502,11 +502,21 @@ namespace RobotWorkstation
         {
             if (m_ManualRobot.IsConnected())
             {
-                m_ManualRobot.RunAction(ComBoxRobotActions.SelectedIndex);
-                if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
-                    m_ManualRobot.RunAction((int)AutoRunAction.AutoRunMoveToScanQRCode);
-                if (VisualSortingStation.m_ScanQRCode)  //二维码格式检查在QRCodeRecvData中
-                    m_ManualRobot.RunAction((int)AutoRunAction.AutoRunMoveToPut);
+                m_ManualRobot.RunAction((int)RobotAction.Action_Manual_Grap_1 + ComBoxRobotActions.SelectedIndex);
+                int nCount = 50;
+                while (nCount-- > 0)
+                {
+                    if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
+                        m_ManualRobot.RunAction((int)RobotAction.Action_QRCodeScan);
+
+                    if (VisualSortingStation.m_ScanQRCode)  //二维码格式检查在QRCodeRecvData中
+                    {
+                        m_ManualRobot.RunAction((int)RobotAction.Action_Manual_Put_1 + ComBoxRobotActions.SelectedIndex);
+                        break;
+                    }
+                       
+                    Thread.Sleep(100);
+                }
             }
         }
 
@@ -547,8 +557,7 @@ namespace RobotWorkstation
             Bitmap bmpDarkRed = Properties.Resources.SmallDarkRed;
 
             //Robot
-            pictureBoxRobotAlarm.Image = m_ManualRobot.HasAlarm() ? bmpRed : bmpDarkRed;
-            pictureBoxRobotAlarm.Image = m_ManualRobot.HasWarning() ? bmpRed : bmpDarkRed;
+            pictureBoxRobotAlarm.Image = (m_ManualRobot.HasAlarm() || m_ManualRobot.HasWarning()) ? bmpRed : bmpDarkRed;
             pictureBoxTemperature.Image = (m_ManualRobot.GetTemperatureStateString() == "过载") ? bmpRed : bmpDarkGreen;
             pictureBoxRobotMove.Image = m_ManualRobot.GetMovingState() ? bmpGreen : bmpDarkGreen;
             DisplayRobotState(m_ManualRobot.GetExecutorStateString(), pictureBoxRobotExecut);

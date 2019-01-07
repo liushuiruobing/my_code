@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 
 namespace RobotWorkstation
 {
-    public enum RobotAction
+    public enum RobotAction  //Action_Auto_Visual_Grap是视觉抓取和视觉放置时所用的索引，具体看使用的地方
     {
-        Action_Manual_Grap_1 = 0,
+        Action_Go_Home = 0,
+        Action_Manual_Grap_1,
         Action_Manual_Grap_2,
         Action_Manual_Grap_3,
         Action_Manual_Grap_4,
@@ -28,9 +29,28 @@ namespace RobotWorkstation
         Action_Manual_Grap_14,
         Action_Manual_Grap_15,
         Action_Manual_Grap_16,
-        Action_Auto_Grap,
+        Action_Visual_Grap,
+
         Action_QRCodeScan,
-        Action_Put
+
+        Action_Manual_Put_1,
+        Action_Manual_Put_2,
+        Action_Manual_Put_3,
+        Action_Manual_Put_4,
+        Action_Manual_Put_5,
+        Action_Manual_Put_6,
+        Action_Manual_Put_7,
+        Action_Manual_Put_8,
+        Action_Manual_Put_9,
+        Action_Manual_Put_10,
+        Action_Manual_Put_11,
+        Action_Manual_Put_12,
+        Action_Manual_Put_13,
+        Action_Manual_Put_14,
+        Action_Manual_Put_15,
+        Action_Manual_Put_16,
+        Action_Visual_Put,
+        
     }
 	
     public enum AutoRunAction
@@ -62,6 +82,7 @@ namespace RobotWorkstation
     {
         public static IO m_IO = IO.GetInstance();               
         public static int m_DevicesTotal = 0;
+        private static int m_TempCount = 0;
         private const int m_OnePanelDevicesMax = 16;
         private static AutoRunAction m_AutoRunAction = AutoRunAction.AuoRunStart;
         private volatile static bool m_ShouldExit = false;
@@ -334,11 +355,11 @@ namespace RobotWorkstation
                             {
                                 if (meassage.Param[Message.MessageCommandIndex + 2] == Message.MessCameraGrapPoint)  //抓取点
                                 {
-                                    m_Robot.SetGrapPointCoords(RobotDevice.m_GrapStartPoint + (int)RobotAction.Action_Auto_Grap, x, y, z, rz);
+                                    m_Robot.SetGrapPointCoords(RobotDevice.m_VisualGrapStartPoint + (RobotAction.Action_Visual_Grap - RobotAction.Action_Manual_Grap_1), x, y, z, rz);
                                 }
                                 else if (meassage.Param[Message.MessageCommandIndex + 2] == Message.MessCameraPutPoint)  //放置点
                                 {
-                                    m_Robot.SetGrapPointCoords(RobotDevice.m_PutStartPoint + (int)RobotAction.Action_Auto_Grap, x, y, z, rz);
+                                    m_Robot.SetGrapPointCoords(RobotDevice.m_VisualPutStartPoint + (RobotAction.Action_Visual_Put - RobotAction.Action_Manual_Put_1), x, y, z, rz);
                                     m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;
                                     m_GetNextGrapPoint = true;
                                 }
@@ -357,6 +378,8 @@ namespace RobotWorkstation
 
         public static void AutoSortingRun()
         {
+            SortMode CurSortMode = Profile.m_Config.SelectedSortMode;  //获取当前抓取模式
+
             //执行各动作
             switch (m_AutoRunAction)
             {
@@ -368,7 +391,11 @@ namespace RobotWorkstation
                         if (Start)
                         {
                             m_GetNextGrapPoint = false;
-                            m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
+
+                            if (CurSortMode == SortMode.SortWithVisual)
+                                m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
+                            else if (CurSortMode == SortMode.SortWithNoVisual)
+                                m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;                         
                         }                            
                     }break;
                 case AutoRunAction.AutoRunGetGrapCoords:        //获得抓取坐标
@@ -384,9 +411,14 @@ namespace RobotWorkstation
                     }break;
                 case AutoRunAction.AutoRunMoveToGrap:           //移动到位并抓取   
                     {
+                        Debug.Assert(m_TempCount <= m_OnePanelDevicesMax);
+
                         //移动到指定位置抓手气缸进到位，后吸起器件，上位机发指令，机械臂脚本解析，执行动作
                         //m_IO.SetRobotIo();
-                        m_Robot.RunAction((short)RobotAction.Action_Auto_Grap);
+                        if(CurSortMode == SortMode.SortWithVisual)
+                            m_Robot.RunAction((short)RobotAction.Action_Visual_Grap);
+                        else if (CurSortMode == SortMode.SortWithNoVisual)
+                            m_Robot.RunAction((short)RobotAction.Action_Manual_Grap_1 + m_TempCount);
 
                         //吸嘴真空检查，true为吸气抓取，false 为放气放下
                         if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
@@ -406,16 +438,20 @@ namespace RobotWorkstation
                     }break;
                 case AutoRunAction.AutoRunMoveToPut:    //移动到位并放下，计数后开始下一个，满总数后下一步    
                     {
-                        int TempCount = 0;
-                        m_Robot.RunAction((short)RobotAction.Action_Put);
+                        Debug.Assert(m_TempCount <= m_OnePanelDevicesMax);
+
+                        if (CurSortMode == SortMode.SortWithVisual)
+                            m_Robot.RunAction((short)RobotAction.Action_Visual_Put);
+                        else if (CurSortMode == SortMode.SortWithNoVisual)
+                            m_Robot.RunAction((short)RobotAction.Action_Manual_Put_1 + m_TempCount);
 
                         if (!DataStruct.SysStat.RobotVacuoCheck) //检查真空是否真的放下，真放下则TempCount+1;                        
-                        {                            
-                            TempCount++;
-                            if (TempCount >= m_OnePanelDevicesMax)
+                        {
+                            m_TempCount++;
+                            if (m_TempCount >= m_OnePanelDevicesMax)
                             {
                                 m_AutoRunAction = AutoRunAction.AutoRunTurnOverPanel;
-                                TempCount = 0;
+                                m_TempCount = 0;
                             }
                             else
                             {
