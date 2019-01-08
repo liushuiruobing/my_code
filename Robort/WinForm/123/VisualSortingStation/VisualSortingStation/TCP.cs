@@ -209,6 +209,25 @@ namespace RobotWorkstation
                 }
             }
         }
+
+        public async void ClientWrite(string StrSend)
+        {
+            if (m_TcpClient.Connected)
+            {
+                try
+                {
+                    NetworkStream stream = m_TcpClient.GetStream();
+                    StreamWriter s = new StreamWriter(stream);
+                    await s.WriteAsync(StrSend);
+                    await s.FlushAsync();
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+            }
+        }
     }
 
     //Tcp Server Class

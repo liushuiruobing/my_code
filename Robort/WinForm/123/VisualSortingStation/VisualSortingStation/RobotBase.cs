@@ -14,7 +14,8 @@ namespace RobotWorkstation
     //机器人
     public abstract class RobotBase
     {
-        public const ushort MODBUS_ADDR = 0x1110;
+        public const ushort MODBUS_WR_ADDR = 0x1110;
+        public const ushort MODBUS_RD_ADDR = 0x1310;
         public const short MODBUS_WR_LEN = 13;
         public const short MODBUS_RD_LEN = 10;
         public const short TIMEOUT = 6000;  // 6000 * 10ms
@@ -484,10 +485,21 @@ namespace RobotWorkstation
             //Tmp = (short)(~Tmp + 1);
             m_SendBuf[11] = Tmp;
 
-            m_Robot.WriteMulitModbus(MODBUS_ADDR, m_SendBuf);
+            m_Robot.WriteMulitModbus(MODBUS_WR_ADDR, m_SendBuf);
             m_Ready = false;
 
             return 0;
+        }
+
+        public void ClearModbusReadAddr()
+        {
+            if (m_IsConnected)
+            {
+                for (int i = 0; i < MODBUS_RD_LEN; i++)
+                    m_SendBuf[i] = 0x00;
+
+                m_Robot.WriteMulitModbus(MODBUS_RD_ADDR, m_SendBuf);
+            }
         }
 
         public bool QueryActionDone()

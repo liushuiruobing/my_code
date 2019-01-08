@@ -246,6 +246,7 @@
             this.customLabel27 = new RobotWorkstation.CustomLabel();
             this.ComBoxMotionControlDevice = new System.Windows.Forms.ComboBox();
             this.customLabel26 = new RobotWorkstation.CustomLabel();
+            this.CBtnCameraTest = new RobotWorkstation.CustomButton();
             this.tabControlManualDebug.SuspendLayout();
             this.tabPageRobot.SuspendLayout();
             this.customGroupBoxRobotGrap.SuspendLayout();
@@ -2168,6 +2169,7 @@
             // tabPageCamera
             // 
             this.tabPageCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.tabPageCamera.Controls.Add(this.CBtnCameraTest);
             this.tabPageCamera.Controls.Add(this.customGroupBox1);
             this.tabPageCamera.Controls.Add(this.PictureBoxCamera);
             this.tabPageCamera.Controls.Add(this.CGroupBoxCameraSet);
@@ -3127,6 +3129,20 @@
             this.customLabel26.TabIndex = 0;
             this.customLabel26.Text = "设备列表：";
             // 
+            // CBtnCameraTest
+            // 
+            this.CBtnCameraTest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(74)))), ((int)(((byte)(74)))));
+            this.CBtnCameraTest.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CBtnCameraTest.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CBtnCameraTest.ForeColor = System.Drawing.Color.Transparent;
+            this.CBtnCameraTest.Location = new System.Drawing.Point(6, 513);
+            this.CBtnCameraTest.Name = "CBtnCameraTest";
+            this.CBtnCameraTest.Size = new System.Drawing.Size(90, 36);
+            this.CBtnCameraTest.TabIndex = 3;
+            this.CBtnCameraTest.Text = "测试";
+            this.CBtnCameraTest.UseVisualStyleBackColor = false;
+            this.CBtnCameraTest.Click += new System.EventHandler(this.CBtnCameraTest_Click);
+            // 
             // ManualDebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -3413,5 +3429,6 @@
         private CustomLabel CLabelRobotGrapBackArrive;
         private System.Windows.Forms.PictureBox PicBoxRobotGrapGoArrive;
         private CustomLabel CLabelRobotGrapGoArrive;
+        private CustomButton CBtnCameraTest;
     }
 }

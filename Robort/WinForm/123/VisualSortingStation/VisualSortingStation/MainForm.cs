@@ -55,8 +55,8 @@ namespace RobotWorkstation
             InitOtherForm();
                                 
             //检查各模块的状态
-            //InitTcp();
-            //InitWorkstatiionAndStart();
+            InitTcp();
+            InitWorkstatiionAndStart();
 
             //创建所有线程
             InitAndCreateAllThread();
@@ -265,32 +265,32 @@ namespace RobotWorkstation
             SysAlarm sysAlarm = SysAlarm.GetInstance();
 
             //Robot
-            //m_Robot = RobotDevice.GetInstance();  
-            //bool Re = m_Robot.InitRobot();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.Robot = 1;
-            //    sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
-            //    //MessageBox.Show("机械臂初始化错误！");
-            //}
+            m_Robot = RobotDevice.GetInstance();  
+            bool Re = m_Robot.InitRobot();
+            if (!Re)
+            {
+                DataStruct.SysStat.Robot = 1;
+                sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
+                //MessageBox.Show("机械臂初始化错误！");
+            }
 
-            ////Crmera  
-            //m_Camera = VisionCamera.GetInstance();  
-            //Re = m_Camera.InitCamera();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.Camera = 1;
-            //    sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
-            //}
+            //Crmera  
+            m_Camera = VisionCamera.GetInstance();  
+            Re = m_Camera.InitCamera();
+            if (!Re)
+            {
+                DataStruct.SysStat.Camera = 1;
+                sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
+            }
 
-            ////RFID    
-            //m_RFID = RFID.GetInstance();   
-            //Re = m_RFID.InitRFID(Profile.m_Config.RfidIp);
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.RFID = 1;
-            //    sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
-            //}
+            //RFID    
+            m_RFID = RFID.GetInstance();   
+            Re = m_RFID.InitRFID(Profile.m_Config.RfidIp);
+            if (!Re)
+            {
+                DataStruct.SysStat.RFID = 1;
+                sysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
+            }
 
             //二维码
             m_QRCode = QRCode.GetInstance(); 
@@ -301,7 +301,7 @@ namespace RobotWorkstation
             string Parity = Profile.m_Config.QRCodeParity;
 
             m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
-            bool Re = m_QRCode.QRCodeInit();
+            Re = m_QRCode.QRCodeInit();
             if (!Re)
             {
                 DataStruct.SysStat.QRCode = 1;
@@ -328,7 +328,7 @@ namespace RobotWorkstation
             m_MyTcpClientCamera = new MyTcpClient();
             if (m_MyTcpClientCamera != null)
             {
-                m_MyTcpClientArm.InitClient();
+                m_MyTcpClientCamera.InitClient();
 
                 IPAddress CameraIp = IPAddress.Parse(Profile.m_Config.CameraIp);
                 int CameraPort = Profile.m_Config.CameraPort;

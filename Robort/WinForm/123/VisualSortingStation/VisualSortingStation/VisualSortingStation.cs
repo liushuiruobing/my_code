@@ -169,11 +169,13 @@ namespace RobotWorkstation
             {
                 const short ReadLen = RobotBase.MODBUS_RD_LEN;
                 Array.Clear(m_RobotRead, 0, m_RobotRead.Length);
-                m_Robot.ReadMulitModbus(RobotBase.MODBUS_ADDR, ReadLen, ref m_RobotRead);
+                m_Robot.ReadMulitModbus(RobotBase.MODBUS_RD_ADDR, ReadLen, ref m_RobotRead);
 
                 //校验协议，并给DataStruct.SysStat中的各状态赋值
                 if (Message.CheckRobotMessage(m_RobotRead, ReadLen))
                 {
+                    m_Robot.ClearModbusReadAddr();
+
                     Robot_IO_IN Io = (Robot_IO_IN)m_RobotRead[5];
                     IOValue IoState = (IOValue)m_RobotRead[6];
                     switch (Io)
@@ -406,7 +408,8 @@ namespace RobotWorkstation
                             if (m_GetNextGrapPoint)
                                 SendMeas[Message.MessageCommandIndex + 1] = Message.MessCameraPutPoint;
 
-                            m_MyTcpClientCamera.ClientWrite(SendMeas);
+                            string StrSend = BitConverter.ToString(SendMeas);
+                            m_MyTcpClientCamera.ClientWrite(StrSend);
                         }
                     }break;
                 case AutoRunAction.AutoRunMoveToGrap:           //移动到位并抓取   

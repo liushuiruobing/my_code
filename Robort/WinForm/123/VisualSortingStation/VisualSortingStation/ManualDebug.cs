@@ -500,23 +500,48 @@ namespace RobotWorkstation
 
         private void CBtnRobotTestRunAction_Click(object sender, EventArgs e)
         {
+            DataStruct.SysStat.RobotVacuoCheck = false;
+            VisualSortingStation.m_ScanQRCode = false;
+
             if (m_ManualRobot.IsConnected())
             {
                 m_ManualRobot.RunAction((int)RobotAction.Action_Manual_Grap_1 + ComBoxRobotActions.SelectedIndex);
-                int nCount = 50;
+                int nCount = 5000;
                 while (nCount-- > 0)
                 {
                     if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
+                    {
+                        DataStruct.SysStat.RobotVacuoCheck = false;
                         m_ManualRobot.RunAction((int)RobotAction.Action_QRCodeScan);
+                        break;
+                    }
+                    Thread.Sleep(100);
+                }
 
+                nCount = 5000;
+                while (nCount-- > 0)
+                {
                     if (VisualSortingStation.m_ScanQRCode)  //二维码格式检查在QRCodeRecvData中
                     {
                         m_ManualRobot.RunAction((int)RobotAction.Action_Manual_Put_1 + ComBoxRobotActions.SelectedIndex);
                         break;
                     }
-                       
+                    Thread.Sleep(100);
+                    if (nCount == 4990)
+                        VisualSortingStation.m_ScanQRCode = true;
+                }
+
+                nCount = 5000;
+                while (nCount-- > 0)
+                {
+                    if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
+                    {
+                        MessageBox.Show("放置完成！");
+                        break;
+                    }
                     Thread.Sleep(100);
                 }
+
             }
         }
 
@@ -1150,6 +1175,15 @@ namespace RobotWorkstation
 
         #endregion
 
+        
+        private void CBtnCameraTest_Click(object sender, EventArgs e)
+        {
+            MyTcpClient m_MyTcpClientCamera = MainForm.GetMyTcpClientCamera();
 
+            byte[] SendMeas = new byte[32];
+            Message.MakeSendArrayByCode((byte)Message.MessageCodeCamera.GetCameraCoords, ref SendMeas);
+            string StrSend = BitConverter.ToString(SendMeas);
+            m_MyTcpClientCamera.ClientWrite(StrSend);
+        }
     }
 }
