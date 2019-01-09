@@ -436,7 +436,7 @@ namespace RobotWorkstation
 
         private void CBtnRobotTestReadPoint_Click(object sender, EventArgs e)
         {
-            if (m_ManualRobot.IsConnected() && m_ManualRobot.m_PointList != null)
+            if (m_ManualRobot.IsConnected() /*&& m_ManualRobot.m_PointList != null*/)
             {
                 ReadRobotGlobalPoints(0, RobotGlobalPointsBefore);
             }
@@ -1178,12 +1178,39 @@ namespace RobotWorkstation
         
         private void CBtnCameraTest_Click(object sender, EventArgs e)
         {
-            MyTcpClient m_MyTcpClientCamera = MainForm.GetMyTcpClientCamera();
+            //MyTcpClient m_MyTcpClientCamera = MainForm.GetMyTcpClientCamera();
 
-            byte[] SendMeas = new byte[32];
-            Message.MakeSendArrayByCode((byte)Message.MessageCodeCamera.GetCameraCoords, ref SendMeas);
-            string StrSend = BitConverter.ToString(SendMeas);
-            m_MyTcpClientCamera.ClientWrite(StrSend);
+            //byte[] SendMeas = new byte[32];
+            //Message.MakeSendArrayByCode((byte)Message.MessageCodeCamera.GetCameraCoords, ref SendMeas);
+            //string StrSend = BitConverter.ToString(SendMeas);
+            //m_MyTcpClientCamera.ClientWrite(StrSend);
+
+            float x = -120.33F;
+            float y = 120.33F;
+            float z = 20.33F;
+            float rz = -10.33F;
+
+            byte[] Temp1 = BitConverter.GetBytes(x);
+            byte[] Temp2 = BitConverter.GetBytes(y);
+            byte[] Temp3 = BitConverter.GetBytes(z);
+            byte[] Temp4 = BitConverter.GetBytes(rz);
+
+            short[] temp = new short[8];
+            temp[0] = BitConverter.ToInt16(Temp1, 0);
+            temp[1] = BitConverter.ToInt16(Temp1, 2);
+
+            temp[2] = BitConverter.ToInt16(Temp2, 0);
+            temp[3] = BitConverter.ToInt16(Temp2, 2);
+
+            temp[4] = BitConverter.ToInt16(Temp3, 0);
+            temp[5] = BitConverter.ToInt16(Temp3, 2);
+
+            temp[6] = BitConverter.ToInt16(Temp4, 0);
+            temp[7] = BitConverter.ToInt16(Temp4, 2);
+
+            float f1 = (float)temp[0];
+
+            float f2 = (float)(temp[2]);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace RobotWorkstation
     {
         public const ushort MODBUS_WR_ADDR = 0x1110;
         public const ushort MODBUS_RD_ADDR = 0x1310;
-        public const short MODBUS_WR_LEN = 13;
+        public const short MODBUS_WR_LEN = 32;
         public const short MODBUS_RD_LEN = 10;
         public const short TIMEOUT = 6000;  // 6000 * 10ms
         public const short MAX_GLOBAL_POINTS = 1000;  //最大1000个全局点位
@@ -447,48 +447,60 @@ namespace RobotWorkstation
         public short RunAction(int Action)
         {
             if (!m_IsConnected)
-            {
                 return 0;
-            }
 
-            short Cntr, Tmp;
-            //short[] InBuf = new short[COM_LEN];
+            for (int i = 0; i < m_SendBuf.Length; i++)
+                m_SendBuf[i] = 0x00;
 
-            //System.Diagnostics.Debug.WriteLine(Action);
-            //System.Diagnostics.Debug.WriteLine("#");
+            m_SendBuf[0] = 0x7e;          
+            m_SendBuf[1] = 0x54;  // for Delta scara robot
+            m_SendBuf[2] = 0x44;        
+            m_SendBuf[3] = 0x04;   // 4 axis robot           
+            m_SendBuf[4] = 0x01;   // robot address         
+            m_SendBuf[5] = 0x02;   // command            
+            m_SendBuf[6] = (short)Action;  // parameter                       
+            m_SendBuf[MODBUS_WR_LEN - 1] = 0x0d;  // end
 
-            m_SendBuf[0] = 0x7e;
-            // for Delta scara robot
-            m_SendBuf[1] = 0x54;
-            m_SendBuf[2] = 0x44;
-            // 4 axis robot
-            m_SendBuf[3] = 0x04;
-            // robot address
-            m_SendBuf[4] = 0x01;
-            // command
-            m_SendBuf[5] = 0x02;
-            // parameter
-            m_SendBuf[6] = (short)Action;
-            m_SendBuf[7] = 0x00;
-            m_SendBuf[8] = 0x00;
-            m_SendBuf[9] = 0x00;
-            m_SendBuf[10] = 0x00;
-            // end
-            Tmp = m_SendBuf[12] = 0x0d;
-            // CRC
-            m_SendBuf[10] = 0x00;
-            for (Cntr = 0; Cntr < 10; Cntr++)
-            {
-                Tmp += m_SendBuf[Cntr];
-            }
+            short sum = 0;
+            foreach (short temp in m_SendBuf)
+                sum += temp;
 
-            //Tmp = (short)(~Tmp + 1);
-            m_SendBuf[11] = Tmp;
+            m_SendBuf[MODBUS_WR_LEN - 2] = sum;
 
             m_Robot.WriteMulitModbus(MODBUS_WR_ADDR, m_SendBuf);
             m_Ready = false;
 
             return 0;
+        }
+
+        public void SetPointParamByModbus(short Action, short PointIndex, short[] Param)
+        {
+            if (m_IsConnected)
+            {
+                for (int i = 0; i < m_SendBuf.Length; i++)
+                    m_SendBuf[i] = 0x00;
+
+                m_SendBuf[0] = 0x7e;
+                m_SendBuf[1] = 0x54;   // for Delta scara robot
+                m_SendBuf[2] = 0x44;
+                m_SendBuf[3] = 0x04;   // 4 axis robot           
+                m_SendBuf[4] = 0x01;   // robot address         
+                m_SendBuf[5] = 0x02;   // command            
+                m_SendBuf[6] = Action;  // parameter      
+
+                for (int i = 0; i < Param.Length; i++)  //7-14
+                    m_SendBuf[7 + i] = Param[i];
+
+                m_SendBuf[MODBUS_WR_LEN - 1] = 0x0d;  // end
+
+                short sum = 0;
+                foreach (short temp in m_SendBuf)
+                    sum += temp;
+
+                m_SendBuf[MODBUS_WR_LEN - 2] = sum;
+
+                m_Robot.WriteMulitModbus(MODBUS_WR_ADDR, m_SendBuf);
+            }
         }
 
         public void ClearModbusReadAddr()

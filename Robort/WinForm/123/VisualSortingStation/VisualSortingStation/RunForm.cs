@@ -19,6 +19,7 @@ namespace RobotWorkstation
         private MyTcpClient m_MyTcpClientArm = null;
         private IO m_IO = null;
         private byte[] SendMeas = new byte[Message.MessageLength];
+        private RobotDevice m_Robot = RobotDevice.GetInstance();
 
         public RunForm()
         {
@@ -141,6 +142,9 @@ namespace RobotWorkstation
             //运行状态更新
             Bitmap bmpGreen = Properties.Resources.SmallGreen;
             Bitmap bmpRed = Properties.Resources.SmallRed;
+            if (m_Robot != null)
+                m_Robot.GetState();
+
             if (DataStruct.SysStat.Robot == 0)
                 PicRobot.Image = bmpGreen;
             else

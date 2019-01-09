@@ -55,8 +55,8 @@ namespace RobotWorkstation
             InitOtherForm();
                                 
             //检查各模块的状态
-            InitTcp();
-            InitWorkstatiionAndStart();
+            //InitTcp();
+            //InitWorkstatiionAndStart();
 
             //创建所有线程
             InitAndCreateAllThread();
@@ -253,8 +253,8 @@ namespace RobotWorkstation
 
         public void CloseForm()
         {
-            if (m_ManualDebugForm != null)
-                m_ManualDebugForm.CloseRobot();
+            if (m_Robot != null)
+                m_Robot.Close();
 
             Profile.SaveConfigFile();
             this.Close();
@@ -271,7 +271,7 @@ namespace RobotWorkstation
             {
                 DataStruct.SysStat.Robot = 1;
                 sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
-                //MessageBox.Show("机械臂初始化错误！");
+                MessageBox.Show("机械臂初始化错误！");
             }
 
             //Crmera  

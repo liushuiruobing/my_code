@@ -55,7 +55,8 @@ namespace RobotWorkstation
 	
     public enum AutoRunAction
     {
-        AuoRunStart = 0,              //开始
+        AuoRunNone = 0,
+        AuoRunStart,                  //开始
         AutoRunGetGrapCoords,         //获得抓取坐标
         AutoRunMoveToGrap,            //移动到位并抓取
         AutoRunMoveToScanQRCode,      //移动到位并扫码,检查扫码格式，不正确则依然执行此动作
@@ -199,10 +200,28 @@ namespace RobotWorkstation
                         case Robot_IO_IN.Robot_IO_IN_VacuoCheck: //吸嘴真空检测
                             {
                                 if (IoState == IOValue.IOValueHigh)
-                                    DataStruct.SysStat.RobotVacuoCheck = true;
+                                {
+                                    DataStruct.SysStat.RobotVacuoCheck = true; //吸起
+
+                                    m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;
+                                }
                                 else
-                                    DataStruct.SysStat.RobotVacuoCheck = false;
-                            }break;
+                                {
+                                    DataStruct.SysStat.RobotVacuoCheck = false; //放下
+
+                                    m_TempCount++;
+                                    if (m_TempCount >= m_OnePanelDevicesMax)
+                                    {
+                                        m_AutoRunAction = AutoRunAction.AutoRunTurnOverPanel;
+                                        m_TempCount = 0;
+                                    }
+                                    else
+                                    {
+                                        m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
+                                    }                                
+                                }
+                            }
+                            break;
                         default:
                             break;
                     }
@@ -347,10 +366,23 @@ namespace RobotWorkstation
                         {
                             bool Coords = true;
 
-                            float x = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 1);
-                            float y = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 5);
-                            float z = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 9);
-                            float rz = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 13);
+                            float x = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 3);
+                            float y = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 7);
+                            float z = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 11);
+                            float rz = BitConverter.ToSingle(meassage.Param, Message.MessageCommandIndex + 15);
+
+                            short[] temp = new short[8];
+                            temp[0] = BitConverter.ToInt16(meassage.Param, Message.MessageCommandIndex + 3);
+                            temp[1] = BitConverter.ToInt16(meassage.Param, Message.MessageCommandIndex + 5);
+
+                            temp[2] = BitConverter.ToInt16(meassage.Param, Message.MessageCommandIndex + 7);
+                            temp[3] = BitConverter.ToInt16(meassage.Param, Message.MessageCommandIndex + 9);
+
+                            temp[4] = BitConverter.ToInt16(meassage.Param, Message.MessageCommandIndex + 11);
+                            temp[5] = BitConverter.ToInt16(meassage.Param, Message.MessageCommandIndex + 13);
+
+                            temp[6] = BitConverter.ToInt16(meassage.Param, Message.MessageCommandIndex + 15);
+                            temp[7] = BitConverter.ToInt16(meassage.Param, Message.MessageCommandIndex + 17);
 
                             //检查坐标范围,正确则Coords = true
                             if (Coords)
@@ -387,7 +419,7 @@ namespace RobotWorkstation
             {
                 case AutoRunAction.AuoRunStart:                 //开始
                     {
-                        bool Start = false;
+                        bool Start = true;
                         //检查各盘是否到位，都无误后 Start = true
 
                         if (Start)
@@ -406,10 +438,15 @@ namespace RobotWorkstation
                         {
                             Message.MakeSendArrayByCode((byte)Message.MessageCodeCamera.GetCameraCoords, ref SendMeas);
                             if (m_GetNextGrapPoint)
+                            {
                                 SendMeas[Message.MessageCommandIndex + 1] = Message.MessCameraPutPoint;
-
+                                SendMeas[Message.MessageLength - 2] = (byte)(SendMeas[Message.MessageLength - 2] - 1);
+                            }
+                                
                             string StrSend = BitConverter.ToString(SendMeas);
                             m_MyTcpClientCamera.ClientWrite(StrSend);
+
+                            m_AutoRunAction = AutoRunAction.AuoRunNone;
                         }
                     }break;
                 case AutoRunAction.AutoRunMoveToGrap:           //移动到位并抓取   
@@ -423,22 +460,15 @@ namespace RobotWorkstation
                         else if (CurSortMode == SortMode.SortWithNoVisual)
                             m_Robot.RunAction((short)RobotAction.Action_Manual_Grap_1 + m_TempCount);
 
-                        //吸嘴真空检查，true为吸气抓取，false 为放气放下
-                        if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
-                            m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
-                        else
-                            m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;
-
-                    }break;
+                        m_AutoRunAction = AutoRunAction.AuoRunNone;
+                    }
+                    break;
                 case AutoRunAction.AutoRunMoveToScanQRCode:     //移动到位并扫码,检查扫码格式，不正确则依然执行此动作v          
                     {                      
                         m_Robot.RunAction((short)RobotAction.Action_QRCodeScan);  //移动到位,读取二维码
-
-                        if (m_ScanQRCode)  //二维码格式检查在QRCodeRecvData中
-                            m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;
-                        else
-                            m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
-                    }break;
+                        m_AutoRunAction = AutoRunAction.AuoRunNone;
+                    }
+                    break;
                 case AutoRunAction.AutoRunMoveToPut:    //移动到位并放下，计数后开始下一个，满总数后下一步    
                     {
                         Debug.Assert(m_TempCount <= m_OnePanelDevicesMax);
@@ -448,24 +478,9 @@ namespace RobotWorkstation
                         else if (CurSortMode == SortMode.SortWithNoVisual)
                             m_Robot.RunAction((short)RobotAction.Action_Manual_Put_1 + m_TempCount);
 
-                        if (!DataStruct.SysStat.RobotVacuoCheck) //检查真空是否真的放下，真放下则TempCount+1;                        
-                        {
-                            m_TempCount++;
-                            if (m_TempCount >= m_OnePanelDevicesMax)
-                            {
-                                m_AutoRunAction = AutoRunAction.AutoRunTurnOverPanel;
-                                m_TempCount = 0;
-                            }
-                            else
-                            {
-                                m_AutoRunAction = AutoRunAction.AutoRunGetGrapCoords;
-                            }
-                        }
-                        else
-                        {
-                            m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;
-                        }                                                  
-                    }break;
+                        m_AutoRunAction = AutoRunAction.AuoRunNone;
+                    }
+                    break;
                 case AutoRunAction.AutoRunTurnOverPanel:        //计数满则翻盘运走，从头开始
                     {
                         bool TurnOver = false;
@@ -554,7 +569,6 @@ namespace RobotWorkstation
                 {
                     DataStruct.SysStat.YellowAlarm = true;
                 }
-                DataStruct.SysStat.Robot = 1;
             }
 
             //check camera
@@ -629,9 +643,15 @@ namespace RobotWorkstation
                 QRCodeEventArgers Temp = e as QRCodeEventArgers;
                 bool Check = CheckAndSaveQRCodeReadData(Temp.QRCodeRecv);
                 if (Check)
+                {
                     m_ScanQRCode = true;
+                    m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;
+                }                    
                 else
-                    m_ScanQRCode = false;                
+                {
+                    m_ScanQRCode = false;
+                    m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
+                }          
             }
         }
 
