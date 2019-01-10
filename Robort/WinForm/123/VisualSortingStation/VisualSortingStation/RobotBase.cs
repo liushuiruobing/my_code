@@ -473,23 +473,25 @@ namespace RobotWorkstation
             return 0;
         }
 
-        public void SetPointParamByModbus(short Action, short PointIndex, short[] Param)
+        public void SetPointParamByModbus(short Action, short GrapPoint, short PutPoint, short[] Param)
         {
             if (m_IsConnected)
             {
                 for (int i = 0; i < m_SendBuf.Length; i++)
                     m_SendBuf[i] = 0x00;
 
-                m_SendBuf[0] = 0x7e;
+                m_SendBuf[0] = 0x7e;  //0x1110
                 m_SendBuf[1] = 0x54;   // for Delta scara robot
                 m_SendBuf[2] = 0x44;
                 m_SendBuf[3] = 0x04;   // 4 axis robot           
                 m_SendBuf[4] = 0x01;   // robot address         
                 m_SendBuf[5] = 0x02;   // command            
-                m_SendBuf[6] = Action;  // parameter      
+                m_SendBuf[6] = Action;  // parameter    
+                m_SendBuf[7] = GrapPoint;  // parameter    
+                m_SendBuf[8] = PutPoint;  // parameter   
 
                 for (int i = 0; i < Param.Length; i++)  //7-14
-                    m_SendBuf[7 + i] = Param[i];
+                    m_SendBuf[9 + i] = Param[i];
 
                 m_SendBuf[MODBUS_WR_LEN - 1] = 0x0d;  // end
 

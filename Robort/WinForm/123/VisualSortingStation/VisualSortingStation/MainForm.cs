@@ -55,8 +55,8 @@ namespace RobotWorkstation
             InitOtherForm();
                                 
             //检查各模块的状态
-            //InitTcp();
-            //InitWorkstatiionAndStart();
+            InitTcp();
+            InitWorkstatiionAndStart();
 
             //创建所有线程
             InitAndCreateAllThread();
@@ -265,7 +265,7 @@ namespace RobotWorkstation
             SysAlarm sysAlarm = SysAlarm.GetInstance();
 
             //Robot
-            m_Robot = RobotDevice.GetInstance();  
+            m_Robot = RobotDevice.GetInstance();
             bool Re = m_Robot.InitRobot();
             if (!Re)
             {

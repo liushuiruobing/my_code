@@ -1185,32 +1185,65 @@ namespace RobotWorkstation
             //string StrSend = BitConverter.ToString(SendMeas);
             //m_MyTcpClientCamera.ClientWrite(StrSend);
 
-            float x = -120.33F;
-            float y = 120.33F;
-            float z = 20.33F;
-            float rz = -10.33F;
+            int x = (int)(-20.33F * 1000);
+            int y = (int)(-20.33F * 1000);
+            int z = (int)(120.33F * 1000);
+            int rz = -10330;
+
+            int x1 = (int)(-11.33F * 1000);
+            int y1 = (int)(-22.33F * 1000);
+            int z1 = (int)(33.33F * 1000);
+            int rz1 = -44330;
 
             byte[] Temp1 = BitConverter.GetBytes(x);
             byte[] Temp2 = BitConverter.GetBytes(y);
             byte[] Temp3 = BitConverter.GetBytes(z);
             byte[] Temp4 = BitConverter.GetBytes(rz);
 
-            short[] temp = new short[8];
-            temp[0] = BitConverter.ToInt16(Temp1, 0);
-            temp[1] = BitConverter.ToInt16(Temp1, 2);
+            byte[] Temp11 = BitConverter.GetBytes(x1);
+            byte[] Temp21 = BitConverter.GetBytes(y1);
+            byte[] Temp31 = BitConverter.GetBytes(z1);
+            byte[] Temp41 = BitConverter.GetBytes(rz1);
 
-            temp[2] = BitConverter.ToInt16(Temp2, 0);
-            temp[3] = BitConverter.ToInt16(Temp2, 2);
 
-            temp[4] = BitConverter.ToInt16(Temp3, 0);
-            temp[5] = BitConverter.ToInt16(Temp3, 2);
+            short[] temp = new short[16];
+            temp[0] = (short)((Temp1[1] << 8) + (Temp1[0] & 0x00FF));
+            temp[1] = (short)((Temp1[3] << 8) + (Temp1[2] & 0x00FF));
 
-            temp[6] = BitConverter.ToInt16(Temp4, 0);
-            temp[7] = BitConverter.ToInt16(Temp4, 2);
+            int a1 = (temp[1] << 16) + (temp[0] & 0x0000ffff);
 
-            float f1 = (float)temp[0];
+            temp[2] = (short)((Temp2[1] << 8) + (Temp2[0] & 0x00FF));
+            temp[3] = (short)((Temp2[3] << 8) + (Temp2[2] & 0x00FF));
 
-            float f2 = (float)(temp[2]);
+
+            temp[4] = (short)((Temp3[1] << 8) + (Temp3[0] & 0x00FF));
+            temp[5] = (short)((Temp3[3] << 8) + (Temp3[2] & 0x00FF));
+
+
+            temp[6] = (short)((Temp4[1] << 8) + (Temp4[0] & 0x00FF));
+            temp[7] = (short)((Temp4[3] << 8) + (Temp4[2] & 0x00FF));
+
+
+            temp[8] = (short)((Temp11[1] << 8) + (Temp11[0] & 0x00FF));
+            temp[9] = (short)((Temp11[3] << 8) + (Temp11[2] & 0x00FF));
+
+
+            temp[10] = (short)((Temp21[1] << 8) + (Temp21[0] & 0x00FF));
+            temp[11] = (short)((Temp21[3] << 8) + (Temp21[2] & 0x00FF));
+
+
+            temp[12] = (short)((Temp31[1] << 8) + (Temp31[0] & 0x00FF));
+            temp[13] = (short)((Temp31[3] << 8) + (Temp31[2] & 0x00FF));
+
+
+            temp[14] = (short)((Temp41[1] << 8) + (Temp41[0] & 0x00FF));
+            temp[15] = (short)((Temp41[3] << 8) + (Temp41[2] & 0x00FF));
+
+
+
+            int GrapPointIndex = RobotDevice.m_VisualGrapStartPoint + (RobotAction.Action_Visual_Grap - RobotAction.Action_Go_Home);
+            int PutPointIndex = RobotDevice.m_VisualPutStartPoint + (RobotAction.Action_Visual_Put - RobotAction.Action_Manual_Put_1);
+            m_ManualRobot.SetPointParamByModbus((short)RobotAction.Action_Visual_SetPoint, (short)GrapPointIndex, (short)PutPointIndex, temp);
         }
     }
 }
