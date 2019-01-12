@@ -39,6 +39,10 @@
             this.PicLedAlarm = new System.Windows.Forms.PictureBox();
             this.PicLedRun = new System.Windows.Forms.PictureBox();
             this.PicLedReady = new System.Windows.Forms.PictureBox();
+            this.TimerCheckAllStatus = new System.Windows.Forms.Timer(this.components);
+            this.customLabel13 = new RobotWorkstation.CustomLabel();
+            this.customLabel12 = new RobotWorkstation.CustomLabel();
+            this.customLabel11 = new RobotWorkstation.CustomLabel();
             this.AfterSortingSalver = new RobotWorkstation.Salver();
             this.OriginalSalver = new RobotWorkstation.Salver();
             this.customLabel10 = new RobotWorkstation.CustomLabel();
@@ -68,8 +72,8 @@
             this.CButtonStop = new RobotWorkstation.CustomButton();
             this.CButtonPause = new RobotWorkstation.CustomButton();
             this.CButtonRun = new RobotWorkstation.CustomButton();
-            this.TimerCheckAllStatus = new System.Windows.Forms.Timer(this.components);
-            this.customLabel11 = new RobotWorkstation.CustomLabel();
+            this.CLabelTotalDeveices = new RobotWorkstation.CustomLabel();
+            this.CLabelTotalTrays = new RobotWorkstation.CustomLabel();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedStop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedAlarm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedRun)).BeginInit();
@@ -125,6 +129,43 @@
             this.PicLedReady.TabIndex = 0;
             this.PicLedReady.TabStop = false;
             // 
+            // TimerCheckAllStatus
+            // 
+            this.TimerCheckAllStatus.Tick += new System.EventHandler(this.TimerCheckAllStatus_Tick);
+            // 
+            // customLabel13
+            // 
+            this.customLabel13.AutoSize = true;
+            this.customLabel13.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel13.Location = new System.Drawing.Point(777, 386);
+            this.customLabel13.Name = "customLabel13";
+            this.customLabel13.Size = new System.Drawing.Size(78, 23);
+            this.customLabel13.TabIndex = 19;
+            this.customLabel13.Text = "分拣物料";
+            // 
+            // customLabel12
+            // 
+            this.customLabel12.AutoSize = true;
+            this.customLabel12.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel12.Location = new System.Drawing.Point(397, 386);
+            this.customLabel12.Name = "customLabel12";
+            this.customLabel12.Size = new System.Drawing.Size(78, 23);
+            this.customLabel12.TabIndex = 18;
+            this.customLabel12.Text = "原始物料";
+            // 
+            // customLabel11
+            // 
+            this.customLabel11.AutoSize = true;
+            this.customLabel11.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel11.Location = new System.Drawing.Point(84, 316);
+            this.customLabel11.Name = "customLabel11";
+            this.customLabel11.Size = new System.Drawing.Size(112, 23);
+            this.customLabel11.TabIndex = 17;
+            this.customLabel11.Text = "其他显示信息";
+            // 
             // AfterSortingSalver
             // 
             this.AfterSortingSalver.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
@@ -139,7 +180,7 @@
             // 
             this.OriginalSalver.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.OriginalSalver.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.OriginalSalver.Location = new System.Drawing.Point(327, 280);
+            this.OriginalSalver.Location = new System.Drawing.Point(331, 280);
             this.OriginalSalver.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.OriginalSalver.Name = "OriginalSalver";
             this.OriginalSalver.Size = new System.Drawing.Size(224, 95);
@@ -150,7 +191,7 @@
             this.customLabel10.AutoSize = true;
             this.customLabel10.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel10.Location = new System.Drawing.Point(71, 310);
+            this.customLabel10.Location = new System.Drawing.Point(1067, 318);
             this.customLabel10.Name = "customLabel10";
             this.customLabel10.Size = new System.Drawing.Size(78, 23);
             this.customLabel10.TabIndex = 14;
@@ -161,7 +202,7 @@
             this.customLabel9.AutoSize = true;
             this.customLabel9.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel9.Location = new System.Drawing.Point(71, 395);
+            this.customLabel9.Location = new System.Drawing.Point(1067, 403);
             this.customLabel9.Name = "customLabel9";
             this.customLabel9.Size = new System.Drawing.Size(78, 23);
             this.customLabel9.TabIndex = 13;
@@ -172,7 +213,7 @@
             this.customLabel8.AutoSize = true;
             this.customLabel8.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel8.Location = new System.Drawing.Point(71, 352);
+            this.customLabel8.Location = new System.Drawing.Point(1067, 360);
             this.customLabel8.Name = "customLabel8";
             this.customLabel8.Size = new System.Drawing.Size(78, 23);
             this.customLabel8.TabIndex = 12;
@@ -183,7 +224,7 @@
             this.customLabel7.AutoSize = true;
             this.customLabel7.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel7.Location = new System.Drawing.Point(71, 266);
+            this.customLabel7.Location = new System.Drawing.Point(1067, 274);
             this.customLabel7.Name = "customLabel7";
             this.customLabel7.Size = new System.Drawing.Size(78, 23);
             this.customLabel7.TabIndex = 11;
@@ -194,7 +235,7 @@
             this.customLabel6.AutoSize = true;
             this.customLabel6.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel6.Location = new System.Drawing.Point(71, 223);
+            this.customLabel6.Location = new System.Drawing.Point(1067, 231);
             this.customLabel6.Name = "customLabel6";
             this.customLabel6.Size = new System.Drawing.Size(78, 23);
             this.customLabel6.TabIndex = 10;
@@ -512,20 +553,27 @@
             this.CButtonRun.UseVisualStyleBackColor = false;
             this.CButtonRun.Click += new System.EventHandler(this.CButtonStart_Click);
             // 
-            // TimerCheckAllStatus
+            // CLabelTotalDeveices
             // 
-            this.TimerCheckAllStatus.Tick += new System.EventHandler(this.TimerCheckAllStatus_Tick);
+            this.CLabelTotalDeveices.AutoSize = true;
+            this.CLabelTotalDeveices.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CLabelTotalDeveices.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.CLabelTotalDeveices.Location = new System.Drawing.Point(1151, 233);
+            this.CLabelTotalDeveices.Name = "CLabelTotalDeveices";
+            this.CLabelTotalDeveices.Size = new System.Drawing.Size(20, 23);
+            this.CLabelTotalDeveices.TabIndex = 20;
+            this.CLabelTotalDeveices.Text = "0";
             // 
-            // customLabel11
+            // CLabelTotalTrays
             // 
-            this.customLabel11.AutoSize = true;
-            this.customLabel11.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.customLabel11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel11.Location = new System.Drawing.Point(1047, 310);
-            this.customLabel11.Name = "customLabel11";
-            this.customLabel11.Size = new System.Drawing.Size(112, 23);
-            this.customLabel11.TabIndex = 17;
-            this.customLabel11.Text = "其他显示信息";
+            this.CLabelTotalTrays.AutoSize = true;
+            this.CLabelTotalTrays.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CLabelTotalTrays.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.CLabelTotalTrays.Location = new System.Drawing.Point(1151, 276);
+            this.CLabelTotalTrays.Name = "CLabelTotalTrays";
+            this.CLabelTotalTrays.Size = new System.Drawing.Size(20, 23);
+            this.CLabelTotalTrays.TabIndex = 21;
+            this.CLabelTotalTrays.Text = "0";
             // 
             // RunForm
             // 
@@ -534,6 +582,10 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.ClientSize = new System.Drawing.Size(1260, 830);
             this.ControlBox = false;
+            this.Controls.Add(this.CLabelTotalTrays);
+            this.Controls.Add(this.CLabelTotalDeveices);
+            this.Controls.Add(this.customLabel13);
+            this.Controls.Add(this.customLabel12);
             this.Controls.Add(this.customLabel11);
             this.Controls.Add(this.AfterSortingSalver);
             this.Controls.Add(this.OriginalSalver);
@@ -616,5 +668,9 @@
         private Salver AfterSortingSalver;
         private System.Windows.Forms.Timer TimerCheckAllStatus;
         private CustomLabel customLabel11;
+        private CustomLabel customLabel12;
+        private CustomLabel customLabel13;
+        private CustomLabel CLabelTotalDeveices;
+        private CustomLabel CLabelTotalTrays;
     }
 }

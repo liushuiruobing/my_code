@@ -37,7 +37,8 @@ namespace RobotWorkstation
     {
         Robot_IO_IN_CylGoArrive = 0x01,  //抓手气缸进到位
         Robot_IO_IN_CylBackArrive,       //抓手气缸退到位
-        Robot_IO_IN_VacuoCheck           //吸嘴真空检测
+        Robot_IO_IN_VacuoCheck,           //吸嘴真空检测
+        Robot_WritePointSuccessed           //机械臂写点位成功
     }
 
     public enum Robot_IO_OUT  //要与实际的接线对应

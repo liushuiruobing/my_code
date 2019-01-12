@@ -16,7 +16,7 @@ namespace RobotWorkstation
     {
         public const ushort MODBUS_WR_ADDR = 0x1110;
         public const ushort MODBUS_RD_ADDR = 0x1310;
-        public const short MODBUS_WR_LEN = 32;
+        public const short MODBUS_WR_LEN = 48;
         public const short MODBUS_RD_LEN = 10;
         public const short TIMEOUT = 6000;  // 6000 * 10ms
         public const short MAX_GLOBAL_POINTS = 1000;  //最大1000个全局点位
@@ -64,6 +64,7 @@ namespace RobotWorkstation
             if (m_IsConnected)
             {
                 m_IsConnected = false;
+                StopProgram();
                 m_Robot.ServoOff();
                 m_Robot.DisConnectRobot();
             }
@@ -473,7 +474,7 @@ namespace RobotWorkstation
             return 0;
         }
 
-        public void SetPointParamByModbus(short Action, short GrapPoint, short PutPoint, short[] Param)
+        public void SetPointParamByModbus(short Action, short GrapPoint, short QRCodeScanPoint, short PutPoint, short[] Param)
         {
             if (m_IsConnected)
             {
@@ -488,10 +489,11 @@ namespace RobotWorkstation
                 m_SendBuf[5] = 0x02;   // command            
                 m_SendBuf[6] = Action;  // parameter    
                 m_SendBuf[7] = GrapPoint;  // parameter    
-                m_SendBuf[8] = PutPoint;  // parameter   
+                m_SendBuf[8] = QRCodeScanPoint;  // parameter   
+                m_SendBuf[9] = PutPoint;  // parameter  
 
-                for (int i = 0; i < Param.Length; i++)  //7-14
-                    m_SendBuf[9 + i] = Param[i];
+                for (int i = 0; i < Param.Length; i++)  //10-23
+                    m_SendBuf[10 + i] = Param[i];
 
                 m_SendBuf[MODBUS_WR_LEN - 1] = 0x0d;  // end
 

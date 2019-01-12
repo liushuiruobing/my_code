@@ -10,8 +10,13 @@ using System.Windows.Forms;
 
 namespace RobotWorkstation
 {
+
     public partial class Salver : UserControl
     {
+        public static Color GridEmptyColor = Color.Gray;
+        public static Color GridFullColor = Color.Green;
+        public static Color GridErrorColor = Color.Red;
+
         public Salver()
         {
             InitializeComponent();

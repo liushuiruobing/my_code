@@ -20,6 +20,7 @@ namespace RobotWorkstation
         private IO m_IO = null;
         private byte[] SendMeas = new byte[Message.MessageLength];
         private RobotDevice m_Robot = RobotDevice.GetInstance();
+        public static int m_GrapAndPutCount = 0;  //用于记录自动抓取和放置的个数
 
         public RunForm()
         {
@@ -40,12 +41,13 @@ namespace RobotWorkstation
         {
             MultiLanguage.LoadLanguage(this, typeof(RunForm));
 
-            OriginalSalver.InitEveryGridColor(Color.Green);
+            OriginalSalver.InitEveryGridColor(Salver.GridFullColor);
+            AfterSortingSalver.InitEveryGridColor(Salver.GridEmptyColor);
         }
 
         private void CButtonStart_Click(object sender, EventArgs e)
         {
-            //OriginalSalver.SetSelectedGridColor(1, Color.Green);
+            
             //if ((DataStruct.SysStat.Ready == 1) && (DataStruct.SysStat.Stop == 0))
             {
                 DataStruct.SysStat.Run = true;
@@ -192,6 +194,28 @@ namespace RobotWorkstation
 
             //轮询单片机的状态
             m_IO.ReadControlBoardIo((byte)Message.MessageCodeARM.GetInIo, ref SendMeas);
+
+            //刷新盘的状态
+            if (DataStruct.SysStat.GrapAndPutOneSuccessed)
+            {
+                DataStruct.SysStat.GrapAndPutOneSuccessed = false;
+                OriginalSalver.SetSelectedGridColor(VisualSortingStation.m_OnePanelDevicesMax - (m_GrapAndPutCount - 1), Salver.GridEmptyColor);
+                AfterSortingSalver.SetSelectedGridColor(m_GrapAndPutCount, Salver.GridFullColor);
+
+                if (m_GrapAndPutCount == VisualSortingStation.m_OnePanelDevicesMax)
+                {
+                    lock (this)
+                    {
+                        m_GrapAndPutCount = 0;
+                    }
+                    
+                    OriginalSalver.InitEveryGridColor(Salver.GridFullColor);
+                    AfterSortingSalver.InitEveryGridColor(Salver.GridEmptyColor);
+                }
+            }
+
+            CLabelTotalDeveices.Text = VisualSortingStation.m_DevicesTotal.ToString();
+            CLabelTotalTrays.Text = (VisualSortingStation.m_DevicesTotal / VisualSortingStation.m_OnePanelDevicesMax).ToString();
         }
 
     }

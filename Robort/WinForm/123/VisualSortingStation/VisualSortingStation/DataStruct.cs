@@ -49,7 +49,9 @@ namespace RobotWorkstation
             //public static bool RobotNozzleInhale;       //吸嘴吸
             //public static bool RobotNozzleBlow;         //吸嘴吹
             public static bool RobotVacuoCheck;         //真空检测
-			
+
+            //抓取放置操作
+            public static bool GrapAndPutOneSuccessed;
         }
 
         public struct SysAlarm
@@ -71,7 +73,7 @@ namespace RobotWorkstation
             SysStat.Ready = false;
             SysStat.Run = false;
             SysStat.Pause = false;
-            SysStat.Stop = true;
+            SysStat.Stop = false;
             SysStat.Scram = false;
             SysStat.Reset = false;
 
@@ -95,6 +97,8 @@ namespace RobotWorkstation
             //SysStat.RobotNozzleInhale = false;
             //SysStat.RobotNozzleBlow = false;
             SysStat.RobotVacuoCheck = false;
+
+            SysStat.GrapAndPutOneSuccessed = false;
 
         }
 

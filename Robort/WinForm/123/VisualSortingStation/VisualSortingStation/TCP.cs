@@ -67,7 +67,7 @@ namespace RobotWorkstation
             //IPEndPoint EndPoint = new IPEndPoint(m_TcpParam.nIpAddress, m_TcpParam.nPort);
             //m_TcpClient = new TcpClient(EndPoint);
           
-            m_TcpClient.ReceiveTimeout = RecvTimeOut;
+            //m_TcpClient.ReceiveTimeout = RecvTimeOut;
             m_TcpClient.SendTimeout = SendTimeOut;
         }
 
@@ -90,6 +90,15 @@ namespace RobotWorkstation
                     MessageBox.Show(ex.Message);
                 }
             }
+        }
+
+        public void Close()
+        {
+            if (m_TcpClient != null && m_TcpClient.Connected)
+            {
+                m_TcpClient.Close();
+            }
+            
         }
 
         private void TcpClientRecvTask(object Client)
@@ -117,9 +126,9 @@ namespace RobotWorkstation
                     m_TcpClient.Close();
                     break;
                 }
-                catch 
+                catch (Exception e)
                 {
-                    //MessageBox.Show(e.Message);
+                    MessageBox.Show(e.Message);
                     continue;
                 }
             }

@@ -29,6 +29,8 @@ namespace RobotWorkstation
         public StopBits m_StopBits = StopBits.One;
         public int m_ReadTimeOut = 100;     
         public event EventHandler QRCodeRecvDataEvent;
+        public string m_ReadString = "";
+        private const int m_QRCodeCount = 52;  //"KR12BN5901299ABPVKBSM965,00C3F41A134C,000000000000\r\n"
 
         public bool m_IsConnect
         {
@@ -143,9 +145,19 @@ namespace RobotWorkstation
             try
             {
                 QRCodeEventArgers ev = new QRCodeEventArgers();
-                ev.QRCodeRecv = ((SerialPort)sender).ReadExisting();
-                if (ev.QRCodeRecv != m_ReadNone)       
-                    QRCodeRecvDataEvent?.Invoke(this, ev);
+                m_ReadString += ((SerialPort)sender).ReadExisting();
+                Debug.WriteLine(m_ReadString);
+
+                if (m_ReadString == m_ReadNone)
+                    m_ReadString = string.Empty;
+
+                if (m_ReadString.Length == m_QRCodeCount)  //二维码+\r\n
+                {
+                    ev.QRCodeRecv = (string)m_ReadString.Clone();
+                    m_ReadString = string.Empty;
+                    QRCodeRecvDataEvent?.Invoke(this, ev);              
+                }       
+                    
             }
             catch (System.TimeoutException)
             {

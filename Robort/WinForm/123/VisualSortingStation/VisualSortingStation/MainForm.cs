@@ -273,14 +273,11 @@ namespace RobotWorkstation
                 sysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
                 MessageBox.Show("机械臂初始化错误！");
             }
-
-            //Crmera  
-            m_Camera = VisionCamera.GetInstance();  
-            Re = m_Camera.InitCamera();
-            if (!Re)
+            else
             {
-                DataStruct.SysStat.Camera = 1;
-                sysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
+                m_Robot.ServoOn();
+                //m_Robot.RunSelectedProgram(1);
+                m_Robot.m_PointList = m_Robot.GetGlobalPointData();
             }
 
             //RFID    

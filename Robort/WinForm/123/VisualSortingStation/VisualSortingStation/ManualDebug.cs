@@ -1023,7 +1023,7 @@ namespace RobotWorkstation
 
         private void ComBoxQRCodeCom_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Profile.m_Config.QRCodePort = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
+            //Profile.m_Config.QRCodePort = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
         }
 
         private void ComBoxQRCodeBandRate_SelectedIndexChanged(object sender, EventArgs e)
@@ -1195,6 +1195,11 @@ namespace RobotWorkstation
             int z1 = (int)(33.33F * 1000);
             int rz1 = -44330;
 
+            int x2 = (int)(-1.33F * 1000);
+            int y2 = (int)(-2.33F * 1000);
+            int z2 = (int)(3.33F * 1000);
+            int rz2 = -55330;
+
             byte[] Temp1 = BitConverter.GetBytes(x);
             byte[] Temp2 = BitConverter.GetBytes(y);
             byte[] Temp3 = BitConverter.GetBytes(z);
@@ -1205,45 +1210,56 @@ namespace RobotWorkstation
             byte[] Temp31 = BitConverter.GetBytes(z1);
             byte[] Temp41 = BitConverter.GetBytes(rz1);
 
+            byte[] Temp12 = BitConverter.GetBytes(x2);
+            byte[] Temp22 = BitConverter.GetBytes(y2);
+            byte[] Temp32 = BitConverter.GetBytes(z2);
+            byte[] Temp42 = BitConverter.GetBytes(rz2);
 
-            short[] temp = new short[16];
+            short[] temp = new short[24];
             temp[0] = (short)((Temp1[1] << 8) + (Temp1[0] & 0x00FF));
             temp[1] = (short)((Temp1[3] << 8) + (Temp1[2] & 0x00FF));
-
-            int a1 = (temp[1] << 16) + (temp[0] & 0x0000ffff);
 
             temp[2] = (short)((Temp2[1] << 8) + (Temp2[0] & 0x00FF));
             temp[3] = (short)((Temp2[3] << 8) + (Temp2[2] & 0x00FF));
 
-
             temp[4] = (short)((Temp3[1] << 8) + (Temp3[0] & 0x00FF));
             temp[5] = (short)((Temp3[3] << 8) + (Temp3[2] & 0x00FF));
-
 
             temp[6] = (short)((Temp4[1] << 8) + (Temp4[0] & 0x00FF));
             temp[7] = (short)((Temp4[3] << 8) + (Temp4[2] & 0x00FF));
 
-
+            ///
             temp[8] = (short)((Temp11[1] << 8) + (Temp11[0] & 0x00FF));
             temp[9] = (short)((Temp11[3] << 8) + (Temp11[2] & 0x00FF));
-
 
             temp[10] = (short)((Temp21[1] << 8) + (Temp21[0] & 0x00FF));
             temp[11] = (short)((Temp21[3] << 8) + (Temp21[2] & 0x00FF));
 
-
             temp[12] = (short)((Temp31[1] << 8) + (Temp31[0] & 0x00FF));
             temp[13] = (short)((Temp31[3] << 8) + (Temp31[2] & 0x00FF));
-
 
             temp[14] = (short)((Temp41[1] << 8) + (Temp41[0] & 0x00FF));
             temp[15] = (short)((Temp41[3] << 8) + (Temp41[2] & 0x00FF));
 
+            ///
 
+            temp[16] = (short)((Temp12[1] << 8) + (Temp12[0] & 0x00FF));
+            temp[17] = (short)((Temp12[3] << 8) + (Temp12[2] & 0x00FF));
+
+            temp[18] = (short)((Temp22[1] << 8) + (Temp22[0] & 0x00FF));
+            temp[19] = (short)((Temp22[3] << 8) + (Temp22[2] & 0x00FF));
+
+            temp[20] = (short)((Temp32[1] << 8) + (Temp32[0] & 0x00FF));
+            temp[21] = (short)((Temp32[3] << 8) + (Temp32[2] & 0x00FF));
+
+            temp[22] = (short)((Temp42[1] << 8) + (Temp42[0] & 0x00FF));
+            temp[23] = (short)((Temp42[3] << 8) + (Temp42[2] & 0x00FF));
 
             int GrapPointIndex = RobotDevice.m_VisualGrapStartPoint + (RobotAction.Action_Visual_Grap - RobotAction.Action_Go_Home);
+            int ScanPointIndex = RobotDevice.m_QRCodePoint;
             int PutPointIndex = RobotDevice.m_VisualPutStartPoint + (RobotAction.Action_Visual_Put - RobotAction.Action_Manual_Put_1);
-            m_ManualRobot.SetPointParamByModbus((short)RobotAction.Action_Visual_SetPoint, (short)GrapPointIndex, (short)PutPointIndex, temp);
+
+            m_ManualRobot.SetPointParamByModbus((short)RobotAction.Action_Visual_SetPoint, (short)GrapPointIndex, (short)ScanPointIndex, (short)PutPointIndex, temp);
         }
     }
 }

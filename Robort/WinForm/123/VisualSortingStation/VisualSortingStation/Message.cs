@@ -29,8 +29,12 @@ namespace RobotWorkstation
         public const byte MessRobotAddr  = 0x01;     //机械臂地址
 
         //Camera相关
-        public const byte MessCameraGrapPoint = 0x00;     //相机发送抓取点标志
-        public const byte MessCameraPutPoint = 0x01;     //相机发送放置点标志
+        public const byte MessCameraCurrentPoint = 0x00;
+        public const byte MessCameraNextPoint = 0x01;
+
+        public const byte MessCameraGrapPoint = 0x00;           //相机发送抓取点标志
+        public const byte MessCameraQRCodeScanPoint = 0x01;     //相机计算的二维码扫描点
+        public const byte MessCameraPutPoint = 0x02;            //相机发送放置点标志
 
         public enum MessageCodePLC
         {
