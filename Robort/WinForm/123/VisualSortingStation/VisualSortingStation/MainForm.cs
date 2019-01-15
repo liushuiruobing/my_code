@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -23,13 +24,16 @@ namespace RobotWorkstation
         private UserLimitsForm m_UserLimitsForm = null;
 
         //所需模块
-        private RobotDevice m_Robot = null;  //机械臂            
-        private VisionCamera m_Camera = null;  //视觉相机     
+        private RobotDevice m_Robot = null;  //机械臂             
         private RFID m_RFID = null;   //RFID      
         private QRCode m_QRCode = null; //二维码
         private static MyTcpClient m_MyTcpClientArm = null;
         private static MyTcpClient m_MyTcpClientCamera = null;
         private MyTcpServer m_MyTcpServer = null;
+
+        //网络共享文件夹
+        //private static NetShare m_NetShare = NetShare.GetInstance();
+        //private static string m_CreateShare = "CreateShare.bat";
 
         //线程
         private Thread m_MainThread = null;
@@ -55,8 +59,8 @@ namespace RobotWorkstation
             InitOtherForm();
                                 
             //检查各模块的状态
-            InitTcp();
-            InitWorkstatiionAndStart();
+            //InitTcp();
+            //InitWorkstatiionAndStart();
 
             //创建所有线程
             InitAndCreateAllThread();
@@ -264,8 +268,16 @@ namespace RobotWorkstation
         {
             SysAlarm sysAlarm = SysAlarm.GetInstance();
 
+            //检查共享文件夹是否存在，存在则直接存储文件，不存在则创建共享文件夹
+            if (!Directory.Exists(NsfTrayModule.m_FileFolder))
+            {
+                //Directory.CreateDirectory(NsfTrayModule.m_FileFolder);
+                //m_NetShare.CallShareBatFile(m_CreateShare);
+                MessageBox.Show("请在D盘创建名为ShareFolder的网络共享文件夹！");
+            }
+
             //Robot
-            m_Robot = RobotDevice.GetInstance();
+            m_Robot = RobotDevice.GetInstance();  
             bool Re = m_Robot.InitRobot();
             if (!Re)
             {

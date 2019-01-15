@@ -40,6 +40,8 @@
             this.PicLedRun = new System.Windows.Forms.PictureBox();
             this.PicLedReady = new System.Windows.Forms.PictureBox();
             this.TimerCheckAllStatus = new System.Windows.Forms.Timer(this.components);
+            this.CLabelTotalTrays = new RobotWorkstation.CustomLabel();
+            this.CLabelTotalDeveices = new RobotWorkstation.CustomLabel();
             this.customLabel13 = new RobotWorkstation.CustomLabel();
             this.customLabel12 = new RobotWorkstation.CustomLabel();
             this.customLabel11 = new RobotWorkstation.CustomLabel();
@@ -72,8 +74,6 @@
             this.CButtonStop = new RobotWorkstation.CustomButton();
             this.CButtonPause = new RobotWorkstation.CustomButton();
             this.CButtonRun = new RobotWorkstation.CustomButton();
-            this.CLabelTotalDeveices = new RobotWorkstation.CustomLabel();
-            this.CLabelTotalTrays = new RobotWorkstation.CustomLabel();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedStop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedAlarm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedRun)).BeginInit();
@@ -133,12 +133,34 @@
             // 
             this.TimerCheckAllStatus.Tick += new System.EventHandler(this.TimerCheckAllStatus_Tick);
             // 
+            // CLabelTotalTrays
+            // 
+            this.CLabelTotalTrays.AutoSize = true;
+            this.CLabelTotalTrays.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CLabelTotalTrays.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.CLabelTotalTrays.Location = new System.Drawing.Point(1151, 276);
+            this.CLabelTotalTrays.Name = "CLabelTotalTrays";
+            this.CLabelTotalTrays.Size = new System.Drawing.Size(20, 23);
+            this.CLabelTotalTrays.TabIndex = 21;
+            this.CLabelTotalTrays.Text = "0";
+            // 
+            // CLabelTotalDeveices
+            // 
+            this.CLabelTotalDeveices.AutoSize = true;
+            this.CLabelTotalDeveices.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CLabelTotalDeveices.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.CLabelTotalDeveices.Location = new System.Drawing.Point(1151, 233);
+            this.CLabelTotalDeveices.Name = "CLabelTotalDeveices";
+            this.CLabelTotalDeveices.Size = new System.Drawing.Size(20, 23);
+            this.CLabelTotalDeveices.TabIndex = 20;
+            this.CLabelTotalDeveices.Text = "0";
+            // 
             // customLabel13
             // 
             this.customLabel13.AutoSize = true;
             this.customLabel13.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel13.Location = new System.Drawing.Point(777, 386);
+            this.customLabel13.Location = new System.Drawing.Point(788, 387);
             this.customLabel13.Name = "customLabel13";
             this.customLabel13.Size = new System.Drawing.Size(78, 23);
             this.customLabel13.TabIndex = 19;
@@ -149,7 +171,7 @@
             this.customLabel12.AutoSize = true;
             this.customLabel12.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel12.Location = new System.Drawing.Point(397, 386);
+            this.customLabel12.Location = new System.Drawing.Point(397, 390);
             this.customLabel12.Name = "customLabel12";
             this.customLabel12.Size = new System.Drawing.Size(78, 23);
             this.customLabel12.TabIndex = 18;
@@ -171,9 +193,9 @@
             this.AfterSortingSalver.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.AfterSortingSalver.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.AfterSortingSalver.Location = new System.Drawing.Point(704, 280);
-            this.AfterSortingSalver.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AfterSortingSalver.Margin = new System.Windows.Forms.Padding(2);
             this.AfterSortingSalver.Name = "AfterSortingSalver";
-            this.AfterSortingSalver.Size = new System.Drawing.Size(224, 95);
+            this.AfterSortingSalver.Size = new System.Drawing.Size(240, 105);
             this.AfterSortingSalver.TabIndex = 16;
             // 
             // OriginalSalver
@@ -181,9 +203,9 @@
             this.OriginalSalver.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.OriginalSalver.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.OriginalSalver.Location = new System.Drawing.Point(331, 280);
-            this.OriginalSalver.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.OriginalSalver.Margin = new System.Windows.Forms.Padding(2);
             this.OriginalSalver.Name = "OriginalSalver";
-            this.OriginalSalver.Size = new System.Drawing.Size(224, 95);
+            this.OriginalSalver.Size = new System.Drawing.Size(240, 105);
             this.OriginalSalver.TabIndex = 15;
             // 
             // customLabel10
@@ -250,9 +272,9 @@
             this.customGroupBox1.Controls.Add(this.PicQRCodeScanner);
             this.customGroupBox1.Controls.Add(this.customLabel4);
             this.customGroupBox1.Controls.Add(this.PicTrayEmpty);
-            this.customGroupBox1.Controls.Add(this.customLabel3);
             this.customGroupBox1.Controls.Add(this.PicCamera);
             this.customGroupBox1.Controls.Add(this.customLabel2);
+            this.customGroupBox1.Controls.Add(this.customLabel3);
             this.customGroupBox1.Controls.Add(this.PicRobot);
             this.customGroupBox1.Controls.Add(this.customLabel1);
             this.customGroupBox1.Font = new System.Drawing.Font("微软雅黑", 12F);
@@ -381,7 +403,7 @@
             // PicRfid
             // 
             this.PicRfid.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicRfid.Location = new System.Drawing.Point(996, 22);
+            this.PicRfid.Location = new System.Drawing.Point(832, 21);
             this.PicRfid.Name = "PicRfid";
             this.PicRfid.Size = new System.Drawing.Size(24, 24);
             this.PicRfid.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -393,16 +415,16 @@
             this.customLabel5.AutoSize = true;
             this.customLabel5.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel5.Location = new System.Drawing.Point(891, 23);
+            this.customLabel5.Location = new System.Drawing.Point(722, 22);
             this.customLabel5.Name = "customLabel5";
             this.customLabel5.Size = new System.Drawing.Size(99, 23);
             this.customLabel5.TabIndex = 8;
-            this.customLabel5.Text = "RFID扫描器";
+            this.customLabel5.Text = "RFID读码器";
             // 
             // PicQRCodeScanner
             // 
             this.PicQRCodeScanner.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicQRCodeScanner.Location = new System.Drawing.Point(782, 22);
+            this.PicQRCodeScanner.Location = new System.Drawing.Point(584, 23);
             this.PicQRCodeScanner.Name = "PicQRCodeScanner";
             this.PicQRCodeScanner.Size = new System.Drawing.Size(24, 24);
             this.PicQRCodeScanner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -414,16 +436,16 @@
             this.customLabel4.AutoSize = true;
             this.customLabel4.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel4.Location = new System.Drawing.Point(664, 23);
+            this.customLabel4.Location = new System.Drawing.Point(466, 22);
             this.customLabel4.Name = "customLabel4";
             this.customLabel4.Size = new System.Drawing.Size(112, 23);
             this.customLabel4.TabIndex = 6;
-            this.customLabel4.Text = "二维码扫描器";
+            this.customLabel4.Text = "二维码读码器";
             // 
             // PicTrayEmpty
             // 
             this.PicTrayEmpty.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicTrayEmpty.Location = new System.Drawing.Point(568, 22);
+            this.PicTrayEmpty.Location = new System.Drawing.Point(1015, 21);
             this.PicTrayEmpty.Name = "PicTrayEmpty";
             this.PicTrayEmpty.Size = new System.Drawing.Size(24, 24);
             this.PicTrayEmpty.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -435,7 +457,7 @@
             this.customLabel3.AutoSize = true;
             this.customLabel3.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel3.Location = new System.Drawing.Point(518, 23);
+            this.customLabel3.Location = new System.Drawing.Point(965, 22);
             this.customLabel3.Name = "customLabel3";
             this.customLabel3.Size = new System.Drawing.Size(44, 23);
             this.customLabel3.TabIndex = 4;
@@ -444,7 +466,7 @@
             // PicCamera
             // 
             this.PicCamera.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicCamera.Location = new System.Drawing.Point(354, 22);
+            this.PicCamera.Location = new System.Drawing.Point(328, 23);
             this.PicCamera.Name = "PicCamera";
             this.PicCamera.Size = new System.Drawing.Size(24, 24);
             this.PicCamera.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -456,7 +478,7 @@
             this.customLabel2.AutoSize = true;
             this.customLabel2.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel2.Location = new System.Drawing.Point(304, 23);
+            this.customLabel2.Location = new System.Drawing.Point(278, 23);
             this.customLabel2.Name = "customLabel2";
             this.customLabel2.Size = new System.Drawing.Size(44, 23);
             this.customLabel2.TabIndex = 2;
@@ -552,28 +574,6 @@
             this.CButtonRun.Text = "启动";
             this.CButtonRun.UseVisualStyleBackColor = false;
             this.CButtonRun.Click += new System.EventHandler(this.CButtonStart_Click);
-            // 
-            // CLabelTotalDeveices
-            // 
-            this.CLabelTotalDeveices.AutoSize = true;
-            this.CLabelTotalDeveices.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.CLabelTotalDeveices.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.CLabelTotalDeveices.Location = new System.Drawing.Point(1151, 233);
-            this.CLabelTotalDeveices.Name = "CLabelTotalDeveices";
-            this.CLabelTotalDeveices.Size = new System.Drawing.Size(20, 23);
-            this.CLabelTotalDeveices.TabIndex = 20;
-            this.CLabelTotalDeveices.Text = "0";
-            // 
-            // CLabelTotalTrays
-            // 
-            this.CLabelTotalTrays.AutoSize = true;
-            this.CLabelTotalTrays.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.CLabelTotalTrays.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.CLabelTotalTrays.Location = new System.Drawing.Point(1151, 276);
-            this.CLabelTotalTrays.Name = "CLabelTotalTrays";
-            this.CLabelTotalTrays.Size = new System.Drawing.Size(20, 23);
-            this.CLabelTotalTrays.TabIndex = 21;
-            this.CLabelTotalTrays.Text = "0";
             // 
             // RunForm
             // 

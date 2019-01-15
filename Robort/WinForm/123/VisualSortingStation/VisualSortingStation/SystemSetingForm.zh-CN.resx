@@ -141,7 +141,7 @@
   <data name="CLabelRobotIp.Text" xml:space="preserve">
     <value>IP 地址：</value>
   </data>
-  <data name="ComBoxSysLanguage.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="ComBoxSysLanguage_1.Location" type="System.Drawing.Point, System.Drawing">
     <value>125, 19</value>
   </data>
   <data name="CLabelSysLanguage.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">

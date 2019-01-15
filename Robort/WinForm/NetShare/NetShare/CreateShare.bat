@@ -1,6 +1,6 @@
 net user guest /active:yes
-net share Share=F:\ShareFolder /Grant:everyone,full
-Icacls F:\ShareFolder /grant Everyone:F /inheritance:e /T
-Icacls F:\ShareFolder\*.* /grant Everyone:F /inheritance:e /T
+net share Share=D:\ShareFolder /Grant:everyone,full
+Icacls D:\ShareFolder /grant Everyone:F /inheritance:e /T
+Icacls D:\ShareFolder\*.* /grant Everyone:F /inheritance:e /T
 
 

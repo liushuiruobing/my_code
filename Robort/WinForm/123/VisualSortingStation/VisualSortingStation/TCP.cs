@@ -44,7 +44,7 @@ namespace RobotWorkstation
     {
         private TcpClient m_TcpClient = null;
 
-        private int RecvTimeOut = 100;
+       // private int RecvTimeOut = 100;
         private int SendTimeOut = 100;        
         public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
         private Byte[] m_RecvBytes = new Byte[8192];
@@ -97,8 +97,7 @@ namespace RobotWorkstation
             if (m_TcpClient != null && m_TcpClient.Connected)
             {
                 m_TcpClient.Close();
-            }
-            
+            }           
         }
 
         private void TcpClientRecvTask(object Client)

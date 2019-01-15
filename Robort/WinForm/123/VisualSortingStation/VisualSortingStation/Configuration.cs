@@ -43,8 +43,9 @@ namespace RobotWorkstation
 
         //Controler Arm
         public string ControlerArmIp;
+        public string ControlerArmMac;
         public int ControlerArmPort;
-
+        
         //Sort Mode
         public SortMode SelectedSortMode;
 
@@ -83,6 +84,7 @@ namespace RobotWorkstation
             //Controler Arm
             ControlerArmIp = "192.168.1.42";
             ControlerArmPort = 20001;
+            ControlerArmMac = "94-F7-20-01-BD-10";
 
             SelectedSortMode = SortMode.SortWithVisual;
         }

@@ -1,16 +1,9 @@
 ﻿using Advantech.Motion;
 using RABD.DROE.SystemDefine;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RobotWorkstation
@@ -47,8 +40,11 @@ namespace RobotWorkstation
 
             InitRobot();
             InitCamera();  //视觉相机
-            InitRfid();
             InitQRCode();
+
+            //隐藏部分页
+            tabPageCamera.Parent = null;
+            tabPageThreeAxisRobot.Parent = null;
         }
 
         private void ManualDebug_Load(object sender, EventArgs e)
@@ -66,10 +62,141 @@ namespace RobotWorkstation
             DGV_RobotGlobalPoint.Rows.Clear();
             LoadRobotGlobalPoints(0, RobotGlobalPointsBefore);
             TimerInitRobotGlobalPointDGV.Start();
+
         }
 
+        private void RefreshTimer_Tick(object sender, EventArgs e)
+        {
+            Bitmap bmpGreen = Properties.Resources.SmallGreen;
+            Bitmap bmpDarkGreen = Properties.Resources.SmallDarkGreen;
+            Bitmap bmpRed = Properties.Resources.SmallRed;
+            Bitmap bmpDarkRed = Properties.Resources.SmallDarkRed;
+
+            //Robot
+            pictureBoxRobotAlarm.Image = (m_ManualRobot.HasAlarm() || m_ManualRobot.HasWarning()) ? bmpRed : bmpDarkRed;
+            pictureBoxTemperature.Image = (m_ManualRobot.GetTemperatureStateString() == "过载") ? bmpRed : bmpDarkGreen;
+            pictureBoxRobotMove.Image = m_ManualRobot.GetMovingState() ? bmpGreen : bmpDarkGreen;
+            DisplayRobotState(m_ManualRobot.GetExecutorStateString(), pictureBoxRobotExecut);
+            RefreshRobotServoPic(m_ManualRobot, pictureBoxServo);
+
+            UpdateRobotCurentMeas();
+
+            if (m_ManualRobot.IsConnected() && m_ManualRobot.m_PointList == null)  //读取全局点位信息，只读一次
+                m_ManualRobot.m_PointList = m_ManualRobot.GetGlobalPointData();
+
+            //抓手
+            PicBoxRobotGrapGoArrive.Image = DataStruct.SysStat.RobotCylGoArrive ? bmpRed : bmpDarkGreen;
+            PicBoxRobotGrapBackArrive.Image = DataStruct.SysStat.RobotCylBackArrive ? bmpRed : bmpDarkGreen;
+            PicBoxRobotGrapVacuumCheck.Image = DataStruct.SysStat.RobotVacuoCheck ? bmpRed : bmpDarkGreen;
+
+            //二维码
+            if (m_QRCode != null && m_QRCode.m_IsConnect)
+            {
+                lock (this)
+                {
+                    if (m_QRCode.m_ReadQueue.Count > 0)
+                        ComBoxQRCodeReadShow.Text += m_QRCode.m_ReadQueue.Dequeue();
+                }
+            }
+
+            //IO 控制板指示灯更新
+            Bitmap bmpYellow = Properties.Resources.SmallYellow;
+            Bitmap bmpBlue = Properties.Resources.SmallBlue;
+
+            PicBoxEmptyPlateUpArrive.Image = DataStruct.SysStat.EmptySalverAirCylUpArrive ? bmpRed : bmpDarkGreen;
+            PicBoxEmptyPlateDownArrive.Image = DataStruct.SysStat.EmptySalverAirCylDownArrive ? bmpRed : bmpDarkGreen;
+        }
+
+        private void ManualDebugForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (m_ManualRobot != null)
+            {
+                m_ManualRobot.Close();
+            }
+        }
+
+        public void HideFormAndSaveConfigFile()
+        {
+            this.Hide();
+            Profile.SaveConfigFile();
+            RefreshTimer.Stop();
+        }
+
+        //当窗体第一次显示时发生
+        private void ManualDebugForm_Shown(object sender, EventArgs e)
+        {
+            RefreshTimer.Start();
+        }
+
+        public void InitRobot()
+        {
+            //下面的三个页暂不使用
+            PageRobotTestUserFrame.Parent = null;
+            PageRobotTestToolFrame.Parent = null;
+            PageRobotTestWorkSpace.Parent = null;
+            ComBoxRobotActions.SelectedIndex = 0;
+        }
+
+        private void tabControlManualDebug_Selected(object sender, TabControlEventArgs e)
+        {
+            switch (tabControlManualDebug.SelectedIndex)
+            {
+                case 0:  //台达机械臂
+                    {
+                        radioButtonRobotDeviceJog.Checked = true;  //默认是Jog模式
+                        CTextBoxRobotMoveSpeed.Text = Profile.m_Config.RobotMoveSpeed.ToString();
+                        CTextBoxJogDistance.Text = Profile.m_Config.RobotMoveDistance.ToString();
+                        CTextBoxJogDistanceUm.Text = Profile.m_Config.RobotMoveDistanceUm.ToString();
+                        m_ManualRobot.SetRobotPamram(int.Parse(CTextBoxRobotMoveSpeed.Text), int.Parse(CTextBoxJogDistance.Text), int.Parse(CTextBoxJogDistanceUm.Text));
+
+                        TimerMotionControlGetState.Stop();
+                    }
+                    break;
+                case 1:  //其他
+                    {
+
+                    }
+                    break;
+                case 2:  //相机
+                    {
+                        CTextBoxCameraExposure.Text = Profile.m_Config.CameraExposure.ToString("F1");
+                        CTextBoxCameraGain.Text = Profile.m_Config.CameraGain.ToString("F1");
+                        CTextBoxCameraFrameRate.Text = Profile.m_Config.CameraFramRate.ToString("F1");
+
+                        TimerMotionControlGetState.Stop();
+                    }
+                    break;
+                case 3:  //三轴机械臂
+                    {
+                        if (!m_MotionControl.m_bInitBoard)
+                            m_MotionControl.InitMotionControl();
+
+                        if (m_MotionControl.m_DeviceCount > 0)
+                        {
+                            ComBoxMotionControlDevice.Items.Clear();
+                            for (int i = 0; i < m_MotionControl.m_DeviceCount; i++)
+                            {
+                                ComBoxMotionControlDevice.Items.Add(m_MotionControl.m_CurAvailableDevs[i].DeviceName);
+                                ComBoxMotionControlDevice.SelectedIndex = 0;
+                            }
+                        }
+
+                        TimerMotionControlGetState.Start();
+                    }
+                    break;
+                default: break;
+            }
+
+            if (tabControlManualDebug.SelectedIndex == 1)  //选择其他页时
+                m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
+            else
+                m_QRCode.QRCodeRecvDataEvent -= new EventHandler(QRCodeRecvData);
+        }
+
+        #region  //机械臂
+
         //加载机械臂的全局点位信息
-        public void LoadRobotGlobalPoints(int StartIndex,  int EndIndex)
+        public void LoadRobotGlobalPoints(int StartIndex, int EndIndex)
         {
             for (int i = StartIndex; i < EndIndex; i++)
             {
@@ -101,7 +228,7 @@ namespace RobotWorkstation
         private void timer_InitRobotGlobalPointDGV_Tick(object sender, EventArgs e)
         {
             TimerInitRobotGlobalPointDGV.Stop();
-            LoadRobotGlobalPoints(RobotGlobalPointsBefore, RobotBase.MAX_GLOBAL_POINTS);    
+            LoadRobotGlobalPoints(RobotGlobalPointsBefore, RobotBase.MAX_GLOBAL_POINTS);
         }
 
         private void CBttonServoOn_Click(object sender, EventArgs e)
@@ -119,7 +246,7 @@ namespace RobotWorkstation
             if (m_ManualRobot.IsConnected())
             {
                 m_ManualRobot.ServoOff();
-                Thread.Sleep(100);  
+                Thread.Sleep(100);
                 RefreshRobotServoPic(m_ManualRobot, pictureBoxServo);
             }
         }
@@ -212,7 +339,7 @@ namespace RobotWorkstation
                 m_ManualRobot.SetSpeed(speed);
                 Profile.m_Config.RobotMoveSpeed = speed;
             }
-            catch 
+            catch
             {
                 return;
             }
@@ -230,7 +357,7 @@ namespace RobotWorkstation
             catch
             {
                 return;
-            }         
+            }
         }
 
         private void CTextBoxJogDistanceUm_TextChanged(object sender, EventArgs e)
@@ -494,7 +621,7 @@ namespace RobotWorkstation
             {
                 int nPointIndex = m_ManualRobotGlobalPointIndex;
                 m_ManualRobot.TechGlobalPoint(nPointIndex);
-                GetRobotGlobalPoint(m_ManualRobot, DGV_RobotGlobalPoint, nPointIndex) ;
+                GetRobotGlobalPoint(m_ManualRobot, DGV_RobotGlobalPoint, nPointIndex);
             }
         }
 
@@ -502,46 +629,33 @@ namespace RobotWorkstation
         {
             DataStruct.SysStat.RobotVacuoCheck = false;
             VisualSortingStation.m_ScanQRCode = false;
+            TimerRobotTestRunAction.Stop();
 
             if (m_ManualRobot.IsConnected())
             {
                 m_ManualRobot.RunAction((int)RobotAction.Action_Manual_Grap_1 + ComBoxRobotActions.SelectedIndex);
-                int nCount = 5000;
-                while (nCount-- > 0)
-                {
-                    if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
-                    {
-                        DataStruct.SysStat.RobotVacuoCheck = false;
-                        m_ManualRobot.RunAction((int)RobotAction.Action_QRCodeScan);
-                        break;
-                    }
-                    Thread.Sleep(100);
-                }
+                TimerRobotTestRunAction.Start();
+            }
+        }
 
-                nCount = 5000;
-                while (nCount-- > 0)
-                {
-                    if (VisualSortingStation.m_ScanQRCode)  //二维码格式检查在QRCodeRecvData中
-                    {
-                        m_ManualRobot.RunAction((int)RobotAction.Action_Manual_Put_1 + ComBoxRobotActions.SelectedIndex);
-                        break;
-                    }
-                    Thread.Sleep(100);
-                    if (nCount == 4990)
-                        VisualSortingStation.m_ScanQRCode = true;
-                }
+        private void TimerRobotTestRunAction_Tick(object sender, EventArgs e)
+        {
+            if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
+            {
+                DataStruct.SysStat.RobotVacuoCheck = false;
+                m_ManualRobot.RunAction((int)RobotAction.Action_QRCodeScan);
+            }
 
-                nCount = 5000;
-                while (nCount-- > 0)
-                {
-                    if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
-                    {
-                        MessageBox.Show("放置完成！");
-                        break;
-                    }
-                    Thread.Sleep(100);
-                }
+            if (VisualSortingStation.m_ScanQRCode)  //二维码格式检查在QRCodeRecvData中
+            {
+                VisualSortingStation.m_ScanQRCode = false;
+                m_ManualRobot.RunAction((int)RobotAction.Action_Manual_Put_1 + ComBoxRobotActions.SelectedIndex);
+            }
 
+            if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
+            {
+                TimerRobotTestRunAction.Stop();
+                MessageBox.Show("放置完成！");
             }
         }
 
@@ -562,107 +676,199 @@ namespace RobotWorkstation
 
         private void CBtnRobotGrap_Click(object sender, EventArgs e)
         {
-            if (CBtnRobotGrap.Text == "抓取")
-            {
-                CBtnRobotGrap.Text = "放下";
-                m_ManualRobot.SetRobotIo(Robot_IO_OUT.Robot_IO_OUT_Vacuo, IOValue.IOValueHigh);
-            }
-            else if (CBtnRobotGrap.Text == "放下")
-            {
-                CBtnRobotGrap.Text = "抓取";
-                m_ManualRobot.SetRobotIo(Robot_IO_OUT.Robot_IO_OUT_Vacuo, IOValue.IOValueHigh);
-            }
+            m_ManualRobot.SetRobotIo(Robot_IO_OUT.Robot_IO_OUT_Vacuo, IOValue.IOValueHigh);
         }
 
-        private void RefreshTimer_Tick(object sender, EventArgs e)
+        private void CBtnRobotPut_Click(object sender, EventArgs e)
         {
-            Bitmap bmpGreen = Properties.Resources.SmallGreen;
-            Bitmap bmpDarkGreen = Properties.Resources.SmallDarkGreen;
-            Bitmap bmpRed = Properties.Resources.SmallRed;
-            Bitmap bmpDarkRed = Properties.Resources.SmallDarkRed;
+            m_ManualRobot.SetRobotIo(Robot_IO_OUT.Robot_IO_OUT_Vacuo, IOValue.IOValueLow);
+        }
 
-            //Robot
-            pictureBoxRobotAlarm.Image = (m_ManualRobot.HasAlarm() || m_ManualRobot.HasWarning()) ? bmpRed : bmpDarkRed;
-            pictureBoxTemperature.Image = (m_ManualRobot.GetTemperatureStateString() == "过载") ? bmpRed : bmpDarkGreen;
-            pictureBoxRobotMove.Image = m_ManualRobot.GetMovingState() ? bmpGreen : bmpDarkGreen;
-            DisplayRobotState(m_ManualRobot.GetExecutorStateString(), pictureBoxRobotExecut);
-            RefreshRobotServoPic(m_ManualRobot, pictureBoxServo);
+        #endregion
 
-            UpdateRobotCurentMeas();
+        #region   // 二维码扫描器
 
-            if (m_ManualRobot.IsConnected() && m_ManualRobot.m_PointList == null)  //读取全局点位信息，只读一次
-                m_ManualRobot.m_PointList = m_ManualRobot.GetGlobalPointData();
+        //二维码读取器
+        public void InitQRCode()
+        {
+            ComBoxQRCodeDisconnect.Enabled = false;
 
-            //抓手
-            PicBoxRobotGrapGoArrive.Image = DataStruct.SysStat.RobotCylGoArrive ? bmpRed : bmpDarkGreen;
-            PicBoxRobotGrapBackArrive.Image = DataStruct.SysStat.RobotCylBackArrive ? bmpRed : bmpDarkGreen;
-            PicBoxRobotGrapVacuumCheck.Image = DataStruct.SysStat.RobotVacuoCheck ? bmpRed : bmpDarkGreen;
-
-            //二维码
-            if (m_QRCode != null && m_QRCode.m_IsConnect)
+            //获取当前的串口设备
+            string[] CurPorts = SerialPort.GetPortNames();
+            if (CurPorts.Length > 0)
             {
-                lock (this)
+                ComBoxQRCodeCom.Items.Clear();
+                for (int i = 0; i < CurPorts.Length; i++)
                 {
-                    if (m_QRCode.m_ReadQueue.Count > 0)
-                        ComBoxQRCodeReadShow.Text += m_QRCode.m_ReadQueue.Dequeue();
+                    ComBoxQRCodeCom.Items.Add(CurPorts[i]);
+                    if (CurPorts[i] == Profile.m_Config.QRCodePort)
+                    {
+                        ComBoxQRCodeCom.SelectedIndex = i;
+                    }
                 }
             }
-
-            //IO 控制板指示灯更新
-            Bitmap bmpYellow = Properties.Resources.SmallYellow;
-            Bitmap bmpBlue = Properties.Resources.SmallBlue;
-
-            PicBoxEmptyPlateUpArrive.Image = DataStruct.SysStat.EmptyPlateUpArrive ? bmpRed : bmpDarkGreen;
-            PicBoxEmptyPlateDownArrive.Image = DataStruct.SysStat.EmptyPlateDownArrive ? bmpRed : bmpDarkGreen;
-            PicBoxIoRedLed.Image = DataStruct.SysStat.RedAlarm ? bmpRed : bmpDarkGreen;
-            PicBoxIoYellowLed.Image = DataStruct.SysStat.YellowAlarm ? bmpYellow : bmpDarkGreen;
-            PicBoxIoGreenLed.Image = DataStruct.SysStat.LedGreen ? bmpGreen : bmpDarkGreen;
-            PicBoxIoBlueLed.Image = DataStruct.SysStat.LedBlue ? bmpBlue : bmpDarkGreen;
+        
+            m_SyncContext = SynchronizationContext.Current;
         }
 
-        private void ManualDebugForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void ComBoxQRCodeConnect_Click(object sender, EventArgs e)
         {
-            CloseRobot();
-        }
+            string Port = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
+            string BandRate = Profile.m_Config.QRCodeBandRate;
+            string DataBits = Profile.m_Config.QRCodeDataBits;
+            string StopBits = Profile.m_Config.QRCodeStopBits;
+            string Parity = Profile.m_Config.QRCodeParity;
 
-        public void CloseRobot()
-        {
-            if (m_ManualRobot != null)
+            m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
+            m_QRCode.QRCodeInit();
+
+            if (m_QRCode.m_IsConnect)
             {
-                m_ManualRobot.Close();
+                ComBoxQRCodeConnect.Enabled = false;
+                ComBoxQRCodeDisconnect.Enabled = true;
             }
         }
 
-        public void HideFormAndSaveConfigFile()
+        private void ComBoxQRCodeDisconnect_Click(object sender, EventArgs e)
         {
-            this.Hide();
-            Profile.SaveConfigFile();
-            RefreshTimer.Stop();
+            if (m_QRCode != null)
+            {
+                m_QRCode.m_SerialPort.Close();
+            }
+            ComBoxQRCodeConnect.Enabled = true;
+            ComBoxQRCodeDisconnect.Enabled = false;
         }
 
-        //当窗体第一次显示时发生
-        private void ManualDebugForm_Shown(object sender, EventArgs e)
+        private void ComBoxQRCodeClear_Click(object sender, EventArgs e)
         {
-            RefreshTimer.Start();
+            ComBoxQRCodeReadShow.Text = "";
         }
 
-
-        public void InitRobot()
+        private void QRCodeRecvData(object sender, EventArgs e)
         {
-            //下面的三个页暂不使用
-            PageRobotTestUserFrame.Parent = null;
-            PageRobotTestToolFrame.Parent = null;
-            PageRobotTestWorkSpace.Parent = null;
-            ComBoxRobotActions.SelectedIndex = 0;
+            if (e is QRCodeEventArgers)
+            {
+                QRCodeEventArgers Temp = e as QRCodeEventArgers;
+
+                bool Check = VisualSortingStation.CheckAndSaveQRCodeReadData(Temp.QRCodeRecv);
+                if (Check)
+                {
+                    VisualSortingStation.m_ScanQRCode = true;
+                }
+                else
+                {
+                    VisualSortingStation.m_ScanQRCode = false;
+                    m_ManualRobot.RunAction((int)RobotAction.Action_QRCodeScan);  //再次扫描
+                }
+
+                m_SyncContext.Post(SetQRCodeTextSafePost, Temp.QRCodeRecv);
+            }
         }
 
+        private void SetQRCodeTextSafePost(object text)
+        {
+            ComBoxQRCodeReadShow.Text += (string)text;
+
+            ComBoxQRCodeReadShow.Focus();//获取焦点          
+            ComBoxQRCodeReadShow.Select(ComBoxQRCodeReadShow.TextLength, 0);//光标定位到文本最后
+            ComBoxQRCodeReadShow.ScrollToCaret();//滚动到光标处
+        }
+
+        private void ComBoxQRCodeConnect_EnabledChanged(object sender, EventArgs e)
+        {
+            if (ComBoxQRCodeConnect.Enabled)
+                ComBoxQRCodeConnect.BackColor = CustomColor.BtnGreenColor;
+            else
+                ComBoxQRCodeConnect.BackColor = Color.Gray;
+        }
+
+        private void ComBoxQRCodeDisconnect_EnabledChanged(object sender, EventArgs e)
+        {
+            if (ComBoxQRCodeDisconnect.Enabled)
+                ComBoxQRCodeDisconnect.BackColor = Color.Red;
+            else
+                ComBoxQRCodeDisconnect.BackColor = Color.Gray;
+        }
+
+        private void ComBoxQRCodeCom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //Profile.m_Config.QRCodePort = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
+        }
+
+        #endregion
+
+        #region  //IO 控制
+
+        private void BtnLampRedOn_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
+        }
+
+        private void BtnLampRedOff_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
+        }
+
+        private void BtnLampOrangeOn_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
+        }
+
+        private void BtnLampOrangeOff_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
+        }
+
+        private void BtnLampGreenOn_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
+        }
+
+        private void BtnLampGreenOff_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
+        }
+
+        private void BtnLampBlueOn_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedBlue, IOValue.IOValueHigh);
+        }
+
+        private void BtnLampBlueOff_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedBlue, IOValue.IOValueLow);
+        }
+
+        private void BtnBeepOn_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_Beep, IOValue.IOValueHigh);
+        }
+
+        private void BtnBeepOff_Click(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_Beep, IOValue.IOValueLow);
+        }
+
+        private void CButtonIoEmptyPlateUp_Click_1(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylUp, IOValue.IOValueHigh);
+        }
+
+        private void CButtonIoEmptyPlateDown_Click_1(object sender, EventArgs e)
+        {
+            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
+        }
+
+        #endregion
+
+        #region  //相机
         public void InitCamera()
         {
             if (m_Camera != null)
             {
                 PictureBoxCamera = m_Camera.m_CameraPictureBox;
                 ComBoxCameraDevList = m_Camera.m_CameraListComboBox;
-            }        
+            }
         }
 
         private void CButtonFindCamera_Click(object sender, EventArgs e)
@@ -704,71 +910,9 @@ namespace RobotWorkstation
                 CTextBoxCameraFrameRate.Text = param.FramRate.ToString("F1");
             }
         }
+        #endregion
 
-        private void tabControlManualDebug_Selected(object sender, TabControlEventArgs e)
-        {
-            switch (tabControlManualDebug.SelectedIndex)
-            {
-                case 0:  //台达机械臂
-                    {
-                        radioButtonRobotDeviceJog.Checked = true;  //默认是Jog模式
-                        CTextBoxRobotMoveSpeed.Text = Profile.m_Config.RobotMoveSpeed.ToString();
-                        CTextBoxJogDistance.Text = Profile.m_Config.RobotMoveDistance.ToString();
-                        CTextBoxJogDistanceUm.Text = Profile.m_Config.RobotMoveDistanceUm.ToString();
-                        m_ManualRobot.SetRobotPamram(int.Parse(CTextBoxRobotMoveSpeed.Text), int.Parse(CTextBoxJogDistance.Text), int.Parse(CTextBoxJogDistanceUm.Text));
-
-                        TimerMotionControlGetState.Stop();
-                    }
-                    break;
-                case 1:  //二维码读码器
-                    {
-
-                    }
-                    break;
-                case 2:  //RFID
-                    {
-
-                    }break;
-                case 3:  //IO
-                    {
-
-                    }
-                    break;
-                case 4:  //相机
-                    {
-                        CTextBoxCameraExposure.Text = Profile.m_Config.CameraExposure.ToString("F1");
-                        CTextBoxCameraGain.Text = Profile.m_Config.CameraGain.ToString("F1");
-                        CTextBoxCameraFrameRate.Text = Profile.m_Config.CameraFramRate.ToString("F1");
-
-                        TimerMotionControlGetState.Stop();
-                    }
-                    break;
-                case 5:  //三轴机械臂
-                    {
-                        if (!m_MotionControl.m_bInitBoard)
-                            m_MotionControl.InitMotionControl();
-
-                        if (m_MotionControl.m_DeviceCount > 0)
-                        {
-                            ComBoxMotionControlDevice.Items.Clear();
-                            for (int i = 0; i < m_MotionControl.m_DeviceCount; i++)
-                            {
-                                ComBoxMotionControlDevice.Items.Add(m_MotionControl.m_CurAvailableDevs[i].DeviceName);
-                                ComBoxMotionControlDevice.SelectedIndex = 0;
-                            }
-                        }
-
-                        TimerMotionControlGetState.Start();
-                    }
-                    break;
-                default: break;
-            }
-
-            if (tabControlManualDebug.SelectedIndex == 1)  //选择二维码读码器页时
-                m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
-            else
-                m_QRCode.QRCodeRecvDataEvent -= new EventHandler(QRCodeRecvData);
-        }
+        #region  //三轴机械臂
 
         //三轴机械臂
         private void CButtonMotionControlDeviceLoadCfg_Click(object sender, EventArgs e)
@@ -786,7 +930,7 @@ namespace RobotWorkstation
         private void CButtonOpenMotionControlDevice_Click(object sender, EventArgs e)
         {
             if (!m_MotionControl.m_bInitBoard)
-            {              
+            {
                 m_MotionControl.OpenDevice();
 
                 ComBoxMotionControlAxis.Items.Clear();
@@ -815,7 +959,7 @@ namespace RobotWorkstation
                 {
                     m_MotionControl.ResetErr(i);
                 }
-            }           
+            }
         }
 
         private void CButtonSetMotionControlSpeedParam_Click(object sender, EventArgs e)
@@ -830,7 +974,7 @@ namespace RobotWorkstation
             {
                 m_MotionControl.m_Distance = AxDistance;
                 m_MotionControl.SetMotionAxisSpeedParam(m_MotionControl.m_CurAxis, AxVelLow, AxVelHigh, AxVelAcc, AxVelDec);
-            }             
+            }
         }
 
         private void CButtonMotionControlUp_Click(object sender, EventArgs e)
@@ -948,318 +1092,8 @@ namespace RobotWorkstation
                 m_MotionControl.m_HomeMode = (uint)ComBoxMotionHomeMode.SelectedIndex;
                 m_MotionControl.GoHome();
             }
-                
-        }
-
-
-        #region   // 二维码扫描器
-
-        private void ComBoxQRCodeConnect_Click(object sender, EventArgs e)
-        {
-            string Port = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
-            string BandRate = (string)ComBoxQRCodeBandRate.Items[ComBoxQRCodeBandRate.SelectedIndex];
-            string DataBits = (string)ComBoxQRCodeDataBit.Items[ComBoxQRCodeDataBit.SelectedIndex];
-            string StopBits = (string)ComBoxQRCodeStopBit.Items[ComBoxQRCodeStopBit.SelectedIndex];
-            string Parity = (string)ComBoxQRCodeParity.Items[ComBoxQRCodeParity.SelectedIndex];
-
-            m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
-            m_QRCode.QRCodeInit();
-
-            if (m_QRCode.m_IsConnect)
-            {
-                ComBoxQRCodeConnect.Enabled = false;
-                ComBoxQRCodeDisconnect.Enabled = true;
-            }
-        }
-
-        private void ComBoxQRCodeDisconnect_Click(object sender, EventArgs e)
-        {
-            if (m_QRCode != null)
-            {
-                m_QRCode.m_SerialPort.Close();
-            }
-            ComBoxQRCodeConnect.Enabled = true;
-            ComBoxQRCodeDisconnect.Enabled = false;
-        }
-
-        private void ComBoxQRCodeClear_Click(object sender, EventArgs e)
-        {
-            ComBoxQRCodeReadShow.Text = "";
-        }
-
-        private void QRCodeRecvData(object sender, EventArgs e)
-        {
-            if (e is QRCodeEventArgers)
-            {
-                QRCodeEventArgers Temp = e as QRCodeEventArgers;
-                m_SyncContext.Post(SetQRCodeTextSafePost, Temp.QRCodeRecv);
-            }
-        }
-
-        private void SetQRCodeTextSafePost(object text)
-        {
-            ComBoxQRCodeReadShow.Text += (string)text;
-
-            ComBoxQRCodeReadShow.Focus();//获取焦点          
-            ComBoxQRCodeReadShow.Select(ComBoxQRCodeReadShow.TextLength, 0);//光标定位到文本最后
-            ComBoxQRCodeReadShow.ScrollToCaret();//滚动到光标处
-        }
-
-        private void ComBoxQRCodeConnect_EnabledChanged(object sender, EventArgs e)
-        {
-            if (ComBoxQRCodeConnect.Enabled)
-                ComBoxQRCodeConnect.BackColor = CustomColor.BtnGreenColor;
-            else
-                ComBoxQRCodeConnect.BackColor = Color.Gray;
-        }
-
-        private void ComBoxQRCodeDisconnect_EnabledChanged(object sender, EventArgs e)
-        {
-            if (ComBoxQRCodeDisconnect.Enabled)
-                ComBoxQRCodeDisconnect.BackColor = Color.Red;
-            else
-                ComBoxQRCodeDisconnect.BackColor = Color.Gray;
-        }
-
-        private void ComBoxQRCodeCom_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //Profile.m_Config.QRCodePort = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
-        }
-
-        private void ComBoxQRCodeBandRate_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Profile.m_Config.QRCodeBandRate = (string)ComBoxQRCodeBandRate.Items[ComBoxQRCodeBandRate.SelectedIndex];
-        }
-
-        private void ComBoxQRCodeDataBit_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Profile.m_Config.QRCodeDataBits = (string)ComBoxQRCodeDataBit.Items[ComBoxQRCodeDataBit.SelectedIndex];
-        }
-
-        private void ComBoxQRCodeStopBit_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Profile.m_Config.QRCodeStopBits = (string)ComBoxQRCodeStopBit.Items[ComBoxQRCodeStopBit.SelectedIndex];
-        }
-
-        private void ComBoxQRCodeParity_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Profile.m_Config.QRCodeParity = (string)ComBoxQRCodeParity.Items[ComBoxQRCodeParity.SelectedIndex];
         }
 
         #endregion
-
-        #region  //RFID
-
-        //RFID
-        public void InitRfid()
-        {
-            ComBoxRfidCh.SelectedIndex = 0;
-        }
-
-        //二维码读取器
-        public void InitQRCode()
-        {
-            ComBoxQRCodeDisconnect.Enabled = false;
-
-            //获取当前的串口设备
-            string[] CurPorts = SerialPort.GetPortNames();
-            if (CurPorts.Length > 0)
-            {
-                ComBoxQRCodeCom.Items.Clear();
-                foreach (string port in CurPorts)
-                {
-                    ComBoxQRCodeCom.Items.Add(port);
-                }
-            }
-
-            ComBoxQRCodeCom.SelectedIndex = 0;
-            ComBoxQRCodeBandRate.SelectedIndex = 0;
-            ComBoxQRCodeDataBit.SelectedIndex = 0;
-            ComBoxQRCodeStopBit.SelectedIndex = 0;
-            ComBoxQRCodeParity.SelectedIndex = 0;
-
-            m_SyncContext = SynchronizationContext.Current;
-        }
-
-        private void CBtnRfidConnect_Click(object sender, EventArgs e)
-        {
-            bool bCon = m_RFID.InitRFID(CTextBoxRfidIp.Text);
-            if (bCon)
-            {
-                MessageBox.Show("RFID 连接成功！");
-            }
-            else
-            {
-                MessageBox.Show("RFID 连接失败！");
-            }
-        }
-
-        private void CBtnRfidInit_Click(object sender, EventArgs e)
-        {
-            m_RFID.Init((ushort)ComBoxRfidCh.SelectedIndex);
-        }
-
-        private void CBtnRfidEnable_Click(object sender, EventArgs e)
-        {
-            m_RFID.Enable((ushort)ComBoxRfidCh.SelectedIndex);
-        }
-
-        private void CBtnRfidDisable_Click(object sender, EventArgs e)
-        {
-            m_RFID.Disable((ushort)ComBoxRfidCh.SelectedIndex);
-        }
-
-        private void CBtnRfidWrite_Click(object sender, EventArgs e)
-        {
-            m_RFID.Write((ushort)ComBoxRfidCh.SelectedIndex, "0000000000000001");
-        }
-
-        private void CBtnRfidRead_Click(object sender, EventArgs e)
-        {
-            CTextBoxRfidSn.Text = "";
-            m_RFID.Read((ushort)ComBoxRfidCh.SelectedIndex);
-            Thread.Sleep(1);
-            if (m_RFID.m_QueueRead.Count > 0)
-                CTextBoxRfidSn.Text = m_RFID.m_QueueRead.Dequeue();
-        }
-
-        private void CTextBoxRfidIp_TextChanged(object sender, EventArgs e)
-        {
-            Profile.m_Config.RfidIp = CTextBoxRfidIp.Text;
-        }
-
-        private void ComBoxRfidCh_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Profile.m_Config.RfidCh = ComBoxRfidCh.SelectedIndex;
-        }
-
-        private void CTextBoxRfidSn_TextChanged(object sender, EventArgs e)
-        {
-            Profile.m_Config.RfidSn = CTextBoxRfidSn.Text;
-        }
-
-
-        #endregion
-
-        #region  //IO 控制
-
-        private void CButtonIoEmptyPlateUp_Click(object sender, EventArgs e)
-        {
-            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_EmptyPanelUp, IOValue.IOValueHigh);
-        }
-
-        private void CButtonIoEmptyPlateDown_Click(object sender, EventArgs e)
-        {
-            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_EmptyPanelDown, IOValue.IOValueHigh);
-        }
-
-        private void CButtonIoRedLed_Click(object sender, EventArgs e)
-        {
-            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
-        }
-
-        private void CButtonIoYellowLed_Click(object sender, EventArgs e)
-        {
-            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedYellow, IOValue.IOValueHigh);
-        }
-
-        private void CButtonIoGreenLed_Click(object sender, EventArgs e)
-        {
-            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
-        }
-
-        private void CButtonIoBlueLed_Click(object sender, EventArgs e)
-        {
-            m_IO.SetControlBoardIo(IO_OUT.IO_OUT_LedBlue, IOValue.IOValueHigh);
-        }
-
-        #endregion
-
-        
-        private void CBtnCameraTest_Click(object sender, EventArgs e)
-        {
-            //MyTcpClient m_MyTcpClientCamera = MainForm.GetMyTcpClientCamera();
-
-            //byte[] SendMeas = new byte[32];
-            //Message.MakeSendArrayByCode((byte)Message.MessageCodeCamera.GetCameraCoords, ref SendMeas);
-            //string StrSend = BitConverter.ToString(SendMeas);
-            //m_MyTcpClientCamera.ClientWrite(StrSend);
-
-            int x = (int)(-20.33F * 1000);
-            int y = (int)(-20.33F * 1000);
-            int z = (int)(120.33F * 1000);
-            int rz = -10330;
-
-            int x1 = (int)(-11.33F * 1000);
-            int y1 = (int)(-22.33F * 1000);
-            int z1 = (int)(33.33F * 1000);
-            int rz1 = -44330;
-
-            int x2 = (int)(-1.33F * 1000);
-            int y2 = (int)(-2.33F * 1000);
-            int z2 = (int)(3.33F * 1000);
-            int rz2 = -55330;
-
-            byte[] Temp1 = BitConverter.GetBytes(x);
-            byte[] Temp2 = BitConverter.GetBytes(y);
-            byte[] Temp3 = BitConverter.GetBytes(z);
-            byte[] Temp4 = BitConverter.GetBytes(rz);
-
-            byte[] Temp11 = BitConverter.GetBytes(x1);
-            byte[] Temp21 = BitConverter.GetBytes(y1);
-            byte[] Temp31 = BitConverter.GetBytes(z1);
-            byte[] Temp41 = BitConverter.GetBytes(rz1);
-
-            byte[] Temp12 = BitConverter.GetBytes(x2);
-            byte[] Temp22 = BitConverter.GetBytes(y2);
-            byte[] Temp32 = BitConverter.GetBytes(z2);
-            byte[] Temp42 = BitConverter.GetBytes(rz2);
-
-            short[] temp = new short[24];
-            temp[0] = (short)((Temp1[1] << 8) + (Temp1[0] & 0x00FF));
-            temp[1] = (short)((Temp1[3] << 8) + (Temp1[2] & 0x00FF));
-
-            temp[2] = (short)((Temp2[1] << 8) + (Temp2[0] & 0x00FF));
-            temp[3] = (short)((Temp2[3] << 8) + (Temp2[2] & 0x00FF));
-
-            temp[4] = (short)((Temp3[1] << 8) + (Temp3[0] & 0x00FF));
-            temp[5] = (short)((Temp3[3] << 8) + (Temp3[2] & 0x00FF));
-
-            temp[6] = (short)((Temp4[1] << 8) + (Temp4[0] & 0x00FF));
-            temp[7] = (short)((Temp4[3] << 8) + (Temp4[2] & 0x00FF));
-
-            ///
-            temp[8] = (short)((Temp11[1] << 8) + (Temp11[0] & 0x00FF));
-            temp[9] = (short)((Temp11[3] << 8) + (Temp11[2] & 0x00FF));
-
-            temp[10] = (short)((Temp21[1] << 8) + (Temp21[0] & 0x00FF));
-            temp[11] = (short)((Temp21[3] << 8) + (Temp21[2] & 0x00FF));
-
-            temp[12] = (short)((Temp31[1] << 8) + (Temp31[0] & 0x00FF));
-            temp[13] = (short)((Temp31[3] << 8) + (Temp31[2] & 0x00FF));
-
-            temp[14] = (short)((Temp41[1] << 8) + (Temp41[0] & 0x00FF));
-            temp[15] = (short)((Temp41[3] << 8) + (Temp41[2] & 0x00FF));
-
-            ///
-
-            temp[16] = (short)((Temp12[1] << 8) + (Temp12[0] & 0x00FF));
-            temp[17] = (short)((Temp12[3] << 8) + (Temp12[2] & 0x00FF));
-
-            temp[18] = (short)((Temp22[1] << 8) + (Temp22[0] & 0x00FF));
-            temp[19] = (short)((Temp22[3] << 8) + (Temp22[2] & 0x00FF));
-
-            temp[20] = (short)((Temp32[1] << 8) + (Temp32[0] & 0x00FF));
-            temp[21] = (short)((Temp32[3] << 8) + (Temp32[2] & 0x00FF));
-
-            temp[22] = (short)((Temp42[1] << 8) + (Temp42[0] & 0x00FF));
-            temp[23] = (short)((Temp42[3] << 8) + (Temp42[2] & 0x00FF));
-
-            int GrapPointIndex = RobotDevice.m_VisualGrapStartPoint + (RobotAction.Action_Visual_Grap - RobotAction.Action_Go_Home);
-            int ScanPointIndex = RobotDevice.m_QRCodePoint;
-            int PutPointIndex = RobotDevice.m_VisualPutStartPoint + (RobotAction.Action_Visual_Put - RobotAction.Action_Manual_Put_1);
-
-            m_ManualRobot.SetPointParamByModbus((short)RobotAction.Action_Visual_SetPoint, (short)GrapPointIndex, (short)ScanPointIndex, (short)PutPointIndex, temp);
-        }
     }
 }

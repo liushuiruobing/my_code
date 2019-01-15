@@ -28,14 +28,6 @@ namespace RobotWorkstation
         public const byte MessRobotAxle6 = 0x06;     //6轴机械臂
         public const byte MessRobotAddr  = 0x01;     //机械臂地址
 
-        //Camera相关
-        public const byte MessCameraCurrentPoint = 0x00;
-        public const byte MessCameraNextPoint = 0x01;
-
-        public const byte MessCameraGrapPoint = 0x00;           //相机发送抓取点标志
-        public const byte MessCameraQRCodeScanPoint = 0x01;     //相机计算的二维码扫描点
-        public const byte MessCameraPutPoint = 0x02;            //相机发送放置点标志
-
         public enum MessageCodePLC
         {
             GetCurStationState = 0x10,
@@ -109,17 +101,13 @@ namespace RobotWorkstation
 
                 //其余位填充0x00
                 for (int i = Message.MessageCommandIndex + 1; i < Message.MessageLength - 1; i++)
-                {
-                    SendMeas[i] = 0;
-                }
+                    SendMeas[i] = 0x00;
 
                 SendMeas[Message.MessageLength - 1] = Message.MessEndCode;
 
                 byte Sum = 0;
                 foreach (byte Temp in SendMeas)
-                {
                     Sum += Temp;
-                }
 
                 SendMeas[Message.MessageLength - 2] = (byte)(0 - Sum);  //校验和
             }

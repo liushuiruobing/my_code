@@ -1,1 +1,1 @@
-Icacls F:\ShareFolder\*.* /grant Everyone:F /inheritance:e /T
+Icacls D:\ShareFolder\*.* /grant Everyone:F /inheritance:e /T
