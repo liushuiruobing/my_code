@@ -45,8 +45,6 @@ namespace ArmController
         public MainForm()
         {
             InitializeComponent();
-
-
             m_UpdateFileName = AppDomain.CurrentDomain.BaseDirectory + "Update.bin";
         }
 
@@ -67,8 +65,6 @@ namespace ArmController
             m_MainThread = new Thread(new ThreadStart(MainThreadFunc));
             m_MainThread.IsBackground = true;
             m_MainThread.Start();
-
-            UpdateProcessBar.Value = UpdateProcessBar.Minimum;
         }
 
         public void MainThreadFunc()
@@ -93,32 +89,38 @@ namespace ArmController
                         if (TempMeas.MeasType == TcpMeasType.MEAS_TYPE_ARM)  // 处理和PLC之间的消息
                         {
                             Message.MessageCodeARM Code = (Message.MessageCodeARM)TempMeas.MeasCode;
-
                             Debug.WriteLine(Code);
 
                             switch (Code)
                             {
                                 case Message.MessageCodeARM.ArmUpdate:
+                                    {
+                                        //断开服务后重新创建
+                                        m_MyTcpServerArm.CloseServer();
+                                        Thread.Sleep(1000);
+                                        if (m_MyTcpServerArm != null)
+                                        {
+                                            IPAddress ServerIp = IPAddress.Parse(TextBoxIp.Text);
+                                            int ServerPort = int.Parse(TextBoxPort.Text);
+                                            m_MyTcpServerArm.CreatServer(ServerIp, ServerPort);
+                                        }
+                                    }
+                                    break;
                                 case Message.MessageCodeARM.ArmUpdateFileLength:
+                                    {
+                                        m_FileSize = BitConverter.ToInt32(TempMeas.Param, Message.MessageCommandIndex + 1);
+                                    }
+                                    break;
                                 case Message.MessageCodeARM.ArmUpdateFileData:
                                     {
-                                        if (Code == Message.MessageCodeARM.ArmUpdateFileLength)
-                                        {
-                                            m_FileSize = BitConverter.ToInt32(TempMeas.Param, Message.MessageCommandIndex + 1);
-                                        }
+                                        m_TotalPages++;
+                                        if (m_TotalPages != 0 && m_TotalPages * 16 >= m_FileSize)
+                                            m_Writer.Write(TempMeas.Param, Message.MessageCommandIndex + 3, (m_FileSize - (m_TotalPages - 1) * 16));
+                                        else
+                                            m_Writer.Write(TempMeas.Param, Message.MessageCommandIndex + 3, 16);
 
-                                        if (Code == Message.MessageCodeARM.ArmUpdateFileData)
-                                        {
-                                            m_TotalPages++;
-
-                                            if (m_TotalPages != 0 && m_TotalPages * 16 >= m_FileSize)
-                                                m_Writer.Write(TempMeas.Param, Message.MessageCommandIndex + 3, (m_TotalPages * 16 - m_FileSize));
-                                            else
-                                                m_Writer.Write(TempMeas.Param, Message.MessageCommandIndex + 3, 16);
-                                            
-                                            m_CurrentPage = BitConverter.ToInt16(TempMeas.Param, Message.MessageCommandIndex + 1);
-                                            Debug.WriteLine("Current Page: " + m_CurrentPage);
-                                        }
+                                        m_CurrentPage = BitConverter.ToInt16(TempMeas.Param, Message.MessageCommandIndex + 1);
+                                        Debug.WriteLine("Current Page: " + m_CurrentPage);
 
                                         if (m_TotalPages != 0 && m_TotalPages * 16 >= m_FileSize)
                                         {
@@ -127,17 +129,15 @@ namespace ArmController
 
                                             byte Sum = MyMath.CalculateSum(TempMeas.Param, TempMeas.Param.Length);
                                             TempMeas.Param[TempMeas.Param.Length - 2] = Sum;
-                                        }
-                                            
-
-                                        NetworkStream stream = TempMeas.Client.GetStream();
-                                        stream.Write(TempMeas.Param, 0, TempMeas.Param.Length);                                      
+                                        }                                            
                                     }
                                     break;
                                 default:break;
                             }
-                        }
 
+                            NetworkStream stream = TempMeas.Client.GetStream();
+                            stream.Write(TempMeas.Param, 0, TempMeas.Param.Length);
+                        }
                     }
                 }
             }

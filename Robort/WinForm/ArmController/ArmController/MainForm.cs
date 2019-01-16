@@ -71,7 +71,6 @@ namespace ArmController
                 m_MyTcpClientArm.CreateConnect(ControlIp, ControlPort);
             }
 
-
             //发送升级指令
             Array.Clear(m_SendCommand, 0, m_SendCommand.Length);
             Message.MakeSendArrayByCode((byte)Message.MessageCodeARM.ArmUpdate, ref m_SendCommand);
@@ -79,8 +78,6 @@ namespace ArmController
             {
                 m_MyTcpClientArm.ClientWrite(m_SendCommand);
             }
-
-            //检查文件是否正确
 
             //创建升级线程
             m_MainThread = new Thread(new ThreadStart(MainThreadFunc));
@@ -116,8 +113,8 @@ namespace ArmController
                             {
                                 case Message.MessageCodeARM.ArmUpdate:   //收到升级指令回复
                                     {
-                                        //m_UpdateAction = UpdateAction.UpdateAction_Update;
-                                        m_UpdateAction = UpdateAction.UpdateAction_SendFileLength;
+                                        m_UpdateAction = UpdateAction.UpdateAction_Update;
+                                        //m_UpdateAction = UpdateAction.UpdateAction_SendFileLength;
                                     }
                                     break;
                                 case Message.MessageCodeARM.ArmUpdateFileLength:    //收到升级文件长度指令回复
