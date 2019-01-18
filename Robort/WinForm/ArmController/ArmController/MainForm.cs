@@ -20,15 +20,16 @@ namespace ArmController
         UpdateAction_Update,
         UpdateAction_SendFileLength,
         UpdateAction_SendFileData,
-        UpdateAction_Succeed,
+        UpdateAction_Result,
     }
 
     public partial class MainForm : Form
     {
+        public bool m_UpdateResult = false;
         public string m_UpdateFileName = null;
         public short m_CurrentPage = 0;
         public int m_TotalPages = 0;
-        public const short m_OnePageMaxBytes = 16;
+        public const short m_OnePageMaxBytes = 256;
         public byte[] m_SendFileDataTemp = new byte[m_OnePageMaxBytes];  //10个协议字节，256个数据字节
         public byte[] m_SendFileData = new byte[m_OnePageMaxBytes + 10];  //10个协议字节，256个数据字节
         public byte[] m_SendCommand = new byte[Message.MessageLength];
@@ -130,7 +131,13 @@ namespace ArmController
                                     break;
                                 case Message.MessageCodeARM.ArmUpdateSucceed:       //升级成功回复
                                     {
-                                        m_UpdateAction = UpdateAction.UpdateAction_Succeed;
+                                        byte Result = TempMeas.Param[Message.MessageCommandIndex + 1];
+                                        if (Result == 0x01)                                      
+                                            m_UpdateResult = true;
+                                        else
+                                            m_UpdateResult = false;
+
+                                        m_UpdateAction = UpdateAction.UpdateAction_Result;
                                     }
                                     break;
                                 default: break;
@@ -213,23 +220,23 @@ namespace ArmController
                             this.Invoke((MethodInvoker)delegate
                             {
                                 UpdateProcessBar.Value = (m_CurrentPage * 100) / m_TotalPages;
-                            });
-                            
+                            });                         
                         }
                         m_UpdateAction = UpdateAction.UpdateAction_None;
                     }
                     break;
-                case UpdateAction.UpdateAction_Succeed:
+                case UpdateAction.UpdateAction_Result:
                     {
+                        string StrResult = "升级失败！";
+                        if (m_UpdateResult)
+                            StrResult = "升级成功！";
+
                         this.Invoke((MethodInvoker)delegate
                         {
                             UpdateProcessBar.Value = UpdateProcessBar.Maximum;
-                            MessageBox.Show(this, "升级成功！");
+                            MessageBox.Show(this, StrResult);
                         });
-
-                        
-                        m_CurrentPage = 0;
-
+                                              
                         if (m_Reader != null)
                         {
                             m_Reader.Close();
@@ -241,7 +248,8 @@ namespace ArmController
                             m_InputStream.Close();
                             m_InputStream.Dispose();
                         }
-                       
+
+                        m_CurrentPage = 0;
                         m_UpdateAction = UpdateAction.UpdateAction_None;
                         m_ShouldExit = true;
                     }
