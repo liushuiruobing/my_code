@@ -15,8 +15,6 @@ namespace RobotWorkstation
         private const int RobotGlobalPointsBefore = 30;  //先加载前30个点，其余的在定时器中加载，来解决刷新缓慢的问题
         private int m_ManualRobotGlobalPointIndex = 0;  //选中的全局点位索引
 
-        private MotionControl m_MotionControl = MotionControl.GetInstance(); //三轴机械手
-        private VisionCamera m_Camera = VisionCamera.GetInstance();
         private RFID m_RFID = RFID.GetInstance();
         private QRCode m_QRCode = QRCode.GetInstance();
         private IO m_IO = IO.GetInstance();
@@ -39,12 +37,8 @@ namespace RobotWorkstation
             InitializeComponent();
 
             InitRobot();
-            InitCamera();  //视觉相机
             InitQRCode();
 
-            //隐藏部分页
-            tabPageCamera.Parent = null;
-            tabPageThreeAxisRobot.Parent = null;
         }
 
         private void ManualDebug_Load(object sender, EventArgs e)
@@ -78,7 +72,6 @@ namespace RobotWorkstation
             pictureBoxRobotMove.Image = m_ManualRobot.GetMovingState() ? bmpGreen : bmpDarkGreen;
             DisplayRobotState(m_ManualRobot.GetExecutorStateString(), pictureBoxRobotExecut);
             RefreshRobotServoPic(m_ManualRobot, pictureBoxServo);
-
             UpdateRobotCurentMeas();
 
             if (m_ManualRobot.IsConnected() && m_ManualRobot.m_PointList == null)  //读取全局点位信息，只读一次
@@ -88,6 +81,9 @@ namespace RobotWorkstation
             PicBoxRobotGrapGoArrive.Image = DataStruct.SysStat.RobotCylGoArrive ? bmpRed : bmpDarkGreen;
             PicBoxRobotGrapBackArrive.Image = DataStruct.SysStat.RobotCylBackArrive ? bmpRed : bmpDarkGreen;
             PicBoxRobotGrapVacuumCheck.Image = DataStruct.SysStat.RobotVacuoCheck ? bmpRed : bmpDarkGreen;
+
+            PicBoxEmptySalverUpArrive.Image = DataStruct.SysStat.EmptySalverAirCylUpArrive ? bmpRed : bmpDarkGreen;
+            PicBoxEmptySalverDownArrive.Image = DataStruct.SysStat.EmptySalverAirCylDownArrive ? bmpRed : bmpDarkGreen;
 
             //二维码
             if (m_QRCode != null && m_QRCode.m_IsConnect)
@@ -99,12 +95,29 @@ namespace RobotWorkstation
                 }
             }
 
-            //IO 控制板指示灯更新
-            Bitmap bmpYellow = Properties.Resources.SmallYellow;
-            Bitmap bmpBlue = Properties.Resources.SmallBlue;
+            //RFID
+            if (m_RFID.IsConnected)
+            {
+                if (m_RFID.Read(m_RFID.m_CurCh))
+                {
+                    Thread.Sleep(1);
+                    if (m_RFID.m_QueueRead.Count > 0)
+                    {
+                        PicTrayDeviceInRFID.Image = bmpDarkGreen;
+                        CTextBoxTrayDeviceRfidSn.Text = VisualSortingStation.m_RfidRead;
+                    }
+                    else
+                    {
+                        PicTrayDeviceInRFID.Image = bmpDarkRed;
+                        CTextBoxTrayDeviceRfidSn.Text = "";
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("请先将载码体放入读写区域！");
+                }
 
-            PicBoxEmptyPlateUpArrive.Image = DataStruct.SysStat.EmptySalverAirCylUpArrive ? bmpRed : bmpDarkGreen;
-            PicBoxEmptyPlateDownArrive.Image = DataStruct.SysStat.EmptySalverAirCylDownArrive ? bmpRed : bmpDarkGreen;
+            }
         }
 
         private void ManualDebugForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -148,8 +161,6 @@ namespace RobotWorkstation
                         CTextBoxJogDistance.Text = Profile.m_Config.RobotMoveDistance.ToString();
                         CTextBoxJogDistanceUm.Text = Profile.m_Config.RobotMoveDistanceUm.ToString();
                         m_ManualRobot.SetRobotPamram(int.Parse(CTextBoxRobotMoveSpeed.Text), int.Parse(CTextBoxJogDistance.Text), int.Parse(CTextBoxJogDistanceUm.Text));
-
-                        TimerMotionControlGetState.Stop();
                     }
                     break;
                 case 1:  //其他
@@ -157,33 +168,7 @@ namespace RobotWorkstation
 
                     }
                     break;
-                case 2:  //相机
-                    {
-                        CTextBoxCameraExposure.Text = Profile.m_Config.CameraExposure.ToString("F1");
-                        CTextBoxCameraGain.Text = Profile.m_Config.CameraGain.ToString("F1");
-                        CTextBoxCameraFrameRate.Text = Profile.m_Config.CameraFramRate.ToString("F1");
 
-                        TimerMotionControlGetState.Stop();
-                    }
-                    break;
-                case 3:  //三轴机械臂
-                    {
-                        if (!m_MotionControl.m_bInitBoard)
-                            m_MotionControl.InitMotionControl();
-
-                        if (m_MotionControl.m_DeviceCount > 0)
-                        {
-                            ComBoxMotionControlDevice.Items.Clear();
-                            for (int i = 0; i < m_MotionControl.m_DeviceCount; i++)
-                            {
-                                ComBoxMotionControlDevice.Items.Add(m_MotionControl.m_CurAvailableDevs[i].DeviceName);
-                                ComBoxMotionControlDevice.SelectedIndex = 0;
-                            }
-                        }
-
-                        TimerMotionControlGetState.Start();
-                    }
-                    break;
                 default: break;
             }
 
@@ -715,11 +700,8 @@ namespace RobotWorkstation
         {
             string Port = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
             string BandRate = Profile.m_Config.QRCodeBandRate;
-            string DataBits = Profile.m_Config.QRCodeDataBits;
-            string StopBits = Profile.m_Config.QRCodeStopBits;
-            string Parity = Profile.m_Config.QRCodeParity;
 
-            m_QRCode.QRCodeCommunParamInit(Port, BandRate, DataBits, StopBits, Parity);
+            m_QRCode.QRCodeCommunParamInit(Port, BandRate);
             m_QRCode.QRCodeInit();
 
             if (m_QRCode.m_IsConnect)
@@ -857,241 +839,6 @@ namespace RobotWorkstation
         private void CButtonIoEmptyPlateDown_Click_1(object sender, EventArgs e)
         {
             m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
-        }
-
-        #endregion
-
-        #region  //相机
-        public void InitCamera()
-        {
-            if (m_Camera != null)
-            {
-                PictureBoxCamera = m_Camera.m_CameraPictureBox;
-                ComBoxCameraDevList = m_Camera.m_CameraListComboBox;
-            }
-        }
-
-        private void CButtonFindCamera_Click(object sender, EventArgs e)
-        {
-            if (m_Camera != null)
-                m_Camera.FindCameraDevice();
-        }
-
-        private void CButtonOpenCamera_Click(object sender, EventArgs e)
-        {
-            if (m_Camera != null)
-                m_Camera.OpenCameraDevice();
-        }
-
-        private void CButtonCloseCamera_Click(object sender, EventArgs e)
-        {
-            if (m_Camera != null)
-                m_Camera.CloseCameraDevice();
-        }
-
-        private void CButtonCameraSetParam_Click(object sender, EventArgs e)
-        {
-            CameraParamStruct param;
-            param.Exposure = float.Parse(CTextBoxCameraExposure.Text);
-            param.Gain = float.Parse(CTextBoxCameraGain.Text);
-            param.FramRate = float.Parse(CTextBoxCameraFrameRate.Text);
-
-            if (m_Camera != null)
-                m_Camera.SetCameraParam(param);
-        }
-
-        private void CButtonCameraReadParam_Click(object sender, EventArgs e)
-        {
-            if (m_Camera != null)
-            {
-                CameraParamStruct param = m_Camera.GetCameraParam();
-                CTextBoxCameraExposure.Text = param.Exposure.ToString("F1");
-                CTextBoxCameraGain.Text = param.Gain.ToString("F1");
-                CTextBoxCameraFrameRate.Text = param.FramRate.ToString("F1");
-            }
-        }
-        #endregion
-
-        #region  //三轴机械臂
-
-        //三轴机械臂
-        private void CButtonMotionControlDeviceLoadCfg_Click(object sender, EventArgs e)
-        {
-            if (m_MotionControl.m_bInitBoard)
-            {
-                this.OpenFileDialogMotionControlLoadCfg.FileName = ".cfg";
-                if (OpenFileDialogMotionControlLoadCfg.ShowDialog() != DialogResult.OK)
-                    return;
-
-                m_MotionControl.LoadConfig(OpenFileDialogMotionControlLoadCfg.FileName);
-            }
-        }
-
-        private void CButtonOpenMotionControlDevice_Click(object sender, EventArgs e)
-        {
-            if (!m_MotionControl.m_bInitBoard)
-            {
-                m_MotionControl.OpenDevice();
-
-                ComBoxMotionControlAxis.Items.Clear();
-                for (int i = 0; i < m_MotionControl.m_AxisCount; i++)
-                {
-                    ComBoxMotionControlAxis.Items.Add(String.Format("{0:d}-Axis", i));
-                }
-                ComBoxMotionControlAxis.SelectedIndex = 0;
-                ComBoxMotionHomeMode.SelectedIndex = 0;
-            }
-        }
-
-        private void CButtonCloseMotionControlDevice_Click(object sender, EventArgs e)
-        {
-            if (m_MotionControl != null)
-            {
-                m_MotionControl.CloseDevice();
-            }
-        }
-
-        private void CButtonMotionControlResetError_Click(object sender, EventArgs e)
-        {
-            if (m_MotionControl != null)
-            {
-                for (uint i = 0; i < m_MotionControl.m_AxisCount; i++)
-                {
-                    m_MotionControl.ResetErr(i);
-                }
-            }
-        }
-
-        private void CButtonSetMotionControlSpeedParam_Click(object sender, EventArgs e)
-        {
-            double AxVelLow = double.Parse(CTextBoxMotionControLowSpeed.Text);
-            double AxVelHigh = double.Parse(CTextBoxMotionControHighSpeed.Text);
-            double AxVelAcc = double.Parse(CTextBoxMotionControAccSpeed.Text);
-            double AxVelDec = double.Parse(CTextBoxMotionControDecSpeed.Text);
-            int AxDistance = int.Parse(CTextBoxMotionControlDistance.Text);
-
-            if (m_MotionControl.m_bInitBoard)
-            {
-                m_MotionControl.m_Distance = AxDistance;
-                m_MotionControl.SetMotionAxisSpeedParam(m_MotionControl.m_CurAxis, AxVelLow, AxVelHigh, AxVelAcc, AxVelDec);
-            }
-        }
-
-        private void CButtonMotionControlUp_Click(object sender, EventArgs e)
-        {
-            if (m_MotionControl.m_bInitBoard)
-            {
-                m_MotionControl.m_CurAxis = MotionControl.AXIS_NO_Y;
-                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Y, false);
-            }
-        }
-
-        private void CButtonMotionControlDown_Click(object sender, EventArgs e)
-        {
-            if (m_MotionControl.m_bInitBoard)
-            {
-                m_MotionControl.m_CurAxis = MotionControl.AXIS_NO_Y;
-                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Y, true);
-            }
-        }
-
-        private void CButtonMotionControlLift_Click(object sender, EventArgs e)
-        {
-            if (m_MotionControl.m_bInitBoard)
-            {
-                m_MotionControl.m_CurAxis = MotionControl.AXIS_NO_X;
-                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_X, false);
-            }
-        }
-
-        private void CButtonMotionControlRight_Click(object sender, EventArgs e)
-        {
-            if (m_MotionControl.m_bInitBoard)
-            {
-                m_MotionControl.m_CurAxis = MotionControl.AXIS_NO_X;
-                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_X, true);
-            }
-        }
-
-        //抓取
-        private void CButtonMotionControlGrasp_Click(object sender, EventArgs e)
-        {
-            if (m_MotionControl.m_bInitBoard)
-            {
-                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Z, false);
-
-                //启动吸嘴
-                Thread.Sleep(500);
-
-                m_MotionControl.MoveMotion(MotionControl.AXIS_NO_Z, true);
-            }
-        }
-
-        private void GetMotionControlIOStatus(uint IOStatus)
-        {
-            if (m_MotionControl != null)
-            {
-                if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_EZ) > 0)//ALM
-                    picBoxMotionControlIoEZ.Image = Properties.Resources.SmallRed;
-                else
-                    picBoxMotionControlIoEZ.Image = Properties.Resources.SmallDarkGreen;
-
-                if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_ORG) > 0)//ORG
-                    picBoxMotionControlIoORG.Image = Properties.Resources.SmallRed;
-                else
-                    picBoxMotionControlIoORG.Image = Properties.Resources.SmallDarkGreen;
-
-                if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_LMTP) > 0)//+EL
-                    picBoxMotionControlIoPosLmit.Image = Properties.Resources.SmallRed;
-                else
-                    picBoxMotionControlIoPosLmit.Image = Properties.Resources.SmallDarkGreen;
-
-                if ((IOStatus & (uint)Ax_Motion_IO.AX_MOTION_IO_LMTN) > 0)//-EL
-                    picBoxMotionControlIoNegLmit.Image = Properties.Resources.SmallRed;
-                else
-                    picBoxMotionControlIoNegLmit.Image = Properties.Resources.SmallDarkGreen;
-            }
-        }
-
-        //监控状态定时器
-        private void TimerMotionControlGetState_Tick(object sender, EventArgs e)
-        {
-            uint IOStatus = 0;
-            string AxisXState = "";
-            string AxisYState = "";
-            string AxisZState = "";
-            string AxisCurState = "";
-            m_MotionControl.GetMotionControlState(ref IOStatus, ref AxisXState, ref AxisYState, ref AxisZState, ref AxisCurState);
-            GetMotionControlIOStatus(IOStatus);
-
-            CTextBoxMotionControlState.Text = AxisCurState;
-            CTextBoxMotionControlXDistance.Text = AxisXState;
-            CTextBoxMotionControlYDistance.Text = AxisYState;
-            CTextBoxMotionControlZDistance.Text = AxisZState;
-        }
-
-        private void CButtonMotionAxisRunNeg_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void CButtonMotionAxisRunPos_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void CButtonMotionAxisStop_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void CButtonMotionAxisHome_Click(object sender, EventArgs e)
-        {
-            if (m_MotionControl.m_bInitBoard)
-            {
-                m_MotionControl.m_HomeMode = (uint)ComBoxMotionHomeMode.SelectedIndex;
-                m_MotionControl.GoHome();
-            }
         }
 
         #endregion

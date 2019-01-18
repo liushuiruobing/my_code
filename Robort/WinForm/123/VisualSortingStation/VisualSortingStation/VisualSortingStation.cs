@@ -20,9 +20,9 @@ namespace RobotWorkstation
         Visual_PutPoint,
         Visual_RunCamera,  //让视觉拍照计算
 
-        Visual_Error = 0x10,
+        Visual_Error = 0x10,  //视觉出现错误
     }
-	
+
     public enum RobotAction  //Action_Auto_Visual_Grap是视觉抓取和视觉放置时所用的索引，具体看使用的地方
     {
         Action_Go_Home = 0,
@@ -82,26 +82,26 @@ namespace RobotWorkstation
         AutoRunTransportReceiveSalver       //运走接收盘
     }
 
-    public enum StationState
+    public enum StationState  //工作站状态
     {
         Stop = 0x00,
         Run,
         Pause,
-        Scram  //急停
+        Reset  
     }
 
-    public enum PlateState
+    public enum SalverState  //托盘状态
     {
-        NoPlate = 0x00,
-        HavePlate,
+        NoSalver = 0x00,
+        HaveSalver,
     }
 
     public class VisualSortingStation  //视觉分拣业务类
     {
-        public static IO m_IO = IO.GetInstance();               
-        public static int m_DevicesTotal = 0;
-        public static int m_TempCount = 0;
-        public const int m_OnePanelDevicesMax = 6;
+        public static IO m_IO = IO.GetInstance();
+        public const int m_OnePanelDevicesMax = 16;
+        private static int m_DevicesTotal = 0;
+        private static int m_TempCount = 0;
         private static AutoRunAction m_AutoRunAction = AutoRunAction.AuoRunStart;
         private volatile static bool m_ShouldExit = false;
         private static bool m_GetNextGrapPoint = false;
@@ -113,13 +113,15 @@ namespace RobotWorkstation
         private static QRCode m_QRCode = QRCode.GetInstance();
         public static bool m_ScanQRCode = false;
         public static List<string> m_QRCodeStr = new List<string>();
+        private static SysAlarm m_SysAlarm = SysAlarm.GetInstance();
 
         //Tcp
         private static MyTcpClient m_MyTcpClientArm = MainForm.GetMyTcpClientArm();
         private static MyTcpClient m_MyTcpClientCamera = MainForm.GetMyTcpClientCamera();
         private static MyTcpServer m_MyTcpServer = MyTcpServer.GetInstance();
-        private static byte[] SendMeas = new byte[Message.MessageLength];
-        
+        private static byte[] m_SendMeas = new byte[Message.MessageLength];
+        private static byte[] m_IoInValue = new byte[4];  //ARM控制板IO输入的缓存 4个byte，每位代表1个IO，共32个
+
         //网络共享文件
         private static NsfTrayModule m_NsfTrayModuleFile = NsfTrayModule.GetInstance();
 
@@ -143,8 +145,6 @@ namespace RobotWorkstation
 
         public static void MainThreadFunc()
         {
-            DataStruct.InitSysStat();
-            DataStruct.InitSysAlarm();
             m_QRCodeStr.Clear();
             m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
 
@@ -156,7 +156,7 @@ namespace RobotWorkstation
                 if (DataStruct.SysStat.Stop)
                     m_ShouldExit = true;
 
-                Thread.Sleep(100);
+                Thread.Sleep(0);  //Sleep(0),则线程会将时间片的剩余部分让给任何已经准备好的具有同等优先级的线程
             }
         }
 
@@ -169,7 +169,7 @@ namespace RobotWorkstation
                     ProcessRobotMessage();
 
                 //处理RFID的数据
-                if (m_RFID != null && m_RFID.m_IsConnected)
+                if (m_RFID != null && m_RFID.IsConnected)
                     ProcessRFIDMessage();
 
                 //作为客户端处理和单片机控制板、相机的消息队列
@@ -180,7 +180,7 @@ namespace RobotWorkstation
                 if (m_MyTcpServer != null)
                     ProcessTcpServerMessage();
 
-                Thread.Sleep(100);
+                Thread.Sleep(0);
             }
 
             if (m_ShouldExit)
@@ -231,17 +231,15 @@ namespace RobotWorkstation
                                 if (IoState == IOValue.IOValueHigh)
                                 {
                                     DataStruct.SysStat.RobotVacuoCheck = true; //吸起
-
-                                     m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
-                                    //m_AutoRunAction = AutoRunAction.AutoRunMoveToPut;  //仅仅是测试，不要提交
+                                    m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
                                 }
                                 else
                                 {
                                     DataStruct.SysStat.RobotVacuoCheck = false; //放下
 
-                                    m_TempCount++;
                                     RunForm.m_GrapAndPutCount = m_TempCount;
-
+                                    m_TempCount++;
+                                    
                                     if (m_TempCount >= m_OnePanelDevicesMax)
                                     {
                                         m_AutoRunAction = AutoRunAction.AutoRunLockDevices;
@@ -256,16 +254,12 @@ namespace RobotWorkstation
                                 }
                             }
                             break;
-                        case Robot_IO_IN.Robot_WritePointSuccessed:
+                        case Robot_IO_IN.Robot_WritePointSuccessed:  //机械臂写点位信息成功
                             {
                                 if (IoState == IOValue.IOValueHigh)
-                                {
                                     m_AutoRunAction = AutoRunAction.AutoRunMoveToGrap;
-                                }
                                 else
-                                {
                                     m_AutoRunAction = AutoRunAction.AuoRunNone;
-                                }
                             }break;
                         default:
                             break;
@@ -276,7 +270,7 @@ namespace RobotWorkstation
 
         public static void ProcessRFIDMessage()
         {
-            if (m_RFID != null && m_RFID.m_IsConnected)
+            if (m_RFID != null && m_RFID.IsConnected)
             {
                 m_RFID.Read(m_RFID.m_CurCh);
                 Thread.Sleep(1);
@@ -336,13 +330,12 @@ namespace RobotWorkstation
                         {
                             if (TempMeas.MeasCode == (byte)Message.MessageCodePLC.GetCurStationState)
                             {
-                                using (NetworkStream stream = TempMeas.Client.GetStream())
-                                {
-                                    TempMeas.Param[7] = GetStationCurState();       //工作站运行状态
-                                    TempMeas.Param[8] = GetStationPlateState();     //物料盘的状态
-                                    TempMeas.Param[TempMeas.Param.Length - 2] = MyMath.CalculateSum(TempMeas.Param, TempMeas.Param.Length); //校验和
-                                    stream.Write(TempMeas.Param, 0, TempMeas.Param.Length);
-                                }
+                                NetworkStream stream = TempMeas.Client.GetStream();
+
+                                TempMeas.Param[7] = GetStationCurState();        //工作站运行状态
+                                TempMeas.Param[8] = GetStationSalverState();     //物料盘的状态
+                                TempMeas.Param[TempMeas.Param.Length - 2] = MyMath.CalculateSum(TempMeas.Param, TempMeas.Param.Length); //校验和
+                                stream.Write(TempMeas.Param, 0, TempMeas.Param.Length);
                             }
                         }
                         else if (TempMeas.MeasType == TcpMeasType.MEAS_TYPE_MIS)  //处理和MIS之间的消息
@@ -381,21 +374,13 @@ namespace RobotWorkstation
                         }
                         break;
                     case Message.MessageCodeARM.GetInIo:    //读取输入口的IO
-                        {                         
-                            byte data1 = meassage.Param[Message.MessageCommandIndex + 1];
-                            byte data2 = meassage.Param[Message.MessageCommandIndex + 2];
-                            byte data3 = meassage.Param[Message.MessageCommandIndex + 3];
-                            byte data4 = meassage.Param[Message.MessageCommandIndex + 4];
+                        {
+                           for (int i = 0; i < m_IoInValue.Length; i++)
+                           {
+                                m_IoInValue[i] = meassage.Param[(Message.MessageCommandIndex + 1) + i];
+                           }
 
-                            //根据实际的接线解析所需IO的状态,对SysStat中的相应标志进行设置
-                            /*
-                            DataStruct.SysStat.EmptySalverAirCylUpArrive;           //空盘气缸上升到位
-                            DataStruct.SysStat.EmptySalverAirCylDownArrive;         //空盘气缸下降到位
-                            DataStruct.SysStat.OverturnSalverArrive;                //翻转托盘到位
-                            DataStruct.SysStat.OverturnSalverAirCylGoArrive;        //翻转托盘锁定气缸进到位
-                            DataStruct.SysStat.OverturnSalverAirCylBackArrive;      //翻转托盘锁定气缸退到位
-                            DataStruct.SysStat.ReceiveSalverArrive;                 //翻转后接收托盘到位
-                            */
+                           ProcessArmIoIn(m_IoInValue);
                         }
                         break;
                     default: break;
@@ -438,7 +423,7 @@ namespace RobotWorkstation
                                     int Grapy = (m_VisualCoords[3] << 16) + (m_VisualCoords[2] & 0x0000ffff);
                                     int Grapz = (m_VisualCoords[5] << 16) + (m_VisualCoords[4] & 0x0000ffff);
                                     int Graprz = (m_VisualCoords[7] << 16) + (m_VisualCoords[6] & 0x0000ffff);
-                                    string StrCoords = "1111" + "X: " + GrapX.ToString() + "   Y: " + Grapy.ToString() + "   Z: " + Grapz.ToString() + "  RZ: " + Graprz.ToString();
+                                    string StrCoords = "Grap Point" + "X: " + GrapX.ToString() + "   Y: " + Grapy.ToString() + "   Z: " + Grapz.ToString() + "  RZ: " + Graprz.ToString();
                                     Debug.WriteLine(StrCoords);
 #endif
                                     GetVisualCoords((int)VisualAction.Visual_QRCodeScanPoint, m_TempCount);   //Visual_QRCodeScanPoint
@@ -463,7 +448,7 @@ namespace RobotWorkstation
                                     int Scanz = (m_VisualCoords[13] << 16) + (m_VisualCoords[12] & 0x0000ffff);
                                     int Scanrz = (m_VisualCoords[15] << 16) + (m_VisualCoords[14] & 0x0000ffff);
 
-                                    string StrCoords = "2222" + "X: " + ScanX.ToString() + "   Y: " + Scany.ToString() + "   Z: " + Scanz.ToString() + "  RZ: " + Scanrz.ToString();
+                                    string StrCoords = "QRCode Scan Point" + "X: " + ScanX.ToString() + "   Y: " + Scany.ToString() + "   Z: " + Scanz.ToString() + "  RZ: " + Scanrz.ToString();
                                     Debug.WriteLine(StrCoords);
 #endif
                                     GetVisualCoords((int)VisualAction.Visual_PutPoint, m_TempCount);   //Visual_QRCodeScanPoint
@@ -495,13 +480,17 @@ namespace RobotWorkstation
                                     int Putz = (m_VisualCoords[21] << 16) + (m_VisualCoords[20] & 0x0000ffff);
                                     int Putrz = (m_VisualCoords[23] << 16) + (m_VisualCoords[22] & 0x0000ffff);
 
-                                    string StrCoords = "333" + "X: " + PutX.ToString() + "   Y: " + Puty.ToString() + "   Z: " + Putz.ToString() + "  RZ: " + Putrz.ToString();
+                                    string StrCoords = "Put Point" + "X: " + PutX.ToString() + "   Y: " + Puty.ToString() + "   Z: " + Putz.ToString() + "  RZ: " + Putrz.ToString();
                                     Debug.WriteLine(StrCoords);
 #endif
                                 }
                                 else if (meassage.Param[Message.MessageCommandIndex + 2] == (byte)VisualAction.Visual_Error)  //视觉出现错误
                                 {
+#if DebugTest
                                     System.Windows.Forms.MessageBox.Show("视觉出现错误！");
+#endif
+                                    DataStruct.SysStat.Camera = 1;
+                                    m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
                                 }
                             }
                             else
@@ -515,6 +504,13 @@ namespace RobotWorkstation
                 }
             }
         }
+
+#if DebugTest  //测试执行时间
+        public static DateTime T1 = DateTime.Now;
+        public static DateTime T2 = DateTime.Now;
+        public static DateTime T3 = DateTime.Now;
+        public static DateTime T4 = DateTime.Now;
+#endif
 
         public static void AutoSortingRun()
         {
@@ -540,6 +536,11 @@ namespace RobotWorkstation
                     }break;
                 case AutoRunAction.AutoRunGetGrapCoords:        //获得抓取坐标
                     {
+#if DebugTest
+                        T1 = DateTime.Now;
+                        if (m_TempCount > 0)
+                            Debug.WriteLine("T1 - T4:  " + (T1 - T4).TotalMilliseconds);
+#endif
                         if (m_MyTcpClientCamera != null && m_MyTcpClientCamera.IsConnected)
                         {
                             GetVisualCoords((int)VisualAction.Visual_GrapPoint, m_TempCount);   //Visual_QRCodeScanPoint  和 Visual_PutPoint在ProcessCameraMessage中获取
@@ -548,6 +549,12 @@ namespace RobotWorkstation
                     }break;
                 case AutoRunAction.AutoRunMoveToGrap:           //移动到位并抓取   
                     {
+#if DebugTest
+                        T2 = DateTime.Now;
+                        Debug.WriteLine("T2:  " + (T2 - T1).TotalMilliseconds);
+                        if(m_TempCount > 0)
+                            Debug.WriteLine("T2 - T4:  " + (T2 - T4).TotalMilliseconds);
+#endif
                         Debug.Assert(m_TempCount <= m_OnePanelDevicesMax);
 
                         //移动到指定位置抓手气缸进到位，后吸起器件，上位机发指令，机械臂脚本解析，执行动作
@@ -559,16 +566,30 @@ namespace RobotWorkstation
                         m_AutoRunAction = AutoRunAction.AuoRunNone;
                     }break;
                 case AutoRunAction.AutoRunMoveToScanQRCode:     //移动到位并扫码,检查扫码格式，不正确则依然执行此动作v          
-                    {                      
+                    {
+#if DebugTest
+                        T3 = DateTime.Now;
+                        Debug.WriteLine("T3:  " + (T3 - T2).TotalMilliseconds);
+#endif
                         m_Robot.RunAction((short)RobotAction.Action_QRCodeScan);  //移动到位,读取二维码
                         m_AutoRunAction = AutoRunAction.AuoRunNone;
                     }
                     break;
                 case AutoRunAction.AutoRunMoveToPut:    //移动到位并放下，计数后开始下一个，满总数后下一步    
                     {
+#if DebugTest
+                        T4 = DateTime.Now;
+                        Debug.WriteLine("T4:  " + (T4 - T3).TotalMilliseconds);
+#endif
                         Debug.Assert(m_TempCount <= m_OnePanelDevicesMax);
-
-                        GetVisualCoords((int)VisualAction.Visual_RunCamera, m_TempCount + 1);
+                        if (m_TempCount == m_OnePanelDevicesMax - 1)
+                        {
+                            GetVisualCoords((int)VisualAction.Visual_RunCamera, 0);  //下一盘时
+                        }
+                        else
+                        {
+                            GetVisualCoords((int)VisualAction.Visual_RunCamera, m_TempCount + 1);
+                        }
 
                         if (CurSortMode == SortMode.SortWithVisual)
                             m_Robot.RunAction((short)RobotAction.Action_Visual_Put);
@@ -609,7 +630,7 @@ namespace RobotWorkstation
                                 {
                                     m_AutoRunAction = AutoRunAction.AuoRunStart;
                                     m_DevicesTotal += m_OnePanelDevicesMax;
-
+                                    RunForm.m_GrapAndPutTotal = m_DevicesTotal;
                                     //清除掉之前的各到位信号，在AuoRunStart时重新检查
 
                                     //让单片机控制运输电机来运走托盘
@@ -633,17 +654,17 @@ namespace RobotWorkstation
                 State = StationState.Pause;
             else if (DataStruct.SysStat.Stop)
                 State = StationState.Stop;
-            else if (DataStruct.SysStat.Scram)
-                State = StationState.Scram;
+            else if (DataStruct.SysStat.Reset)
+                State = StationState.Reset;
 
             return (byte)State;
         }
 
-        public static byte GetStationPlateState()
+        public static byte GetStationSalverState()
         {
-            PlateState State = PlateState.NoPlate;
+            SalverState State = SalverState.NoSalver;
             if (DataStruct.SysStat.ReceiveSalverArrive)
-                State = PlateState.HavePlate;
+                State = SalverState.HaveSalver;
 
             return (byte)State;
         }
@@ -651,8 +672,6 @@ namespace RobotWorkstation
         // 0 -- run , 1 -- stop , 2 -- pause
         public static int CheckSysAlarm()
         {
-            //DeviceRobot.Get_Rbt_Stat();
-
             // check robot
             if (DataStruct.SysAlarm.Robot >= 1)
             {
@@ -751,7 +770,7 @@ namespace RobotWorkstation
                         m_ScanQRCode = false;
                         m_AutoRunAction = AutoRunAction.AutoRunMoveToScanQRCode;
                     }                  
-                }          
+                }
             }
         }
 
@@ -780,24 +799,42 @@ namespace RobotWorkstation
         //PutPointIndex 是要放置点的索引 0-15 
         public static void GetVisualCoords(int VisualActionIndex, int PutPointIndex)
         {
-            Message.MakeSendArrayByCode((byte)Message.MessageCodeCamera.GetCameraCoords, ref SendMeas);
+            Message.MakeSendArrayByCode((byte)Message.MessageCodeCamera.GetCameraCoords, ref m_SendMeas);
             if (m_GetNextGrapPoint)
-                SendMeas[Message.MessageCommandIndex + 1] = MessCameraNextPoint;
+                m_SendMeas[Message.MessageCommandIndex + 1] = MessCameraNextPoint;
 
-            SendMeas[Message.MessageCommandIndex + 2] = (byte)VisualActionIndex;
-            SendMeas[Message.MessageCommandIndex + 3] = (byte)PutPointIndex;  //把要放置的索引传递给视觉
+            m_SendMeas[Message.MessageCommandIndex + 2] = (byte)VisualActionIndex;
+            m_SendMeas[Message.MessageCommandIndex + 3] = (byte)PutPointIndex;  //把要放置的索引传递给视觉
 
             //重新计算校验和
-            SendMeas[Message.MessageLength - 2] = 0x00;
+            m_SendMeas[Message.MessageLength - 2] = 0x00;
             byte Sum = 0;
-            foreach (byte Temp in SendMeas)
+            foreach (byte Temp in m_SendMeas)
                 Sum += Temp;
-            SendMeas[Message.MessageLength - 2] = (byte)(0 - Sum);  //校验和
+            m_SendMeas[Message.MessageLength - 2] = (byte)(0 - Sum);  //校验和
 
-            string StrSend = BitConverter.ToString(SendMeas);
+            string StrSend = BitConverter.ToString(m_SendMeas);
 
             if(m_MyTcpClientCamera != null && m_MyTcpClientCamera.IsConnected)
                 m_MyTcpClientCamera.ClientWrite(StrSend);
+        }
+
+        public static void ProcessArmIoIn(byte[] IoIn)
+        {
+            //解析IoIn
+
+            //根据实际的接线解析所需IO的状态,对SysStat中的相应标志进行设置
+            /*
+            DataStruct.SysStat.EmptySalverAirCylUpArrive;           //空盘气缸上升到位
+            DataStruct.SysStat.EmptySalverAirCylDownArrive;         //空盘气缸下降到位
+            DataStruct.SysStat.OverturnSalverArrive;                //翻转托盘到位
+            DataStruct.SysStat.OverturnSalverAirCylGoArrive;        //翻转托盘锁定气缸进到位
+            DataStruct.SysStat.OverturnSalverAirCylBackArrive;      //翻转托盘锁定气缸退到位
+            DataStruct.SysStat.ReceiveSalverArrive;                 //翻转后接收托盘到位
+            */
+
+            //设置按键灯
+            //SetKeyLedByKey(ControlBord_IO_IN.IO_IN_KeyRun, LED_State.LED_ON);
         }
     }
 }

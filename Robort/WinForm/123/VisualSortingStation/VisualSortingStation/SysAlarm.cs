@@ -28,46 +28,50 @@ namespace RobotWorkstation
         /*告警类型*/
         public enum Type
         {
-            Robot,  
-            Camera,  
-            QRCode,  //二维码读码器
-            RFID,    //RFID读码器
-            Server,  //服务器
-            Salver,  //物料盘      
+            Camera,
+            Robot,   
+            QRCode,         //二维码读码器
+            RFID,           //RFID读码器
+            Salver,         //物料盘      
+            ARM,            //单片机控制板   
+            Server,         //服务器
             Max,
         }
 
         /*告警级别*/
         public static readonly int[] TABLE_INIT_LEVEL = new int[(int)Type.Max]
         {
+            1,  //Camera 
             1,  //Robot
-            1,  //Camera
             1,  //QRCode
-            1,  //RFID
-            1,  //Salver
-            1,  //Server
+            2,  //RFID
+            2,  //Salver
+            2,  //Arm
+            2,  //Server
         };
 
         /*告警信息字符串*/
         public static readonly string[,] TABLE_INIT_INFORMAT = new string[(int)Type.Max, (int)LanguageId.Language_Total]
         {
-            {"机械臂未连接！", "机械臂未连接！"},
             {"相机未连接！", "相机未连接！"},
+            {"机械臂未连接！", "机械臂未连接！"},
             {"二维码读码器未连接！", "二维码读码器未连接！"},
             {"RFID读码器未连接！", "RFID读码器未连接！"},
+            {"缺少物料盘！", "缺少物料盘！"},
+            {"单片机控制板未连接！", "单片机控制板未连接！"},
             {"服务器未连接！", "服务器未连接！"},
-            {"缺少物料盘！", "缺少物料盘！"}
         };
 
         /*解决方法字符串*/
         public static readonly string[,] TABLE_INIT_SOLUTION = new string[(int)Type.Max, (int)LanguageId.Language_Total]
         {
-            {"请检查机械臂！", "请检查机械臂！"},
             {"请检查相机！", "请检查相机！"},
+            {"请检查机械臂！", "请检查机械臂！"},
             {"请检查二维码读码器！", "请检查二维码读码器！"},
             {"请检查RFID读码器！", "请检查RFID读码器！"},
+            {"请检查物料盘！", "请检查物料盘！"},
+            {"请检查单片机控制板连接！", "请检查单片机控制板连接！"},
             {"请检查服务器！", "请检查服务器！"},
-            {"请检查物料盘！", "请检查物料盘！"}
         };
         
         private static SysAlarm m_UniqueSysAlarm;  // 定义一个静态变量来保存类的实例

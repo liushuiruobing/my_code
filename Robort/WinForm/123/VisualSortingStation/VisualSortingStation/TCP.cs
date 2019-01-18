@@ -45,7 +45,7 @@ namespace RobotWorkstation
         private TcpClient m_TcpClient = null;
 
        // private int RecvTimeOut = 100;
-        private int SendTimeOut = 100;        
+        //private int SendTimeOut = 100;        
         public Queue<TcpMeas> m_RecvMeasQueue = new Queue<TcpMeas>();
         private Byte[] m_RecvBytes = new Byte[8192];
 
@@ -68,7 +68,7 @@ namespace RobotWorkstation
             //m_TcpClient = new TcpClient(EndPoint);
           
             //m_TcpClient.ReceiveTimeout = RecvTimeOut;
-            m_TcpClient.SendTimeout = SendTimeOut;
+            //m_TcpClient.SendTimeout = SendTimeOut;
         }
 
         public void CreateConnect(IPAddress nIpAddress, int nPort)
@@ -125,9 +125,9 @@ namespace RobotWorkstation
                     m_TcpClient.Close();
                     break;
                 }
-                catch (Exception e)
+                catch //(Exception e)
                 {
-                    MessageBox.Show(e.Message);
+                    //MessageBox.Show(e.Message);
                     continue;
                 }
             }
@@ -360,6 +360,14 @@ namespace RobotWorkstation
             }
         }
 
+        /// <summary>
+        /// 解析数据,收到一包有效数据后,添加到消息队列
+        /// </summary>
+        /// <param name="recvBytes">接收到的数据</param>
+        /// <param name="recvCount">接收到的数据长度</param>
+        /// <param name="client">客户端</param>
+        /// <param name="parseCount">解析计数器</param>
+        /// <param name="arrayParse">解析缓冲区</param>
         public void ParseAndAddMessageToQueue(byte[] RecvBytes, int RecvCount, TcpClient Client, ref int parseCount, byte[] arrayParse)
         {
             //匹配比较数组, -1表示不需要比较,忽略

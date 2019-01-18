@@ -24,9 +24,9 @@ namespace RobotWorkstation
         private string m_ReadNone = "None";
         public string m_StrPort = "COM3";
         public int m_BaudRate = 115200;
-        public Parity m_Parity = Parity.None;
-        public int m_DataBits = 8;
-        public StopBits m_StopBits = StopBits.One;
+        public const Parity m_Parity = Parity.None;
+        public const int m_DataBits = 8;
+        public const StopBits m_StopBits = StopBits.One;
         public int m_ReadTimeOut = 100;     
         public event EventHandler QRCodeRecvDataEvent;
         public string m_ReadString = "";
@@ -66,55 +66,10 @@ namespace RobotWorkstation
             return m_UniqueQRCode;
         }
 
-        public StopBits GetStopBits(string strStopBits)
-        {
-            StopBits TempStopBits = StopBits.One;
-
-            switch (strStopBits)
-            {
-                case "1":
-                    TempStopBits = StopBits.One;
-                    break;
-                case "1.5":
-                    TempStopBits = StopBits.OnePointFive;
-                    break;
-                case "2":
-                    TempStopBits = StopBits.Two;
-                    break;
-                default:
-                    break;
-            }
-            return TempStopBits;
-        }
-
-        public Parity GetParity(string strParity)
-        {
-            Parity tempParity = Parity.None;
-
-            switch (strParity)
-            {
-                case "无":
-                    tempParity = Parity.None;
-                    break;
-                case "奇校验":
-                    tempParity = Parity.Odd;
-                    break;
-                case "偶校验":
-                    tempParity = Parity.Even;
-                    break;
-                default:
-                    break;
-            }
-            return tempParity;
-        }
-
-        public void QRCodeCommunParamInit(string Port, string BandRate, string DataBits, string StopBits, string Parity)
+        public void QRCodeCommunParamInit(string Port, string BandRate)
         {
             m_StrPort = Port;
             m_BaudRate = int.Parse(BandRate);
-            m_DataBits = int.Parse(DataBits);
-            m_StopBits = GetStopBits(StopBits);
-            m_Parity = GetParity(Parity);
         }
 
         public bool QRCodeInit()
@@ -146,7 +101,6 @@ namespace RobotWorkstation
             {
                 QRCodeEventArgers ev = new QRCodeEventArgers();
                 m_ReadString += ((SerialPort)sender).ReadExisting();
-                Debug.WriteLine(m_ReadString);
 
                 if (m_ReadString == m_ReadNone)
                     m_ReadString = string.Empty;

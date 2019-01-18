@@ -20,8 +20,8 @@ namespace RobotWorkstation
         private IO m_IO = null;
         private byte[] SendMeas = new byte[Message.MessageLength];
         private RobotDevice m_Robot = RobotDevice.GetInstance();
-        public static int m_GrapAndPutCount = 0;  //用于记录自动抓取和放置的个数
-
+        public static int m_GrapAndPutCount = -1;  //用于记录自动抓取和放置的个数
+        public static int m_GrapAndPutTotal = 0;   //用于记录自动抓取和放置的总数
         public RunForm()
         {
             InitializeComponent();
@@ -188,7 +188,6 @@ namespace RobotWorkstation
                         DgvSysAlarm.Rows.Add(data.ID.ToString(), data.Level.ToString(), data.Informat, data.Solution);
                     }
                 }
-
                 m_SysAlarmState[i] = data.IsAlarm;
             }
 
@@ -199,8 +198,8 @@ namespace RobotWorkstation
             if (DataStruct.SysStat.GrapAndPutOneSuccessed)
             {
                 DataStruct.SysStat.GrapAndPutOneSuccessed = false;
-                OriginalSalver.SetSelectedGridColor(VisualSortingStation.m_OnePanelDevicesMax - (m_GrapAndPutCount - 1), Salver.GridEmptyColor);
-                AfterSortingSalver.SetSelectedGridColor(m_GrapAndPutCount, Salver.GridFullColor);
+                SetOriginalSalverGridColor(m_GrapAndPutCount, Salver.GridEmptyColor);
+                SetAfterSortingSalverGridColor(m_GrapAndPutCount, Salver.GridFullColor);
 
                 if (m_GrapAndPutCount == VisualSortingStation.m_OnePanelDevicesMax)
                 {
@@ -214,9 +213,25 @@ namespace RobotWorkstation
                 }
             }
 
-            CLabelTotalDeveices.Text = VisualSortingStation.m_DevicesTotal.ToString();
-            CLabelTotalTrays.Text = (VisualSortingStation.m_DevicesTotal / VisualSortingStation.m_OnePanelDevicesMax).ToString();
+            CLabelCurDevices.Text = (m_GrapAndPutCount + 1).ToString();
+            CLabelTotalDeveices.Text = m_GrapAndPutTotal.ToString();
+            CLabelTotalTrays.Text = (m_GrapAndPutTotal / VisualSortingStation.m_OnePanelDevicesMax).ToString();
         }
 
+        //DeviceIndex 从0开始
+        public void SetOriginalSalverGridColor(int DeviceIndex, Color color)
+        {
+            int Row = DeviceIndex % OriginalSalver.SalverRows;
+            int Col = (OriginalSalver.SalverCols - 1) -  DeviceIndex / OriginalSalver.SalverRows;
+            OriginalSalver.SetSelectedGridColor(Row, Col, color);
+        }
+
+        //DeviceIndex 从0开始
+        public void SetAfterSortingSalverGridColor(int DeviceIndex, Color color)
+        {
+            int Row = DeviceIndex % OriginalSalver.SalverRows;
+            int Col = DeviceIndex / OriginalSalver.SalverRows;
+            AfterSortingSalver.SetSelectedGridColor(Row, Col, color);
+        }
     }
 }

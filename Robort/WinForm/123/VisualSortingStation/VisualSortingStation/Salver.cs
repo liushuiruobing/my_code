@@ -22,6 +22,16 @@ namespace RobotWorkstation
         private int GridWidth = 40;
         private int GridHeight = 35;
 
+        public int SalverRows
+        {
+            get { return SalverPanel.RowCount; }
+        }
+
+        public int SalverCols
+        {
+            get { return SalverPanel.ColumnCount; }
+        }
+
         public Salver()
         {
             InitializeComponent();
@@ -66,12 +76,9 @@ namespace RobotWorkstation
             }
         }
 
-        public void SetSelectedGridColor(int Index, Color color)
+        public void SetSelectedGridColor(int Row, int Col, Color color)
         {
-            int SetRowIndex = Index / SalverPanel.ColumnCount;
-            int SetColIndex = Index - SetRowIndex * SalverPanel.ColumnCount;
-
-            SalverPics[SetRowIndex, SetColIndex].BackColor = color;          
+            SalverPics[Row, Col].BackColor = color;          
         }
     }
 }

@@ -133,8 +133,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera\CameraOperator.cs" />
-    <Compile Include="Camera\VisionCamera.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="CustomUI.cs">
       <SubType>Component</SubType>
@@ -161,7 +159,6 @@
     </Compile>
     <Compile Include="Master.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="MotionControl.cs" />
     <Compile Include="MultiLanguage.cs" />
     <Compile Include="MyMath.cs" />
     <Compile Include="NetShare.cs" />

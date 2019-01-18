@@ -58,6 +58,12 @@ namespace RobotWorkstation
         IOValueHigh
     }
 
+    public enum LED_State
+    {
+        LED_OFF = 0,
+        LED_ON
+    }
+
     public class IO  //IO的控制
     {
         private static IO m_UniqueIo = null;
@@ -169,6 +175,32 @@ namespace RobotWorkstation
                 Message.MakeSendArrayByCode(Code, ref SendMeas);
                 m_MyTcpClientArm.ClientWrite(SendMeas);
             }
+        }
+
+        public void SetKeyLedByKey(ControlBord_IO_IN Key, LED_State LedState)
+        {
+            IOValue Value = LedState == (LED_State.LED_ON) ? IOValue.IOValueHigh : IOValue.IOValueLow;
+            ControlBord_IO_OUT KeyLed = ControlBord_IO_OUT.IO_OUT_LedKeyRun;
+
+            switch (Key)
+            {
+                case ControlBord_IO_IN.IO_IN_KeyRun:
+                    KeyLed = ControlBord_IO_OUT.IO_OUT_LedKeyRun;
+                    break;
+                case ControlBord_IO_IN.IO_IN_KeyPause:
+                    KeyLed = ControlBord_IO_OUT.IO_OUT_LedKeyPause;
+                    break;
+                case ControlBord_IO_IN.IO_IN_KeyStop:
+                    KeyLed = ControlBord_IO_OUT.IO_OUT_LedKeyStop;
+                    break;
+                case ControlBord_IO_IN.IO_IN_KeyReset:
+                    KeyLed = ControlBord_IO_OUT.IO_OUT_LedKeyReset;
+                    break;
+                default:
+                    break;
+            }
+
+            SetControlBoardIo(KeyLed, Value);
         }
     }
 }

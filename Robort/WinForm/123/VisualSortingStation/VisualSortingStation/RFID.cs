@@ -35,11 +35,12 @@ namespace RobotWorkstation
         private static RFID m_UniqueRFID = null;
         private static readonly object m_Locker = new object();
 
+        public const int MAX_CHANNEL = 4;  //最大支持4个通道
+
         public Master m_ModbusMaster;
-        private string m_Ip = "192.168.1.21";
         private readonly ushort m_Port = 502;  //默认502不允许修改
         public ushort m_CurCh = 0;
-        RFID_STATUS[] m_RfidStatus = new RFID_STATUS[2];  //两个通道
+        RFID_STATUS[] m_RfidStatus = new RFID_STATUS[MAX_CHANNEL];  //两个通道
         private byte[] data;
         private byte cmdByte;
         public string m_StrReadTemp = null;
@@ -47,7 +48,7 @@ namespace RobotWorkstation
         private System.Timers.Timer m_CheckStatusTimer = new System.Timers.Timer();
         //private readonly ushort m_Ch0Addr = 2048;
 
-        public bool m_IsConnected
+        public bool IsConnected
         {
             get
             {
@@ -64,7 +65,7 @@ namespace RobotWorkstation
             for (int i = 0; i < m_RfidStatus.Length; i++)
             {
                 m_RfidStatus[i].InitStatus();
-            } 
+            }
             if (m_CheckStatusTimer != null)
                 m_CheckStatusTimer.Elapsed += OnTimedCheckStatus;
         }
@@ -86,22 +87,16 @@ namespace RobotWorkstation
             return m_UniqueRFID;
         }
 
-        public bool InitRFID(string Ip)
-        {
-            m_Ip = Ip;
-            return Connect();             
-        }
-
-        public bool Connect()  // Create new modbus master and add event functions
+        public bool Connect(string IP)  // Create new modbus master and add event functions
         {
             try
-            {             
-                m_ModbusMaster = new Master(m_Ip, m_Port);
+            {
+                m_ModbusMaster = new Master(IP, m_Port);
                 m_ModbusMaster.OnResponseData += new Master.ResponseData(ModbusMaster_OnResponseData);
                 if (m_ModbusMaster.connected == true)
                 {
                     //创建定时器读取状态
-                    m_CheckStatusTimer.Interval = 10;
+                    m_CheckStatusTimer.Interval = 500;
                     m_CheckStatusTimer.Start();
                 }
                 return m_ModbusMaster.connected;
@@ -114,7 +109,20 @@ namespace RobotWorkstation
         }
 
         public void Enable(ushort Ch)
-        {         
+        {
+            try
+            {
+                if (m_ModbusMaster == null || !m_ModbusMaster.connected)
+                {
+                    return;
+                }
+            }
+            catch (SystemException error)
+            {
+                MessageBox.Show(error.Message);
+                return;
+            }
+
             ushort ID = 1;
             byte unit = 0;
             ushort StartAddress = (ushort)(2048 + Ch * 6);
@@ -126,7 +134,7 @@ namespace RobotWorkstation
         }
 
         public void Disable(ushort Ch)
-        {          
+        {
             ushort ID = 1;
             byte unit = 0;
             ushort StartAddress = (ushort)(2048 + Ch * 6);
@@ -138,7 +146,20 @@ namespace RobotWorkstation
         }
 
         public void Init(ushort Ch)
-        {           
+        {
+            try
+            {
+                if (m_ModbusMaster == null || !m_ModbusMaster.connected)
+                {
+                    return;
+                }
+            }
+            catch (SystemException error)
+            {
+                MessageBox.Show(error.Message);
+                return;
+            }
+
             ushort ID = 1;
             byte unit = 1;//初始化
             ushort StartAddress = (ushort)(2048 + Ch * 6);
@@ -156,7 +177,7 @@ namespace RobotWorkstation
             m_ModbusMaster.WriteSingleRegister(ID, unit, StartAddress, sendCmdData);
         }
 
-        public void Write(ushort Ch, string  str)
+        public void Write(ushort Ch, string str)
         {
             byte[] sendData = new byte[10];
             byte[] sendCmdData = new byte[2];
@@ -224,15 +245,17 @@ namespace RobotWorkstation
             }
         }
 
-        public void Read(ushort Ch)
+        public bool Read(ushort Ch)
         {
             ushort ID;
             byte unit;
             ushort StartAddress;
             byte[] sendCmdData;
 
-            if (m_RfidStatus[Ch].Tp  == true)
+            if (m_RfidStatus[Ch].Tp == true)
             {
+                //m_CheckStatusTimer.Start();
+
                 ID = 3;
                 unit = 0;
                 StartAddress = (ushort)(2049 + Ch * 6);
@@ -262,11 +285,13 @@ namespace RobotWorkstation
 
                 ID = 6;
                 StartAddress = 2;
-                byte Length = 4;
+                //byte Length = 4;
+                byte Length = 1;
 
                 m_ModbusMaster.ReadInputRegister(ID, unit, StartAddress, Length);
                 Thread.Sleep(30);
 
+                /*
                 ID = 3;
                 unit = 0;
                 StartAddress = (ushort)(2049 + Ch * 6);
@@ -295,16 +320,17 @@ namespace RobotWorkstation
                 Thread.Sleep(30);
 
                 ID = 5;
-
                 StartAddress = 2;
                 Length = 4;
 
                 m_ModbusMaster.ReadInputRegister(ID, unit, StartAddress, Length);
+                */
 
+                return true;
             }
             else
             {
-                MessageBox.Show("请先将载码体放入读写区域！");
+                return false;
             }
         }
 
@@ -334,14 +360,15 @@ namespace RobotWorkstation
                             }
                             MessageBox.Show(b);
                         }
-                    }break;
+                    }
+                    break;
                 case 4:
                     {
                         if (unit == 0)//状态读取
                         {
                             data = values;
                             //this.textBox3.Dispatcher.Invoke(new Action(delegate() { textBox3.Text = data[1].ToString(); }));
-                            
+
                             //ch0 DONE
                             if ((data[1] & 128) == 128)
                                 m_RfidStatus[0].Done = true;
@@ -389,7 +416,7 @@ namespace RobotWorkstation
                                 m_RfidStatus[1].XcvrCon = true;
                             else
                                 m_RfidStatus[1].XcvrCon = false;
-                      
+
                             //ch0 XCVR ON
                             if ((data[1] & 8) == 8)
                                 m_RfidStatus[0].XcvrOn = true;
@@ -426,7 +453,8 @@ namespace RobotWorkstation
                             else
                                 m_RfidStatus[1].Tfr = false;
                         }
-                    }break;
+                    }
+                    break;
                 case 5:
                     {
                         data = values;
@@ -452,7 +480,13 @@ namespace RobotWorkstation
                             tmp[i] = (char)data[i];
                             m_StrReadTemp = m_StrReadTemp + tmp[i].ToString();
                         }
-                    }break;
+                        m_QueueRead.Enqueue(m_StrReadTemp);
+                        m_StrReadTemp = "";
+                        //m_CheckStatusTimer.Stop();
+
+                        //Console.WriteLine("m_QueueRead.Enqueue");
+                    }
+                    break;
                 default: break;
             }
         }

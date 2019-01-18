@@ -25,16 +25,10 @@ namespace RobotWorkstation
         //Camera
         public string CameraIp;
         public int CameraPort;
-        public float CameraExposure;
-        public float CameraGain;
-        public float CameraFramRate;
 
         //QRCode
         public string QRCodePort;
         public string QRCodeBandRate;
-        public string QRCodeDataBits;
-        public string QRCodeStopBits;
-        public string QRCodeParity;
 
         //RFID
         public string RfidIp;
@@ -65,16 +59,10 @@ namespace RobotWorkstation
             //Camera
             CameraIp = "192.168.1.46";
             CameraPort = 20002;
-            CameraExposure = 1000;
-            CameraGain = 1000;
-            CameraFramRate = 1000;
 
             //QRCode
             QRCodePort = "COM1";
             QRCodeBandRate = "115200";
-            QRCodeDataBits = "8";
-            QRCodeStopBits = "1";
-            QRCodeParity = "None";
 
             //RFID
             RfidIp = "192.168.1.24";

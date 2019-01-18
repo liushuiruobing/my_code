@@ -15,17 +15,17 @@ namespace RobotWorkstation
             public static byte Camera;                                          // 0 -- not , 1 -- Camera alarm
             public static byte QRCode;                                          // 0 -- not , 1 -- QRCode alarm
             public static byte RFID;                                            // 0 -- not , 1 -- RFID alarm
+            public static byte Salver;                                          // 0 -- not , 1 -- RFID alarm
+            public static byte ARM;                                             // 0 -- not , 1 -- ARM alarm
+            public static byte Server;                                          // 0 -- not , 1 -- Server alarm
 
-            //按键
-            public static bool Ready;
-            public static bool Run;
+            public static bool Ready;          
+            public static bool Run;   //按键
             public static bool Pause;
             public static bool Stop;
-            public static bool Scram; //急停
             public static bool Reset;
-
-            //塔灯
-            public static bool RedAlarm;
+           
+            public static bool RedAlarm;  //塔灯
             public static bool OriangeAlarm;
             public static bool LedGreen;
             public static bool LedBlue;        
@@ -50,25 +50,30 @@ namespace RobotWorkstation
 
         public struct SysAlarm
         {
-            public static ushort Robot;                                         // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
-            public static ushort Camera;                                        // ID = 2 , Level = 1 ; 0 -- normal , 1 -- Alarm
-            public static ushort QRCode;                                        // ID = 3 , Level = 2 ; 0 -- normal , 1 -- Alarm
-            public static ushort RFID;                                          // ID = 3 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            public static ushort Robot;        // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
+            public static ushort Camera;       // ID = 2 , Level = 1 ; 0 -- normal , 1 -- Alarm
+            public static ushort QRCode;       // ID = 3 , Level = 1 ; 0 -- normal , 1 -- Alarm
+            public static ushort RFID;         // ID = 4 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            public static ushort Salver;       // ID = 5 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            public static ushort ARM;          // ID = 6 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            public static ushort Server;       // ID = 7 , Level = 2 ; 0 -- normal , 1 -- Alarm
         }
 
         public static void InitSysStat()
         {
-            SysStat.WorkMode = 0x01;                // 0 -- Auto，1 -- manul
+            SysStat.WorkMode = 1;                // 0 -- Auto，1 -- manul
             SysStat.Robot = 1;                   // 0 -- not , 1 -- device robot alarm
             SysStat.Camera = 1;
-            SysStat.QRCode = 0;
+            SysStat.QRCode = 1;
             SysStat.RFID = 1;
+            SysStat.Salver = 1;
+            SysStat.ARM = 1;
+            SysStat.Server = 1;
 
             SysStat.Ready = false;
             SysStat.Run = false;
             SysStat.Pause = false;
             SysStat.Stop = false;
-            SysStat.Scram = false;
             SysStat.Reset = false;
 
             SysStat.RedAlarm = false;
@@ -93,10 +98,13 @@ namespace RobotWorkstation
 
         public static void InitSysAlarm()
         {
-            SysAlarm.Robot = 0x00;                                         // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
+            SysAlarm.Robot = 0x00;      // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
             SysAlarm.Camera = 0x00;
             SysAlarm.QRCode = 0x00;
             SysAlarm.RFID = 0x00;
+            SysAlarm.Salver = 0x00;       // ID = 5 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            SysAlarm.ARM = 0x00;          // ID = 6 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            SysAlarm.Server = 0x00;       // ID = 7 , Level = 2 ; 0 -- normal , 1 -- Alarm
         }
     }
 }

@@ -22,8 +22,8 @@ namespace RobotWorkstation
         //31-50  分拣后装盘点位 
         public const int m_HomePoint = 0;                //对应机械臂的第0个点
         public const int m_QRCodePoint = 1;              //二维码扫描点
-        public const int m_VisualGrapStartPoint =10;     //视觉开始抓取点
-        public const int m_VisualPutStartPoint = 30;     //视觉开始放置点
+        public const int m_VisualGrapStartPoint =10;     //视觉开始抓取点,  注意和机器人脚本软件相对应，+100后是抓取点上空
+        public const int m_VisualPutStartPoint = 30;     //视觉开始放置点， 注意和机器人脚本软件相对应，+100后是放置点上空
 
         // 定义私有构造函数，使外界不能创建该类实例
         private RobotDevice()
