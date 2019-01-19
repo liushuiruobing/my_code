@@ -669,46 +669,63 @@ namespace RobotWorkstation
             return (byte)State;
         }
 
-        // 0 -- run , 1 -- stop , 2 -- pause
+        //UI上的灯
         public static int CheckSysAlarm()
         {
             // check robot
-            if (DataStruct.SysAlarm.Robot >= 1)
+            if (DataStruct.SysStateAlarm.Robot >= 1)
             {
-                if (DataStruct.SysAlarm.Robot == 2)
+                if (DataStruct.SysStateAlarm.Robot == 2)
                 {
                     DataStruct.SysStat.RedAlarm = true;
                 }
-                else if (DataStruct.SysAlarm.Robot == 1)
+                else if (DataStruct.SysStateAlarm.Robot == 1)
                 {
                     DataStruct.SysStat.OriangeAlarm = true;
                 }
             }
 
             //check camera
-            if (DataStruct.SysAlarm.Camera == 1)
+            if (DataStruct.SysStateAlarm.Camera == 1)
             {
                 DataStruct.SysStat.Camera = 1;
                 DataStruct.SysStat.RedAlarm = true;
             }
 
             //check QRCode
-            if (DataStruct.SysAlarm.QRCode == 1)
+            if (DataStruct.SysStateAlarm.QRCode == 1)
             {
                 DataStruct.SysStat.QRCode = 1;
                 DataStruct.SysStat.RedAlarm = true;
             }
 
             //check RFID
-            if (DataStruct.SysAlarm.RFID == 1)
+            if (DataStruct.SysStateAlarm.RFID == 1)
             {
                 DataStruct.SysStat.RFID = 1;
                 DataStruct.SysStat.RedAlarm = true;
             }
 
-            //check PLC
-
             //check IO Control Board
+            if (DataStruct.SysStateAlarm.ARM == 1)
+            {
+                DataStruct.SysStat.ARM = 1;
+                DataStruct.SysStat.RedAlarm = true;
+            }
+
+            //check Salver
+            if (DataStruct.SysStateAlarm.Salver == 1)
+            {
+                DataStruct.SysStat.Salver = 1;
+                DataStruct.SysStat.RedAlarm = true;
+            }
+
+            //check Server
+            if (DataStruct.SysStateAlarm.Server == 1)
+            {
+                DataStruct.SysStat.Server = 1;
+                DataStruct.SysStat.RedAlarm = true;
+            }
 
             if ((!DataStruct.SysStat.OriangeAlarm) && (!DataStruct.SysStat.RedAlarm))
                 return 0;
@@ -720,8 +737,8 @@ namespace RobotWorkstation
                 return 3;
         }
 
-        //Alarm type , 0 = Green ; 1 = Yellow ; 2 = Red ; 3 = Red & Yellow
-        public static void SetSysAlarm(byte AlarmType)
+        //工作站的塔灯 Alarm type , 0 = Green ; 1 = Yellow ; 2 = Red ; 3 = Red & Yellow
+        public static void SetSysAlarmLed(byte AlarmType)
         {
             if (AlarmType == 0)
             {

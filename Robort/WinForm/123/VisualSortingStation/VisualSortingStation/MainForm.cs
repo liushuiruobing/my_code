@@ -53,17 +53,11 @@ namespace RobotWorkstation
 
         public MainForm()
         {
-            //初始化
-            DataStruct.InitSysStat();
-            DataStruct.InitSysAlarm();
-            Profile.LoadConfigFile();
-
             InitializeComponent();
             InitOtherForm();
-                                
-            //InitTcp();
-            //InitWorkstatiionAndStart();           
-            InitAndCreateAllThread();  //创建所有线程
+
+            //初始化
+            InitWorkStation();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -264,6 +258,19 @@ namespace RobotWorkstation
             this.Close();
         }
 
+        public void InitWorkStation()
+        {
+            DataStruct.InitSysStat();
+            DataStruct.InitSysStateAlarm();
+            Profile.LoadConfigFile();
+
+            InitTcp();
+            InitWorkstatiionAndStart();
+            int Re = VisualSortingStation.CheckSysAlarm();
+            if (Re == 0)
+                InitAndCreateAllThread();  //创建所有线程
+        }
+
         public void InitTcp()
         {
             //和Camera通信
@@ -286,24 +293,24 @@ namespace RobotWorkstation
             }
 
             //和单片机通信
-            //m_MyTcpClientArm = new MyTcpClient();
-            //if (m_MyTcpClientArm != null)
-            //{
-            //    IPAddress ControlIp = IPAddress.Parse(Profile.m_Config.ControlerArmIp);
-            //    int ControlPort = Profile.m_Config.ControlerArmPort;
-            //    m_MyTcpClientArm.CreateConnect(ControlIp, ControlPort);
+            m_MyTcpClientArm = new MyTcpClient();
+            if (m_MyTcpClientArm != null)
+            {
+                IPAddress ControlIp = IPAddress.Parse(Profile.m_Config.ControlerArmIp);
+                int ControlPort = Profile.m_Config.ControlerArmPort;
+                m_MyTcpClientArm.CreateConnect(ControlIp, ControlPort);
 
-            //    if (!m_MyTcpClientArm.IsConnected)
-            //    {
-            //        DataStruct.SysStat.ARM = 1;
-            //        m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, true);
-            //    }
-            //    else
-            //    {
-            //        DataStruct.SysStat.ARM = 0;
-            //        m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, false);
-            //    }
-            //}
+                if (!m_MyTcpClientArm.IsConnected)
+                {
+                    DataStruct.SysStat.ARM = 1;
+                    m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, true);
+                }
+                else
+                {
+                    DataStruct.SysStat.ARM = 0;
+                    m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, false);
+                }
+            }
 
             m_MyTcpServer = MyTcpServer.GetInstance();
             if (m_MyTcpServer != null)
@@ -351,18 +358,18 @@ namespace RobotWorkstation
             }
 
             //RFID
-            //m_RFID = RFID.GetInstance();
-            //Re = m_RFID.Connect(Profile.m_Config.RfidIp);
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.RFID = 1;
-            //    m_SysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
-            //}
-            //else
-            //{
-            //    DataStruct.SysStat.RFID = 0;
-            //    m_SysAlarm.SetAlarm(SysAlarm.Type.RFID, false);
-            //}
+            m_RFID = RFID.GetInstance();
+            Re = m_RFID.Connect(Profile.m_Config.RfidIp);
+            if (!Re)
+            {
+                DataStruct.SysStat.RFID = 1;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
+            }
+            else
+            {
+                DataStruct.SysStat.RFID = 0;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.RFID, false);
+            }
 
             //二维码
             m_QRCode = QRCode.GetInstance(); 

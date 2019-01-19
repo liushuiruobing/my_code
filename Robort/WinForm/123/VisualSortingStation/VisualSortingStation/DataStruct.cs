@@ -10,7 +10,6 @@ namespace RobotWorkstation
     {
         public struct SysStat
         {
-            public static byte WorkMode;                                        // 0 -- Auto，1 -- manul
             public static byte Robot;                                           // 0 -- not , 1 -- device robot alarm
             public static byte Camera;                                          // 0 -- not , 1 -- Camera alarm
             public static byte QRCode;                                          // 0 -- not , 1 -- QRCode alarm
@@ -48,7 +47,7 @@ namespace RobotWorkstation
             public static bool GrapAndPutOneSuccessed;
         }
 
-        public struct SysAlarm
+        public struct SysStateAlarm
         {
             public static ushort Robot;        // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
             public static ushort Camera;       // ID = 2 , Level = 1 ; 0 -- normal , 1 -- Alarm
@@ -61,7 +60,6 @@ namespace RobotWorkstation
 
         public static void InitSysStat()
         {
-            SysStat.WorkMode = 1;                // 0 -- Auto，1 -- manul
             SysStat.Robot = 1;                   // 0 -- not , 1 -- device robot alarm
             SysStat.Camera = 1;
             SysStat.QRCode = 1;
@@ -96,15 +94,15 @@ namespace RobotWorkstation
             SysStat.GrapAndPutOneSuccessed = false;
         }
 
-        public static void InitSysAlarm()
+        public static void InitSysStateAlarm()
         {
-            SysAlarm.Robot = 0x00;      // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
-            SysAlarm.Camera = 0x00;
-            SysAlarm.QRCode = 0x00;
-            SysAlarm.RFID = 0x00;
-            SysAlarm.Salver = 0x00;       // ID = 5 , Level = 2 ; 0 -- normal , 1 -- Alarm
-            SysAlarm.ARM = 0x00;          // ID = 6 , Level = 2 ; 0 -- normal , 1 -- Alarm
-            SysAlarm.Server = 0x00;       // ID = 7 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            SysStateAlarm.Robot = 0x00;      // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
+            SysStateAlarm.Camera = 0x00;
+            SysStateAlarm.QRCode = 0x00;
+            SysStateAlarm.RFID = 0x00;
+            SysStateAlarm.Salver = 0x00;       // ID = 5 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            SysStateAlarm.ARM = 0x00;          // ID = 6 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            SysStateAlarm.Server = 0x00;       // ID = 7 , Level = 2 ; 0 -- normal , 1 -- Alarm
         }
     }
 }

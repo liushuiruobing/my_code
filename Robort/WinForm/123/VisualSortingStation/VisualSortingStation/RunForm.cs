@@ -48,7 +48,7 @@ namespace RobotWorkstation
         private void CButtonStart_Click(object sender, EventArgs e)
         {
             
-            //if ((DataStruct.SysStat.Ready == 1) && (DataStruct.SysStat.Stop == 0))
+            if ((DataStruct.SysStat.Ready) && (!DataStruct.SysStat.Stop))
             {
                 DataStruct.SysStat.Run = true;
                 DataStruct.SysStat.Pause = false;
@@ -104,11 +104,6 @@ namespace RobotWorkstation
                 DataStruct.SysStat.Ready = false;
                 DataStruct.SysStat.Run = false;
             }
-        }
-
-        private void CButtonAutoRun_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void CButtonClearSysAlarm_Click(object sender, EventArgs e)
@@ -169,13 +164,13 @@ namespace RobotWorkstation
 
             //设置报警灯的状态
             if (DataStruct.SysStat.Run)
-                VisualSortingStation.SetSysAlarm(0);
+                VisualSortingStation.SetSysAlarmLed(0);
             else if (DataStruct.SysStat.Pause && !DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarm(1);
+                VisualSortingStation.SetSysAlarmLed(1);
             else if (!DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarm(2);
+                VisualSortingStation.SetSysAlarmLed(2);
             else if (DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarm(3);
+                VisualSortingStation.SetSysAlarmLed(3);
 
             //添加报警信息
             for (int i = 0; i < (int)SysAlarm.Type.Max; i++)
