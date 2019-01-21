@@ -133,12 +133,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
+    <Compile Include="ArmControler.cs" />
+=======
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
     <Compile Include="Configuration.cs" />
     <Compile Include="CustomUI.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DataStruct.cs" />
-    <Compile Include="IO.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

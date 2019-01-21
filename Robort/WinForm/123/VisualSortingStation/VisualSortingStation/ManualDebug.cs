@@ -1,10 +1,9 @@
-﻿using Advantech.Motion;
-using RABD.DROE.SystemDefine;
+﻿using RABD.DROE.SystemDefine;
 using System;
 using System.Drawing;
-using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
+using System.IO.Ports;
 
 namespace RobotWorkstation
 {
@@ -17,7 +16,8 @@ namespace RobotWorkstation
 
         private RFID m_RFID = RFID.GetInstance();
         private QRCode m_QRCode = QRCode.GetInstance();
-        private IO m_IO = IO.GetInstance();
+        private ArmControler m_ArmControler = ArmControler.GetInstance();
+        private static MyTcpClient m_MyTcpClientArm = MainForm.GetMyTcpClientArm();
 
         SynchronizationContext m_SyncContext = null;
 
@@ -783,62 +783,66 @@ namespace RobotWorkstation
 
         private void BtnLampRedOn_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
         }
 
         private void BtnLampRedOff_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
         }
 
         private void BtnLampOrangeOn_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
         }
 
         private void BtnLampOrangeOff_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
         }
 
         private void BtnLampGreenOn_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
         }
 
         private void BtnLampGreenOff_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
         }
 
         private void BtnLampBlueOn_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedBlue, IOValue.IOValueHigh);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedBlue, IOValue.IOValueHigh);
         }
 
         private void BtnLampBlueOff_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedBlue, IOValue.IOValueLow);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedBlue, IOValue.IOValueLow);
         }
 
         private void BtnBeepOn_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_Beep, IOValue.IOValueHigh);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_Beep, IOValue.IOValueHigh);
         }
 
         private void BtnBeepOff_Click(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_Beep, IOValue.IOValueLow);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_Beep, IOValue.IOValueLow);
         }
 
         private void CButtonIoEmptyPlateUp_Click_1(object sender, EventArgs e)
         {
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylUp, IOValue.IOValueHigh);
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylUp, IOValue.IOValueHigh);
         }
 
         private void CButtonIoEmptyPlateDown_Click_1(object sender, EventArgs e)
         {
+<<<<<<< HEAD
+            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
+=======
             m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
         }
 
         #endregion

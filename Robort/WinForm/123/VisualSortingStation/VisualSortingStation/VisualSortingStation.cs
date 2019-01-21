@@ -3,16 +3,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+
 
 
 namespace RobotWorkstation
 {
+    public enum Key
+    {
+        Key_Run = 0,
+        Key_Pause,
+        Key_Stop,
+        Key_Reset
+    }
+
     public enum VisualAction
     {
         Visual_GrapPoint = 0x00,
@@ -98,7 +104,11 @@ namespace RobotWorkstation
 
     public class VisualSortingStation  //视觉分拣业务类
     {
+<<<<<<< HEAD
+        public static ArmControler m_ArmControler = ArmControler.GetInstance();
+=======
         public static IO m_IO = IO.GetInstance();
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
         public const int m_OnePanelDevicesMax = 16;
         private static int m_DevicesTotal = 0;
         private static int m_TempCount = 0;
@@ -128,9 +138,13 @@ namespace RobotWorkstation
         //视觉
         public const byte MessCameraCurrentPoint = 0x00;
         public const byte MessCameraNextPoint = 0x01;
-
         private static short[] m_VisualCoords = new short[24];  //记录抓取点、二维码扫描点、放置点x,y,z,rz
 
+        //线程
+        private static Thread m_MainThread = null;
+        public static ManualResetEvent m_MainThreadEvent = new ManualResetEvent(false);
+        private static Thread m_MeassageProcessThread = null;
+              
         public static bool ShouldExit
         {
             set
@@ -143,6 +157,19 @@ namespace RobotWorkstation
             }
         }
 
+        public static void CreateAllThread()
+        {
+            //创建主线程
+            m_MainThread = new Thread(new ThreadStart(VisualSortingStation.MainThreadFunc));
+            m_MainThread.IsBackground = true;
+            m_MainThread.Start();
+
+            //创建消息处理线程
+            m_MeassageProcessThread = new Thread(new ThreadStart(VisualSortingStation.MessageProcessThreadFunc));
+            m_MeassageProcessThread.IsBackground = true;
+            m_MeassageProcessThread.Start();
+        }
+
         public static void MainThreadFunc()
         {
             m_QRCodeStr.Clear();
@@ -150,13 +177,18 @@ namespace RobotWorkstation
 
             while (!m_ShouldExit)
             {
+                m_MainThreadEvent.WaitOne();
+
                 if (DataStruct.SysStat.Run)
                     AutoSortingRun();
 
-                if (DataStruct.SysStat.Stop)
-                    m_ShouldExit = true;
-
                 Thread.Sleep(0);  //Sleep(0),则线程会将时间片的剩余部分让给任何已经准备好的具有同等优先级的线程
+
+<<<<<<< HEAD
+                Debug.WriteLine("MainThreadFunc Runing...");
+=======
+                Thread.Sleep(0);  //Sleep(0),则线程会将时间片的剩余部分让给任何已经准备好的具有同等优先级的线程
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             }
         }
 
@@ -355,7 +387,7 @@ namespace RobotWorkstation
                 Message.MessageCodeARM Code = (Message.MessageCodeARM)meassage.MeasCode;
                 switch (Code)
                 {
-                    case Message.MessageCodeARM.GetOutIo:   //读取输出口缓冲区数据
+                    case Message.MessageCodeARM.GetOutput:   //读取输出口缓冲区数据
                         {
                             byte data1 = meassage.Param[Message.MessageCommandIndex + 1];
                             byte data2 = meassage.Param[Message.MessageCommandIndex + 2];
@@ -373,7 +405,11 @@ namespace RobotWorkstation
                             */
                         }
                         break;
+<<<<<<< HEAD
+                    case Message.MessageCodeARM.GetInput:    //读取输入口的IO
+=======
                     case Message.MessageCodeARM.GetInIo:    //读取输入口的IO
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
                         {
                            for (int i = 0; i < m_IoInValue.Length; i++)
                            {
@@ -601,7 +637,7 @@ namespace RobotWorkstation
                     break;
                 case AutoRunAction.AutoRunLockDevices:        //计数满则锁定翻转盘器件
                     {
-                        bool Re = m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
+                        bool Re = m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
                         if (Re)
                             m_AutoRunAction = AutoRunAction.AuoRunNone;
                     }break;
@@ -612,7 +648,7 @@ namespace RobotWorkstation
                     }break;
                 case AutoRunAction.AutoRunUnLockDevices:          //翻转成功，解锁器件
                     {
-                        bool Re = m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
+                        bool Re = m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
                         if(Re)
                             m_AutoRunAction = AutoRunAction.AuoRunNone;
                     } break;
@@ -677,11 +713,11 @@ namespace RobotWorkstation
             {
                 if (DataStruct.SysStateAlarm.Robot == 2)
                 {
-                    DataStruct.SysStat.RedAlarm = true;
+                    DataStruct.SysStat.LedRed = true;
                 }
                 else if (DataStruct.SysStateAlarm.Robot == 1)
                 {
-                    DataStruct.SysStat.OriangeAlarm = true;
+                    DataStruct.SysStat.LedOriange = true;
                 }
             }
 
@@ -689,49 +725,61 @@ namespace RobotWorkstation
             if (DataStruct.SysStateAlarm.Camera == 1)
             {
                 DataStruct.SysStat.Camera = 1;
-                DataStruct.SysStat.RedAlarm = true;
+                DataStruct.SysStat.LedRed = true;
             }
 
             //check QRCode
             if (DataStruct.SysStateAlarm.QRCode == 1)
             {
                 DataStruct.SysStat.QRCode = 1;
-                DataStruct.SysStat.RedAlarm = true;
+                DataStruct.SysStat.LedRed = true;
             }
 
             //check RFID
             if (DataStruct.SysStateAlarm.RFID == 1)
             {
                 DataStruct.SysStat.RFID = 1;
-                DataStruct.SysStat.RedAlarm = true;
+                DataStruct.SysStat.LedRed = true;
             }
 
             //check IO Control Board
             if (DataStruct.SysStateAlarm.ARM == 1)
             {
                 DataStruct.SysStat.ARM = 1;
+<<<<<<< HEAD
+                DataStruct.SysStat.LedRed = true;
+=======
                 DataStruct.SysStat.RedAlarm = true;
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             }
 
             //check Salver
             if (DataStruct.SysStateAlarm.Salver == 1)
             {
                 DataStruct.SysStat.Salver = 1;
+<<<<<<< HEAD
+                DataStruct.SysStat.LedRed = true;
+=======
                 DataStruct.SysStat.RedAlarm = true;
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             }
 
             //check Server
             if (DataStruct.SysStateAlarm.Server == 1)
             {
                 DataStruct.SysStat.Server = 1;
+<<<<<<< HEAD
+                DataStruct.SysStat.LedRed = true;
+=======
                 DataStruct.SysStat.RedAlarm = true;
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             }
 
-            if ((!DataStruct.SysStat.OriangeAlarm) && (!DataStruct.SysStat.RedAlarm))
+            if ((!DataStruct.SysStat.LedOriange) && (!DataStruct.SysStat.LedRed))
                 return 0;
-            else if (DataStruct.SysStat.OriangeAlarm && !DataStruct.SysStat.RedAlarm)
+            else if (DataStruct.SysStat.LedOriange && !DataStruct.SysStat.LedRed)
                 return 1;
-            else if (DataStruct.SysStat.RedAlarm && !DataStruct.SysStat.OriangeAlarm)
+            else if (DataStruct.SysStat.LedRed && !DataStruct.SysStat.LedOriange)
                 return 2;
             else
                 return 3;
@@ -742,27 +790,27 @@ namespace RobotWorkstation
         {
             if (AlarmType == 0)
             {
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
             }
             else if (AlarmType == 1)
             {
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
             }
             else if (AlarmType == 2)
             {
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
             }
             else if (AlarmType == 3)
             {
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
-                m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
+                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
             }
         }
 
@@ -824,11 +872,15 @@ namespace RobotWorkstation
             m_SendMeas[Message.MessageCommandIndex + 3] = (byte)PutPointIndex;  //把要放置的索引传递给视觉
 
             //重新计算校验和
+<<<<<<< HEAD
+            m_SendMeas[Message.MessageSumCheck] = MyMath.CalculateSum(m_SendMeas, Message.MessageLength);
+=======
             m_SendMeas[Message.MessageLength - 2] = 0x00;
             byte Sum = 0;
             foreach (byte Temp in m_SendMeas)
                 Sum += Temp;
             m_SendMeas[Message.MessageLength - 2] = (byte)(0 - Sum);  //校验和
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
 
             string StrSend = BitConverter.ToString(m_SendMeas);
 
@@ -851,7 +903,91 @@ namespace RobotWorkstation
             */
 
             //设置按键灯
+<<<<<<< HEAD
+            //ProcessKey(Key.Key_Run);
             //SetKeyLedByKey(ControlBord_IO_IN.IO_IN_KeyRun, LED_State.LED_ON);
         }
+
+        public static void ProcessKey(Key key)
+        {
+            switch (key)
+            {
+                case Key.Key_Run:
+                    {
+                        int Re = CheckSysAlarm();
+                        if (Re == 0)
+                            m_MainThreadEvent.Set();
+
+                        if ((DataStruct.SysStat.Ready) && (!DataStruct.SysStat.Stop))
+                        {
+                            DataStruct.SysStat.Run = true;
+                            DataStruct.SysStat.Pause = false;
+                        }
+                    }
+                    break;
+                case Key.Key_Pause:
+                    {
+                        m_MainThreadEvent.Reset();
+
+                        if (!DataStruct.SysStat.Stop)
+                        {
+                            DataStruct.SysStat.Pause = true;
+                            DataStruct.SysStat.Run = false;
+                        }
+                    }
+                    break;
+                case Key.Key_Stop:
+                    {
+                        m_MainThreadEvent.Reset();
+
+                        DataStruct.SysStat.Ready = false;
+                        DataStruct.SysStat.Run = false;
+                        DataStruct.SysStat.Pause = false;
+                        DataStruct.SysStat.Stop = true;
+                    }
+                    break;
+                case Key.Key_Reset:
+                    {
+                        DataStruct.InitDataStruct();
+
+                        int Rtn = CheckSysAlarm();
+                        if (Rtn == 0)
+                        {
+                            DataStruct.SysStat.Ready = true;
+                            DataStruct.SysStat.Run = false;
+                            DataStruct.SysStat.Stop = false;
+                            DataStruct.SysStat.Pause = false;
+                        }
+                        else if (Rtn == 1)
+                        {
+                            DataStruct.SysStat.Pause = true;
+                            DataStruct.SysStat.Ready = false;
+                            DataStruct.SysStat.Run = false;
+                            DataStruct.SysStat.Stop = false;
+                        }
+                        else if (Rtn == 2)
+                        {
+                            DataStruct.SysStat.Stop = true;
+                            DataStruct.SysStat.Ready = false;
+                            DataStruct.SysStat.Run = false;
+                            DataStruct.SysStat.Pause = false;
+                        }
+                        else
+                        {
+                            DataStruct.SysStat.Pause = true;
+                            DataStruct.SysStat.Stop = false;
+                            DataStruct.SysStat.Ready = false;
+                            DataStruct.SysStat.Run = false;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+=======
+            //SetKeyLedByKey(ControlBord_IO_IN.IO_IN_KeyRun, LED_State.LED_ON);
+        }
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
     }
 }

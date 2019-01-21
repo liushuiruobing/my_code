@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace RobotWorkstation
 {   
@@ -27,6 +19,7 @@ namespace RobotWorkstation
         private RobotDevice m_Robot = null;  //机械臂             
         private RFID m_RFID = null;   //RFID      
         private QRCode m_QRCode = null; //二维码
+        public static ArmControler m_ArmControler = ArmControler.GetInstance();
         private static MyTcpClient m_MyTcpClientArm = null;
         private static MyTcpClient m_MyTcpClientCamera = null;
         private MyTcpServer m_MyTcpServer = null;
@@ -35,10 +28,6 @@ namespace RobotWorkstation
         //网络共享文件夹
         //private static NetShare m_NetShare = NetShare.GetInstance();
         //private static string m_CreateShare = "CreateShare.bat";
-
-        //线程
-        private Thread m_MainThread = null;
-        private Thread m_MeassageProcessThread = null;
 
         //防止闪屏
         protected override CreateParams CreateParams
@@ -259,6 +248,19 @@ namespace RobotWorkstation
         }
 
         public void InitWorkStation()
+<<<<<<< HEAD
+        {
+            DataStruct.InitDataStruct();
+            Profile.LoadConfigFile();
+
+            //InitTcp();
+            //InitWorkstatiionAndStart();
+            InitAndCreateAllThread();  //创建所有线程
+        }
+
+        public void InitTcp()
+        {
+=======
         {
             DataStruct.InitSysStat();
             DataStruct.InitSysStateAlarm();
@@ -273,6 +275,7 @@ namespace RobotWorkstation
 
         public void InitTcp()
         {
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             //和Camera通信
             m_MyTcpClientCamera = new MyTcpClient();
             if (m_MyTcpClientCamera != null)
@@ -293,6 +296,22 @@ namespace RobotWorkstation
             }
 
             //和单片机通信
+<<<<<<< HEAD
+            m_ArmControler.Open();
+            m_MyTcpClientArm = m_ArmControler.m_MyTcpClient[(int)Board.Conveyor];
+            if (!m_MyTcpClientArm.IsConnected)
+            {
+                DataStruct.SysStat.ARM = 1;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, true);
+            }
+            else
+            {
+                DataStruct.SysStat.ARM = 0;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, false);
+            }
+
+            //创建Tcp Server
+=======
             m_MyTcpClientArm = new MyTcpClient();
             if (m_MyTcpClientArm != null)
             {
@@ -312,6 +331,7 @@ namespace RobotWorkstation
                 }
             }
 
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             m_MyTcpServer = MyTcpServer.GetInstance();
             if (m_MyTcpServer != null)
             {
@@ -392,15 +412,7 @@ namespace RobotWorkstation
 
         public void InitAndCreateAllThread()
         {
-            //创建主线程
-            m_MainThread = new Thread(new ThreadStart(VisualSortingStation.MainThreadFunc));
-            m_MainThread.IsBackground = true;
-            m_MainThread.Start();
-
-            //创建消息处理线程
-            m_MeassageProcessThread = new Thread(new ThreadStart(VisualSortingStation.MessageProcessThreadFunc));
-            m_MeassageProcessThread.IsBackground = true;
-            m_MeassageProcessThread.Start();
+            VisualSortingStation.CreateAllThread();
         }
     }
 }

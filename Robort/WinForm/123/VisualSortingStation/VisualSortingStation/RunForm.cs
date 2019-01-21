@@ -17,8 +17,8 @@ namespace RobotWorkstation
         private SysAlarm m_SysAlarm = SysAlarm.GetInstance();
         private bool[] m_SysAlarmState = new bool[(int)SysAlarm.Type.Max];  //报警状态备份
         private MyTcpClient m_MyTcpClientArm = null;
-        private IO m_IO = null;
-        private byte[] SendMeas = new byte[Message.MessageLength];
+        private ArmControler m_ArmControler = null;
+        private byte[] m_SendMeas = new byte[Message.MessageLength];
         private RobotDevice m_Robot = RobotDevice.GetInstance();
         public static int m_GrapAndPutCount = -1;  //用于记录自动抓取和放置的个数
         public static int m_GrapAndPutTotal = 0;   //用于记录自动抓取和放置的总数
@@ -26,7 +26,7 @@ namespace RobotWorkstation
         {
             InitializeComponent();
             m_MyTcpClientArm = MainForm.GetMyTcpClientArm();
-            m_IO = IO.GetInstance();
+            m_ArmControler = ArmControler.GetInstance();
 
             for (int i = 0; i < (int)SysAlarm.Type.Max; i++)
             {
@@ -47,33 +47,33 @@ namespace RobotWorkstation
 
         private void CButtonStart_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
+            VisualSortingStation.ProcessKey(Key.Key_Run);
+=======
             
             if ((DataStruct.SysStat.Ready) && (!DataStruct.SysStat.Stop))
             {
                 DataStruct.SysStat.Run = true;
                 DataStruct.SysStat.Pause = false;
             }
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
         }
 
         private void CButtonPause_Click(object sender, EventArgs e)
         {
-            if (!DataStruct.SysStat.Stop)
-            {
-                DataStruct.SysStat.Pause = true;
-                DataStruct.SysStat.Run = false;
-            }
+            VisualSortingStation.ProcessKey(Key.Key_Pause);
         }
 
         private void CButtonStop_Click(object sender, EventArgs e)
         {
-            DataStruct.SysStat.Ready = false;
-            DataStruct.SysStat.Run = false;
-            DataStruct.SysStat.Pause = false;
-            DataStruct.SysStat.Stop = true;
+            VisualSortingStation.ProcessKey(Key.Key_Stop);
         }
 
         private void CButtonReset_Click(object sender, EventArgs e)
         {
+<<<<<<< HEAD
+            VisualSortingStation.ProcessKey(Key.Key_Reset);
+=======
             //VisualSortingStation.Init_Equipment();
             int Rtn = VisualSortingStation.CheckSysAlarm();
             if (Rtn == 0)
@@ -104,6 +104,7 @@ namespace RobotWorkstation
                 DataStruct.SysStat.Ready = false;
                 DataStruct.SysStat.Run = false;
             }
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
         }
 
         private void CButtonClearSysAlarm_Click(object sender, EventArgs e)
@@ -187,7 +188,7 @@ namespace RobotWorkstation
             }
 
             //轮询单片机的状态
-            m_IO.ReadControlBoardIo((byte)Message.MessageCodeARM.GetInIo, ref SendMeas);
+            m_ArmControler.SendReadPoint(Board.Conveyor);
 
             //刷新盘的状态
             if (DataStruct.SysStat.GrapAndPutOneSuccessed)
@@ -211,6 +212,7 @@ namespace RobotWorkstation
             CLabelCurDevices.Text = (m_GrapAndPutCount + 1).ToString();
             CLabelTotalDeveices.Text = m_GrapAndPutTotal.ToString();
             CLabelTotalTrays.Text = (m_GrapAndPutTotal / VisualSortingStation.m_OnePanelDevicesMax).ToString();
+<<<<<<< HEAD
         }
 
         //DeviceIndex 从0开始
@@ -222,6 +224,19 @@ namespace RobotWorkstation
         }
 
         //DeviceIndex 从0开始
+=======
+        }
+
+        //DeviceIndex 从0开始
+        public void SetOriginalSalverGridColor(int DeviceIndex, Color color)
+        {
+            int Row = DeviceIndex % OriginalSalver.SalverRows;
+            int Col = (OriginalSalver.SalverCols - 1) -  DeviceIndex / OriginalSalver.SalverRows;
+            OriginalSalver.SetSelectedGridColor(Row, Col, color);
+        }
+
+        //DeviceIndex 从0开始
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
         public void SetAfterSortingSalverGridColor(int DeviceIndex, Color color)
         {
             int Row = DeviceIndex % OriginalSalver.SalverRows;

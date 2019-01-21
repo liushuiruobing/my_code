@@ -8,6 +8,20 @@ using System.Threading.Tasks;
 
 namespace RobotWorkstation
 {
+    public enum Robot_IO_IN  //要与实际的接线对应
+    {
+        Robot_IO_IN_CylGoArrive = 0x01,     //抓手气缸进到位
+        Robot_IO_IN_CylBackArrive,          //抓手气缸退到位
+        Robot_IO_IN_VacuoCheck,             //吸嘴真空检测
+        Robot_WritePointSuccessed           //机械臂写点位成功
+    }
+
+    public enum Robot_IO_OUT  //要与实际的接线对应
+    {
+        Robot_IO_OUT_Cyl = 0x01,    //抓手气缸
+        Robot_IO_OUT_Vacuo          //吸嘴
+    }
+
     public class RobotDevice : RobotBase
     {
         private static RobotDevice m_UniqueRobot = null;  //定义类的静态成员对象，实现单例模式

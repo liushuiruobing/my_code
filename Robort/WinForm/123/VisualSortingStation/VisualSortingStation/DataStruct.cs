@@ -24,8 +24,13 @@ namespace RobotWorkstation
             public static bool Stop;
             public static bool Reset;
            
+<<<<<<< HEAD
+            public static bool LedRed;  //塔灯
+            public static bool LedOriange;
+=======
             public static bool RedAlarm;  //塔灯
             public static bool OriangeAlarm;
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             public static bool LedGreen;
             public static bool LedBlue;        
             public static bool Beep;    //报警蜂鸣
@@ -74,8 +79,8 @@ namespace RobotWorkstation
             SysStat.Stop = false;
             SysStat.Reset = false;
 
-            SysStat.RedAlarm = false;
-            SysStat.OriangeAlarm = false;
+            SysStat.LedRed = false;
+            SysStat.LedOriange = false;
             SysStat.LedGreen = false;
             SysStat.LedBlue = false;
             SysStat.Beep = false;
@@ -95,6 +100,7 @@ namespace RobotWorkstation
         }
 
         public static void InitSysStateAlarm()
+<<<<<<< HEAD
         {
             SysStateAlarm.Robot = 0x00;      // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
             SysStateAlarm.Camera = 0x00;
@@ -103,6 +109,22 @@ namespace RobotWorkstation
             SysStateAlarm.Salver = 0x00;       // ID = 5 , Level = 2 ; 0 -- normal , 1 -- Alarm
             SysStateAlarm.ARM = 0x00;          // ID = 6 , Level = 2 ; 0 -- normal , 1 -- Alarm
             SysStateAlarm.Server = 0x00;       // ID = 7 , Level = 2 ; 0 -- normal , 1 -- Alarm
+        }
+
+        public static void InitDataStruct()
+        {
+            InitSysStat();
+            InitSysStateAlarm();
+=======
+        {
+            SysStateAlarm.Robot = 0x00;      // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
+            SysStateAlarm.Camera = 0x00;
+            SysStateAlarm.QRCode = 0x00;
+            SysStateAlarm.RFID = 0x00;
+            SysStateAlarm.Salver = 0x00;       // ID = 5 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            SysStateAlarm.ARM = 0x00;          // ID = 6 , Level = 2 ; 0 -- normal , 1 -- Alarm
+            SysStateAlarm.Server = 0x00;       // ID = 7 , Level = 2 ; 0 -- normal , 1 -- Alarm
+>>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
         }
     }
 }

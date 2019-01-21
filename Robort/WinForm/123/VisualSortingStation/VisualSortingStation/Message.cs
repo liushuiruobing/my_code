@@ -11,6 +11,7 @@ namespace RobotWorkstation
         public const int MessageLength = 32;        //通信协议的消息长度是32字节
         public const int MessageStateIndex = 4;     //状态码的索引是4
         public const int MessageCommandIndex = 5;   //命令吗的索引是5
+        public const int MessageSumCheck = MessageLength - 2;
 
         public const byte MessStartCode  = 0x7e;     //起始同步码
         public const byte MessEndCode    = 0x0d;     //终止同步码
@@ -35,32 +36,34 @@ namespace RobotWorkstation
 
         public enum MessageCodeARM  //单片机控制板
         {
-            SetOutIo = 0x10,                //设置输出口
-            GetOutIo,                       //读取输出口缓冲区数据
-            SetOutIoDefault,                //设置输出口开机默认状态（需要存储到SPI-Flash）
+            SetOutput = 0x10,               //设置输出口
+            GetOutput,                      //读取输出口缓冲区数据
+            SetOutputDefault,               //设置输出口开机默认状态（需要存储到SPI-Flash）
 
-            GetInIo = 0x18,                 //读取输入口
+            GetInput = 0x18,                //读取输入口
 
-            GetMotorParam = 0x20,           //读取电机轴运动参数
-            SetMotorDefaultParam,           //设置电机轴默认运动参数（需要存储到SPI-Flash）
-            SetMotorAxleCurParam,           //设置电机轴当前运动参数
+            GetAxisParameters = 0x20,       //读取电机轴运动参数
+            SetAxisParametersDefault,       //设置电机轴默认运动参数（需要存储到SPI-Flash）
+            SetAxisParameters,              //设置电机轴当前运动参数
 
-            GetMotorAxleCurSteps = 0x28,    //读取电机轴当前步数
-            SetMotorAxleSteps,              //设置电机轴步数
-            SetMotorAxleMaxSteps,           //设置电机轴最大步数（需要存储到SPI-Flash）
-            StopMotor,                      //停止电机轴运动
+            GetAxisStepsAbs = 0x28,         //读取电机轴当前步数
+            SetAxisStepsAbs,                //设置电机轴步数(绝对值)
+            SetAxisStepsRef,                //设置电机轴步数(相对值)
+            SetAxisMoveContinuous,          //设置电机连续运动
+            SetAxisStepsMax,                //设置电机轴最大步数
+            StopAxis,                       //停止电机轴
 
-            GetMotorAxleState = 0x30,       //读取电机轴状态
-            ResetMotorAxleState,            //复位电机轴错误状态
+            GetAxisState = 0x30,            //读取电机轴状态
+            ResetAxisError,                 //复位电机轴错误状态
 
-            SetMotorGoHome = 0x38,          //设置电机轴回原点
+            AxisGoHome  = 0x38,             //设置电机轴回原点
 
-            SetControlerIP = 0x40,          //设置板卡IP地址（需要存储到SPI-Flash）
-            SetControlerHardwareVer,        //设置板卡硬件版本（需要存储到SPI-Flash）
+            SetIp = 0x40,                   //设置板卡IP地址（需要存储到SPI-Flash）
+            SetVersionHardware ,            //设置板卡硬件版本（需要存储到SPI-Flash）
 
-            RestControler = 0x48,           //恢复出厂设置（恢复除IP地址外的所有SPI-FLASH数据）
+            ResetFactory  = 0x48,           //恢复出厂设置（恢复除IP地址外的所有SPI-FLASH数据）
 
-            GetControlerInfo = 0x50,        //读取板卡信息
+            GetBoardInformation  = 0x50,    //读取板卡信息
 
             SendControlerUpdateFileLength = 0x60,   //系统升级--发送升级文件长度数据
             SendControlerUpdateFileData             //系统升级--发送升级文件
@@ -109,7 +112,7 @@ namespace RobotWorkstation
                 foreach (byte Temp in SendMeas)
                     Sum += Temp;
 
-                SendMeas[Message.MessageLength - 2] = (byte)(0 - Sum);  //校验和
+                SendMeas[Message.MessageSumCheck] = (byte)(0 - Sum);  //校验和
             }
         }
     }
