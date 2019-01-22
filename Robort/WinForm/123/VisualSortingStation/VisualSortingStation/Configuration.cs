@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using System.IO;
+using System.Windows.Forms;
 
 namespace RobotWorkstation
 {
@@ -95,7 +96,7 @@ namespace RobotWorkstation
                 }
                 catch //(InvalidOperationException)
                 {
-                    System.Windows.Forms.MessageBox.Show("加载配置文件失败！", "警告");
+                    MessageBox.Show(ConstString.StrLoadConfigFailed[0], Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     //return;
                 }
             }
@@ -113,7 +114,7 @@ namespace RobotWorkstation
                 }
                 catch
                 {
-                    System.Windows.Forms.MessageBox.Show("保存配置文件失败！", "警告");
+                    MessageBox.Show(ConstString.StrSaveConfigFailed[0], Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     //return;
                 }
             }

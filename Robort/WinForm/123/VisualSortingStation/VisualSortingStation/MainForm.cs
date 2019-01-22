@@ -59,11 +59,6 @@ namespace RobotWorkstation
             MultiLanguage.LoadLanguage(this, typeof(MainForm));
         }
 
-        public static MyTcpClient GetMyTcpClientArm()
-        {
-            return m_MyTcpClientArm;
-        }
-
         public static MyTcpClient GetMyTcpClientCamera()
         {
             return m_MyTcpClientCamera;
@@ -248,57 +243,39 @@ namespace RobotWorkstation
         }
 
         public void InitWorkStation()
-<<<<<<< HEAD
         {
             DataStruct.InitDataStruct();
             Profile.LoadConfigFile();
 
-            //InitTcp();
+            InitTcp();
             //InitWorkstatiionAndStart();
             InitAndCreateAllThread();  //创建所有线程
         }
 
         public void InitTcp()
         {
-=======
-        {
-            DataStruct.InitSysStat();
-            DataStruct.InitSysStateAlarm();
-            Profile.LoadConfigFile();
-
-            InitTcp();
-            InitWorkstatiionAndStart();
-            int Re = VisualSortingStation.CheckSysAlarm();
-            if (Re == 0)
-                InitAndCreateAllThread();  //创建所有线程
-        }
-
-        public void InitTcp()
-        {
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             //和Camera通信
-            m_MyTcpClientCamera = new MyTcpClient();
-            if (m_MyTcpClientCamera != null)
-            {
-                IPAddress CameraIp = IPAddress.Parse(Profile.m_Config.CameraIp);
-                int CameraPort = Profile.m_Config.CameraPort;
-                m_MyTcpClientCamera.CreateConnect(CameraIp, CameraPort);
-                if (!m_MyTcpClientCamera.IsConnected)
-                {
-                    DataStruct.SysStat.Camera = 1;
-                    m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
-                }
-                else
-                {
-                    DataStruct.SysStat.Camera = 0;
-                    m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, false);
-                }
-            }
+            //m_MyTcpClientCamera = new MyTcpClient();
+            //if (m_MyTcpClientCamera != null)
+            //{
+            //    IPAddress CameraIp = IPAddress.Parse(Profile.m_Config.CameraIp);
+            //    int CameraPort = Profile.m_Config.CameraPort;
+            //    m_MyTcpClientCamera.CreateConnect(CameraIp, CameraPort);
+            //    if (!m_MyTcpClientCamera.IsConnected)
+            //    {
+            //        DataStruct.SysStat.Camera = 1;
+            //        m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
+            //    }
+            //    else
+            //    {
+            //        DataStruct.SysStat.Camera = 0;
+            //        m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, false);
+            //    }
+            //}
 
             //和单片机通信
-<<<<<<< HEAD
             m_ArmControler.Open();
-            m_MyTcpClientArm = m_ArmControler.m_MyTcpClient[(int)Board.Conveyor];
+            m_MyTcpClientArm = m_ArmControler.m_MyTcpClientArm[(int)Board.Controler];
             if (!m_MyTcpClientArm.IsConnected)
             {
                 DataStruct.SysStat.ARM = 1;
@@ -311,44 +288,23 @@ namespace RobotWorkstation
             }
 
             //创建Tcp Server
-=======
-            m_MyTcpClientArm = new MyTcpClient();
-            if (m_MyTcpClientArm != null)
-            {
-                IPAddress ControlIp = IPAddress.Parse(Profile.m_Config.ControlerArmIp);
-                int ControlPort = Profile.m_Config.ControlerArmPort;
-                m_MyTcpClientArm.CreateConnect(ControlIp, ControlPort);
-
-                if (!m_MyTcpClientArm.IsConnected)
-                {
-                    DataStruct.SysStat.ARM = 1;
-                    m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, true);
-                }
-                else
-                {
-                    DataStruct.SysStat.ARM = 0;
-                    m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, false);
-                }
-            }
-
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
-            m_MyTcpServer = MyTcpServer.GetInstance();
-            if (m_MyTcpServer != null)
-            {
-                IPAddress ServerIp = IPAddress.Parse(Profile.m_Config.VisualStationServerIp);
-                int ServerPort = Profile.m_Config.VisualStationServerPort;
-                bool Re = m_MyTcpServer.CreatServer(ServerIp, ServerPort);
-                if (!Re)
-                {
-                    DataStruct.SysStat.Server = 1;
-                    m_SysAlarm.SetAlarm(SysAlarm.Type.Server, true);
-                }
-                else
-                {
-                    DataStruct.SysStat.Server = 0;
-                    m_SysAlarm.SetAlarm(SysAlarm.Type.Server, false);
-                }
-            }
+            //m_MyTcpServer = MyTcpServer.GetInstance();
+            //if (m_MyTcpServer != null)
+            //{
+            //    IPAddress ServerIp = IPAddress.Parse(Profile.m_Config.VisualStationServerIp);
+            //    int ServerPort = Profile.m_Config.VisualStationServerPort;
+            //    bool Re = m_MyTcpServer.CreatServer(ServerIp, ServerPort);
+            //    if (!Re)
+            //    {
+            //        DataStruct.SysStat.Server = 1;
+            //        m_SysAlarm.SetAlarm(SysAlarm.Type.Server, true);
+            //    }
+            //    else
+            //    {
+            //        DataStruct.SysStat.Server = 0;
+            //        m_SysAlarm.SetAlarm(SysAlarm.Type.Server, false);
+            //    }
+            //}
         }
 
         public void InitWorkstatiionAndStart()

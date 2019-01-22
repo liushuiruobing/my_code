@@ -17,7 +17,11 @@ namespace RobotWorkstation
         private RFID m_RFID = RFID.GetInstance();
         private QRCode m_QRCode = QRCode.GetInstance();
         private ArmControler m_ArmControler = ArmControler.GetInstance();
-        private static MyTcpClient m_MyTcpClientArm = MainForm.GetMyTcpClientArm();
+
+        private ControlBord_InputPoint[] m_InputPoint = new ControlBord_InputPoint[(int)ControlBord_InputPoint.IO_IN_MAX];  //输入点数组
+        private PictureBox[] m_PicInput = new PictureBox[(int)ControlBord_InputPoint.IO_IN_MAX];  //输入点对应的PictureBox
+        private int m_TotalInputPoint = 0;  //输入点总数
+
 
         SynchronizationContext m_SyncContext = null;
 
@@ -82,9 +86,6 @@ namespace RobotWorkstation
             PicBoxRobotGrapBackArrive.Image = DataStruct.SysStat.RobotCylBackArrive ? bmpRed : bmpDarkGreen;
             PicBoxRobotGrapVacuumCheck.Image = DataStruct.SysStat.RobotVacuoCheck ? bmpRed : bmpDarkGreen;
 
-            PicBoxEmptySalverUpArrive.Image = DataStruct.SysStat.EmptySalverAirCylUpArrive ? bmpRed : bmpDarkGreen;
-            PicBoxEmptySalverDownArrive.Image = DataStruct.SysStat.EmptySalverAirCylDownArrive ? bmpRed : bmpDarkGreen;
-
             //二维码
             if (m_QRCode != null && m_QRCode.m_IsConnect)
             {
@@ -116,7 +117,36 @@ namespace RobotWorkstation
                 {
                     MessageBox.Show("请先将载码体放入读写区域！");
                 }
+            }
 
+            //Arm Controler
+            //空盘气缸
+            PicBoxEmptySalverUpArrive.Image = DataStruct.SysStat.EmptySalverAirCylUpArrive ? bmpRed : bmpDarkGreen;
+            PicBoxEmptySalverDownArrive.Image = DataStruct.SysStat.EmptySalverAirCylDownArrive ? bmpRed : bmpDarkGreen;
+
+            //按键
+            PicKeyRun.Image = DataStruct.SysStat.Run ? bmpRed : bmpDarkGreen;
+            PicKeyPause.Image = DataStruct.SysStat.Pause ? bmpRed : bmpDarkGreen;
+            PicKeyStop.Image = DataStruct.SysStat.Stop ? bmpRed : bmpDarkGreen;
+            PicKeyReset.Image = DataStruct.SysStat.Reset ? bmpRed : bmpDarkGreen;
+
+            //翻转机构
+            PicOverturn.Image = DataStruct.SysStat.OverturnSalverArrive ? bmpRed : bmpDarkGreen;
+            PicOverturnCylLock.Image = DataStruct.SysStat.OverturnSalverAirCylGoArrive ? bmpRed : bmpDarkGreen;
+            PicOverturnCylUnLock.Image = DataStruct.SysStat.OverturnSalverAirCylBackArrive ? bmpRed : bmpDarkGreen;
+
+            if (m_ArmControler.m_IsOpened[(int)Board.Controler])
+            {
+                m_ArmControler.SendReadPostion(Axis.Conveyor);
+                int postion = m_ArmControler.ReadPostion(Axis.Conveyor);
+                CTxtAxisConveyorCurPos.Text = Convert.ToString(postion);
+
+                TextBox[] txtState = new TextBox[(int)Axis.Max] { CTxtAxisConveyorrState, CTxtAxisTurnOverState };
+                for (int i = 0; i < (int)Axis.Max; i++)
+                {
+                    m_ArmControler.SendReadState(m_ArmControler.m_AxisNumber[i]);
+                    txtState[i].Text = m_ArmControler.ReadState(m_ArmControler.m_AxisNumber[i]);
+                }
             }
         }
 
@@ -646,7 +676,7 @@ namespace RobotWorkstation
 
         private void CBtnRobotTestTurnOver_Click(object sender, EventArgs e)
         {
-
+            CBtnTurnOver_Click(null, null);
         }
 
         private void CBtnRobotGrapGo_Click(object sender, EventArgs e)
@@ -783,68 +813,215 @@ namespace RobotWorkstation
 
         private void BtnLampRedOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
         }
 
         private void BtnLampRedOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
         }
 
         private void BtnLampOrangeOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
         }
 
         private void BtnLampOrangeOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
         }
 
         private void BtnLampGreenOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueHigh);
         }
 
         private void BtnLampGreenOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
         }
 
         private void BtnLampBlueOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedBlue, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueHigh);
         }
 
         private void BtnLampBlueOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedBlue, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueLow);
         }
 
         private void BtnBeepOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_Beep, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_Beep, IOValue.IOValueHigh);
         }
 
         private void BtnBeepOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_Beep, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_Beep, IOValue.IOValueLow);
         }
 
         private void CButtonIoEmptyPlateUp_Click_1(object sender, EventArgs e)
         {
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylUp, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_EmptySalverAirCylUp, IOValue.IOValueHigh);
         }
 
         private void CButtonIoEmptyPlateDown_Click_1(object sender, EventArgs e)
         {
-<<<<<<< HEAD
-            m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
-=======
-            m_IO.SetControlBoardIo(ControlBord_IO_OUT.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
         }
 
         #endregion
+
+        #region  //传输线电机轴
+        private void CBtnAxisConveyorMoveForward_Click(object sender, EventArgs e)
+        {
+            Axis AxisIndex = Axis.Conveyor;
+            m_ArmControler.ResetError(AxisIndex);
+            SetSpeedParamConveyorAxis(AxisIndex);
+            m_ArmControler.MoveContinuous(AxisIndex, AxisDir.Forward);
+        }
+
+        private void CBtnAxisConveyorMoveReverse_Click(object sender, EventArgs e)
+        {
+            Axis AxisIndex = Axis.Conveyor;
+            m_ArmControler.ResetError(AxisIndex);
+            SetSpeedParamConveyorAxis(AxisIndex);
+            m_ArmControler.MoveContinuous(AxisIndex, AxisDir.Reverse);
+        }
+
+        private void CBtnAxisConveyorStop_Click(object sender, EventArgs e)
+        {
+            Axis AxisIndex = Axis.Conveyor;
+            m_ArmControler.ResetError(AxisIndex);
+            m_ArmControler.Stop(AxisIndex);
+        }
+
+        private void MoveMaual(Axis axis, TextBox txt, bool dir)
+        {
+            int step;
+
+            try
+            {
+                step = Convert.ToInt32(txt.Text);
+            }
+            catch
+            {
+                MessageBox.Show("请输入正确的数值", Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!dir)
+            {
+                step = -step;
+            }
+
+            m_ArmControler.ResetError(axis);
+            SetSpeedParamConveyorAxis(axis);
+            m_ArmControler.MoveRef(axis, step);
+        }
+
+        private void BtnAxisConveyorAdd_Click(object sender, EventArgs e)
+        {
+            Axis AxisIndex = Axis.Conveyor;
+            MoveMaual(AxisIndex, CTxtAxisConveyorrStepPpu, true);
+        }
+
+        private void BtnAxisConveyorDec_Click(object sender, EventArgs e)
+        {
+            Axis AxisIndex = Axis.Conveyor;
+            MoveMaual(AxisIndex, CTxtAxisConveyorrStepPpu, false);
+        }
+
+        private void BtnAxisConveyorResetError_Click(object sender, EventArgs e)
+        {
+            Axis AxisIndex = Axis.Conveyor;
+            m_ArmControler.ResetError(AxisIndex);
+        }
+
+        /// <summary>
+        /// 设置传输线电机轴速度
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        private void SetSpeedParamConveyorAxis(Axis axis)
+        {
+            int velStart, velRun, velAdd, velDec;
+            try
+            {
+                velStart = Convert.ToInt32(CTxtAxisConveyorSpeedStart.Text);
+                velRun = Convert.ToInt32(CTxtAxisConveyorSpeedRun.Text);
+                velAdd = Convert.ToInt32(CTxtAxisConveyorSpeedAdd.Text);
+                velDec = Convert.ToInt32(CTxtAxisConveyorSpeedDec.Text);
+            }
+            catch
+            {
+                MessageBox.Show("请输入正确的数值", Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            m_ArmControler.SetSpeedParam(axis, velStart, velRun, velAdd, velDec, false);
+        }
+
+        #endregion
+
+        #region  //翻转机构
+
+        /// <summary>
+        /// 设置翻转电机轴速度
+        /// </summary>
+        /// <param name="axis">轴号</param>
+        private void SetSpeedParamTurnOverAxis(Axis axis)
+        {
+            int velStart, velRun, velAdd, velDec;
+            try
+            {
+                velStart = 2000;
+                velRun = Convert.ToInt32(CTxtAxisTurnOverSpeed.Text);
+                velAdd = 10000;
+                velDec = 10000;
+            }
+            catch
+            {
+                MessageBox.Show("请输入正确的数值", Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            m_ArmControler.SetSpeedParam(axis, velStart, velRun, velAdd, velDec, false);
+        }
+
+        private void CBtnTurnOver_Click(object sender, EventArgs e)
+        {
+            Axis AxisIndex = Axis.TurnOver;
+            m_ArmControler.ResetError(AxisIndex);
+            SetSpeedParamTurnOverAxis(AxisIndex);
+            MoveMaual(AxisIndex, CTxtAxisTurnOverStep, true);
+        }
+
+        private void CBtnTurnOverReset_Click(object sender, EventArgs e)
+        {
+            Axis AxisIndex = Axis.TurnOver;
+            m_ArmControler.ResetError(AxisIndex);
+            m_ArmControler.BackHome(AxisIndex, AxisDir.Reverse);
+        }
+
+        private void CBtnTurnOverLockCylOpen_Click(object sender, EventArgs e)
+        {
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
+        }
+
+        private void CBtnTurnOverLockCylClose_Click(object sender, EventArgs e)
+        {
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
+        }
+
+        private void CBtnTurnOverAxisErrorReset_Click(object sender, EventArgs e)
+        {
+            Axis AxisIndex = Axis.TurnOver;
+            m_ArmControler.ResetError(AxisIndex);
+        }
+
+        #endregion
+
+
     }
 }

@@ -104,11 +104,6 @@ namespace RobotWorkstation
 
     public class VisualSortingStation  //视觉分拣业务类
     {
-<<<<<<< HEAD
-        public static ArmControler m_ArmControler = ArmControler.GetInstance();
-=======
-        public static IO m_IO = IO.GetInstance();
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
         public const int m_OnePanelDevicesMax = 16;
         private static int m_DevicesTotal = 0;
         private static int m_TempCount = 0;
@@ -126,11 +121,10 @@ namespace RobotWorkstation
         private static SysAlarm m_SysAlarm = SysAlarm.GetInstance();
 
         //Tcp
-        private static MyTcpClient m_MyTcpClientArm = MainForm.GetMyTcpClientArm();
+        public static ArmControler m_ArmControler = ArmControler.GetInstance();
         private static MyTcpClient m_MyTcpClientCamera = MainForm.GetMyTcpClientCamera();
         private static MyTcpServer m_MyTcpServer = MyTcpServer.GetInstance();
-        private static byte[] m_SendMeas = new byte[Message.MessageLength];
-        private static byte[] m_IoInValue = new byte[4];  //ARM控制板IO输入的缓存 4个byte，每位代表1个IO，共32个
+        private static byte[] m_SendMeas = new byte[Message.MessageLength];      
 
         //网络共享文件
         private static NsfTrayModule m_NsfTrayModuleFile = NsfTrayModule.GetInstance();
@@ -184,41 +178,32 @@ namespace RobotWorkstation
 
                 Thread.Sleep(0);  //Sleep(0),则线程会将时间片的剩余部分让给任何已经准备好的具有同等优先级的线程
 
-<<<<<<< HEAD
                 Debug.WriteLine("MainThreadFunc Runing...");
-=======
-                Thread.Sleep(0);  //Sleep(0),则线程会将时间片的剩余部分让给任何已经准备好的具有同等优先级的线程
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             }
         }
 
         public static void MessageProcessThreadFunc()
         {
             while (!m_ShouldExit)
-            {
-                //处理Robot消息
-                if (m_Robot != null && m_Robot.m_IsConnected)
-                    ProcessRobotMessage();
-
-                //处理RFID的数据
-                if (m_RFID != null && m_RFID.IsConnected)
-                    ProcessRFIDMessage();
-
-                //作为客户端处理和单片机控制板、相机的消息队列
-                if ((m_MyTcpClientArm != null && m_MyTcpClientArm.IsConnected) || (m_MyTcpClientCamera != null && m_MyTcpClientCamera.IsConnected))
-                    ProcessTcpClientMessage();
-
-                //作为服务端处理和MIS及PLC之间的消息
-                if (m_MyTcpServer != null)
-                    ProcessTcpServerMessage();
+            {             
+                ProcessRobotMessage();      //处理Robot消息
+              
+                ProcessRFIDMessage();       //处理RFID的数据
+              
+                ProcessTcpClientMessage();  //作为客户端处理和单片机控制板、相机的消息队列
+               
+                ProcessTcpServerMessage();  //作为服务端处理和MIS及PLC之间的消息
 
                 Thread.Sleep(0);
             }
 
             if (m_ShouldExit)
             {
-                if (m_MyTcpClientArm != null)
-                    m_MyTcpClientArm.Close();
+                foreach (MyTcpClient Client in m_ArmControler.m_MyTcpClientArm)
+                {
+                    if (Client != null)
+                        Client.Close();
+                }
 
                 if (m_MyTcpClientCamera != null)
                     m_MyTcpClientCamera.Close();
@@ -318,21 +303,31 @@ namespace RobotWorkstation
 
         public static void ProcessTcpClientMessage()
         {
-            if (m_MyTcpClientArm != null && m_MyTcpClientArm.IsConnected)
+            //作为客户端处理所有Arm控制板的消息
+            for(int i = 0; i < m_ArmControler.m_MyTcpClientArm.Length; i++)
             {
-                while (m_MyTcpClientArm.m_RecvMeasQueue.Count != 0)
+                MyTcpClient Client = m_ArmControler.m_MyTcpClientArm[i];
+                if (Client != null && Client.IsConnected)
                 {
-                    TcpMeas TempMeas = m_MyTcpClientArm.m_RecvMeasQueue.Dequeue();
-                    if (TempMeas != null && TempMeas.Client != null)
+                    while (Client.m_RecvMeasQueue.Count != 0)
                     {
-                        if (TempMeas.MeasType == TcpMeasType.MEAS_TYPE_ARM)  // 处理和ARM之间的消息
+                        TcpMeas TempMeas = Client.m_RecvMeasQueue.Dequeue();
+                        if (TempMeas != null && TempMeas.Client != null)
                         {
-                            ProcessArmMessage(TempMeas);
+                            if (TempMeas.MeasType == TcpMeasType.MEAS_TYPE_ARM)  // 处理和ARM之间的消息
+                            {
+                                ProcessArmMessage((Board)i, TempMeas);
+                            }
                         }
+#if DebugTest
+                        Debug.WriteLine(BitConverter.ToString(TempMeas.Param));
+#endif
+
                     }
                 }
             }
 
+            //作为客户端处理相机的消息
             if (m_MyTcpClientCamera != null && m_MyTcpClientCamera.IsConnected)
             {
                 while (m_MyTcpClientCamera.m_RecvMeasQueue.Count != 0)
@@ -380,7 +375,7 @@ namespace RobotWorkstation
         }
 
         //处理和单片机控制板的消息
-        public static void ProcessArmMessage(TcpMeas meassage)
+        public static void ProcessArmMessage(Board board, TcpMeas meassage)
         {
             if (meassage != null)
             {
@@ -405,18 +400,35 @@ namespace RobotWorkstation
                             */
                         }
                         break;
-<<<<<<< HEAD
                     case Message.MessageCodeARM.GetInput:    //读取输入口的IO
-=======
-                    case Message.MessageCodeARM.GetInIo:    //读取输入口的IO
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
                         {
-                           for (int i = 0; i < m_IoInValue.Length; i++)
-                           {
-                                m_IoInValue[i] = meassage.Param[(Message.MessageCommandIndex + 1) + i];
-                           }
+                            int DataIndex = Message.MessageCommandIndex + 1;
+                            uint dataInput = (uint)meassage.Param[DataIndex + 3] * 0x1000000
+                                            + (uint)meassage.Param[DataIndex + 2] * 0x10000
+                                            + (uint)meassage.Param[DataIndex + 1] * 0x100
+                                            + (uint)meassage.Param[DataIndex];
+                            m_ArmControler.m_IoInValue[(int)board] = dataInput;
+                            ProcessArmIoIn(board, m_ArmControler.m_IoInValue[(int)board]);
+                        }
+                        break;
+                    case Message.MessageCodeARM.GetAxisState:
+                        {
+                            int DataIndex = Message.MessageCommandIndex + 2;
 
-                           ProcessArmIoIn(m_IoInValue);
+                            //m_AxisState 中轴的索引为DataIndex - 1
+                            m_ArmControler.m_AxisState[(int)board, meassage.Param[DataIndex - 1] ] = meassage.Param[DataIndex];
+                        }
+                        break;
+                    case Message.MessageCodeARM.GetAxisStepsAbs:
+                        {
+                            int DataIndex = Message.MessageCommandIndex + 2;
+                            uint steps = (uint)meassage.Param[DataIndex] * 0x1000000
+                                + (uint)meassage.Param[DataIndex + 1] * 0x10000
+                                + (uint)meassage.Param[DataIndex + 1] * 0x100
+                                + (uint)meassage.Param[DataIndex + 1];
+
+                            //m_AxisPostion 中轴的索引为DataIndex - 1
+                            m_ArmControler.m_AxisPostion[(int)board, meassage.Param[DataIndex - 1]] = (int)steps;  //有负值
                         }
                         break;
                     default: break;
@@ -637,7 +649,7 @@ namespace RobotWorkstation
                     break;
                 case AutoRunAction.AutoRunLockDevices:        //计数满则锁定翻转盘器件
                     {
-                        bool Re = m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
+                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
                         if (Re)
                             m_AutoRunAction = AutoRunAction.AuoRunNone;
                     }break;
@@ -648,7 +660,7 @@ namespace RobotWorkstation
                     }break;
                 case AutoRunAction.AutoRunUnLockDevices:          //翻转成功，解锁器件
                     {
-                        bool Re = m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
+                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
                         if(Re)
                             m_AutoRunAction = AutoRunAction.AuoRunNone;
                     } break;
@@ -746,33 +758,21 @@ namespace RobotWorkstation
             if (DataStruct.SysStateAlarm.ARM == 1)
             {
                 DataStruct.SysStat.ARM = 1;
-<<<<<<< HEAD
                 DataStruct.SysStat.LedRed = true;
-=======
-                DataStruct.SysStat.RedAlarm = true;
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             }
 
             //check Salver
             if (DataStruct.SysStateAlarm.Salver == 1)
             {
                 DataStruct.SysStat.Salver = 1;
-<<<<<<< HEAD
                 DataStruct.SysStat.LedRed = true;
-=======
-                DataStruct.SysStat.RedAlarm = true;
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             }
 
             //check Server
             if (DataStruct.SysStateAlarm.Server == 1)
             {
                 DataStruct.SysStat.Server = 1;
-<<<<<<< HEAD
                 DataStruct.SysStat.LedRed = true;
-=======
-                DataStruct.SysStat.RedAlarm = true;
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
             }
 
             if ((!DataStruct.SysStat.LedOriange) && (!DataStruct.SysStat.LedRed))
@@ -790,27 +790,27 @@ namespace RobotWorkstation
         {
             if (AlarmType == 0)
             {
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueHigh);
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
             }
             else if (AlarmType == 1)
             {
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
             }
             else if (AlarmType == 2)
             {
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueLow);
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
             }
             else if (AlarmType == 3)
             {
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedGreen, IOValue.IOValueLow);
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedOriange, IOValue.IOValueHigh);
-                m_ArmControler.SetControlBoardIo(Board.Conveyor, ControlBord_IO_OUT.IO_OUT_LedRed, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
             }
         }
 
@@ -872,15 +872,7 @@ namespace RobotWorkstation
             m_SendMeas[Message.MessageCommandIndex + 3] = (byte)PutPointIndex;  //把要放置的索引传递给视觉
 
             //重新计算校验和
-<<<<<<< HEAD
             m_SendMeas[Message.MessageSumCheck] = MyMath.CalculateSum(m_SendMeas, Message.MessageLength);
-=======
-            m_SendMeas[Message.MessageLength - 2] = 0x00;
-            byte Sum = 0;
-            foreach (byte Temp in m_SendMeas)
-                Sum += Temp;
-            m_SendMeas[Message.MessageLength - 2] = (byte)(0 - Sum);  //校验和
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
 
             string StrSend = BitConverter.ToString(m_SendMeas);
 
@@ -888,9 +880,19 @@ namespace RobotWorkstation
                 m_MyTcpClientCamera.ClientWrite(StrSend);
         }
 
-        public static void ProcessArmIoIn(byte[] IoIn)
+        public static void ProcessArmIoIn(Board board, uint Data)
         {
             //解析IoIn
+            //for (int i = 0; i < m_TotalInputPoint; i++)
+            //{
+            //    bool state = m_ArmControler.ReadPoint(m_InputPoint[i]);
+            //    if (state != m_InputPointState[(int)m_InputPoint[i]])  //状态改变,才刷新图片显示
+            //    {
+            //        m_InputPointState[(int)m_InputPoint[i]] = state;
+            //        m_PicInput[i].Image = (state == ARMBoard.INPUT_STATE_OK) ? bmpGreen : bmpDarkGreen;
+            //        //Console.WriteLine(i + "disp");
+            //    }
+            //}
 
             //根据实际的接线解析所需IO的状态,对SysStat中的相应标志进行设置
             /*
@@ -903,7 +905,6 @@ namespace RobotWorkstation
             */
 
             //设置按键灯
-<<<<<<< HEAD
             //ProcessKey(Key.Key_Run);
             //SetKeyLedByKey(ControlBord_IO_IN.IO_IN_KeyRun, LED_State.LED_ON);
         }
@@ -985,9 +986,5 @@ namespace RobotWorkstation
                     break;
             }
         }
-=======
-            //SetKeyLedByKey(ControlBord_IO_IN.IO_IN_KeyRun, LED_State.LED_ON);
-        }
->>>>>>> 2e99c703d89de6b5ce7fc31142d09201938502a8
     }
 }
