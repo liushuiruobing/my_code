@@ -27,7 +27,7 @@ namespace RobotWorkstation
         IO_IN_EmptySalverAirCylDownArrive = 5 + Board.Controler * ArmControler.MAX_IO_CHANNEL,       //空盘气缸下降到位
         IO_IN_ReceiveSalverArrive = 6 + Board.Controler * ArmControler.MAX_IO_CHANNEL,               //接收盘到位
         IO_IN_OverturnSalverArrive = 7 + Board.Controler * ArmControler.MAX_IO_CHANNEL,              //翻转托盘到位
-        IO_IN_OverturnSalverAirCylGoArrive = 8 + Board.Controler * ArmControler.MAX_IO_CHANNEL,     //翻转托盘进到位
+        IO_IN_OverturnSalverAirCylGoArrive = 8 + Board.Controler * ArmControler.MAX_IO_CHANNEL,      //翻转托盘进到位
         IO_IN_OverturnSalverAirCylBackArrive = 9 + Board.Controler * ArmControler.MAX_IO_CHANNEL,    //翻转托盘退到位    
         IO_IN_MAX
     }
