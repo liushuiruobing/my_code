@@ -33,11 +33,11 @@ namespace RobotWorkstation
             //单片机控制的气缸和托盘
             public static bool EmptySalverAirCylUpArrive;           //空盘气缸上升到位
             public static bool EmptySalverAirCylDownArrive;         //空盘气缸下降到位
+            public static bool ReceiveSalverArrive;                 //翻转后接收托盘到位
             public static bool OverturnSalverArrive;                //翻转托盘到位
             public static bool OverturnSalverAirCylGoArrive;        //翻转托盘锁定气缸进到位
             public static bool OverturnSalverAirCylBackArrive;      //翻转托盘锁定气缸退到位
-            public static bool ReceiveSalverArrive;                 //翻转后接收托盘到位
-
+            
             //机械臂
             public static bool RobotCylGoArrive;        //机械臂抓手气缸进到位
             public static bool RobotCylBackArrive;      //机械臂抓手气缸退到位

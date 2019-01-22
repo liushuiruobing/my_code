@@ -16,37 +16,38 @@ namespace RobotWorkstation
 
     #region  //IO相关
 
-    public enum ControlBord_InputPoint  //具体编号要等电气连接图出来之后与之相对应，机械臂的IO由机械臂的脚本处理，上位机只查询标志
+    public enum ARM_InputPoint  //具体编号要等电气连接图出来之后与之相对应，机械臂的IO由机械臂的脚本处理，上位机只查询标志
     {
         //In
-        IO_IN_KeyRun = 0,
-        IO_IN_KeyPause,
-        IO_IN_KeyStop,
-        IO_IN_KeyReset,
-        IO_IN_EmptySalverAirCylUpArrive,         //空盘气缸上升到位
-        IO_IN_EmptySalverAirCylDownArrive,       //空盘气缸下降到位
-        IO_IN_ReceiveSalverArrive,               //接收盘到位
-        IO_IN_OverturnSalverArrive,              //翻转托盘到位
-        IO_IN_OverturnSalverAirCylGoArrive,      //翻转托盘进到位
-        IO_IN_OverturnSalverAirCylBackArrive,    //翻转托盘退到位    
+        IO_IN_KeyRun = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_IN_KeyPause = 1 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_IN_KeyStop = 2 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_IN_KeyReset = 3 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_IN_EmptySalverAirCylUpArrive = 4 + Board.Controler * ArmControler.MAX_IO_CHANNEL,         //空盘气缸上升到位
+        IO_IN_EmptySalverAirCylDownArrive = 5 + Board.Controler * ArmControler.MAX_IO_CHANNEL,       //空盘气缸下降到位
+        IO_IN_ReceiveSalverArrive = 6 + Board.Controler * ArmControler.MAX_IO_CHANNEL,               //接收盘到位
+        IO_IN_OverturnSalverArrive = 7 + Board.Controler * ArmControler.MAX_IO_CHANNEL,              //翻转托盘到位
+        IO_IN_OverturnSalverAirCylGoArrive = 8 + Board.Controler * ArmControler.MAX_IO_CHANNEL,     //翻转托盘进到位
+        IO_IN_OverturnSalverAirCylBackArrive = 9 + Board.Controler * ArmControler.MAX_IO_CHANNEL,    //翻转托盘退到位    
         IO_IN_MAX
     }
 
-    public enum ControlBord_OutputPoint   //具体编号要等电气连接图出来之后与之相对应，
+    public enum ARM_OutputPoint   //具体编号要等电气连接图出来之后与之相对应，
     {
         //Out
-        IO_OUT_LedRed = 0,
-        IO_OUT_LedOriange,
-        IO_OUT_LedGreen,
-        IO_OUT_LedBlue,
-        IO_OUT_LedKeyRun,
-        IO_OUT_LedKeyPause,
-        IO_OUT_LedKeyStop,
-        IO_OUT_LedKeyReset,
-        IO_OUT_Beep,
-        IO_OUT_EmptySalverAirCylUp,         //空盘气缸上升
-        IO_OUT_EmptySalverAirCylDown,       //空盘气缸下降
-        IO_OUT_OverturnSalverAirCyl,        //翻转托盘气缸
+        IO_OUT_LedRed = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedOriange = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedGreen = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedBlue = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedKeyRun = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedKeyPause = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedKeyStop = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedKeyReset = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_Beep = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_EmptySalverAirCylUp = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,        //空盘气缸上升
+        IO_OUT_EmptySalverAirCylDown = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,     //空盘气缸下降
+        IO_OUT_OverturnSalverAirCyl = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,      //翻转托盘气缸
+        IO_OUT_MAX
     }
 
     public enum IOValue
@@ -101,7 +102,9 @@ namespace RobotWorkstation
         public MyTcpClient[] m_MyTcpClientArm = new MyTcpClient[(int)Board.Max];
         public bool[] m_IsOpened = new bool[(int)Board.Max];
         public Axis[] m_AxisNumber = new Axis[(int)Axis.Max] { Axis.Conveyor, Axis.TurnOver };
-        public uint[] m_IoInValue = new uint[(int)Board.Max];  //ARM控制板IO输入的缓存 4个byte，每位代表1个IO，共32个,从而用uint来表示，32位每个位代表1个IO  
+        public uint[] m_InputValue = new uint[(int)Board.Max];  //ARM控制板IO输入的缓存 4个byte，每位代表1个IO，共32个,从而用uint来表示，32位每个位代表1个IO  
+        public ARM_InputPoint[] m_InputPoint = new ARM_InputPoint[(int)ARM_InputPoint.IO_IN_MAX];  //输入点数组
+
         public int[,] m_AxisState = new int[(int)Board.Max, MAX_AXIS_CHANNEL]{ { 0, 0, 0, 0, 0, 0, 0, 0, } };  //电机轴状态
         public int[,] m_AxisPostion = new int[(int)Board.Max, MAX_AXIS_CHANNEL] { { 0, 0, 0, 0, 0, 0, 0, 0, } };  //电机轴当前位置
 
@@ -175,13 +178,13 @@ namespace RobotWorkstation
         /// </summary>
         /// <param name="point">输入点位</param>
         /// <returns></returns>
-        public bool ReadPoint(ControlBord_InputPoint point)
+        public bool ReadPoint(ARM_InputPoint point)
         {
             int indexBoard = (int)point / MAX_IO_CHANNEL;  //板卡索引
             int indexPoint = (int)point % MAX_IO_CHANNEL;  //板卡内端口号索引
             uint mask = (uint)1 << indexPoint;
 
-            return (m_IoInValue[indexBoard] & mask) > 0;
+            return (m_InputValue[indexBoard] & mask) > 0;
         }
 
         //给单片机发送非电机轴的指令，仅指令，无参数
@@ -443,7 +446,7 @@ namespace RobotWorkstation
 
 
         //设置单片机控制板的IO
-        public bool SetArmControlBoardIo(Board board, ControlBord_OutputPoint Io, IOValue Value)
+        public bool SetArmControlBoardIo(Board board, ARM_OutputPoint Io, IOValue Value)
         {
             if (!m_IsOpened[(int)board])
                 return false;
@@ -497,24 +500,24 @@ namespace RobotWorkstation
         }
 
         //设置单片机控制板控制的按键灯
-        public void SetKeyLedByKey(Board board, ControlBord_InputPoint Key, LED_State LedState)
+        public void SetKeyLedByKey(Board board, ARM_InputPoint Key, LED_State LedState)
         {
             IOValue Value = LedState == (LED_State.LED_ON) ? IOValue.IOValueHigh : IOValue.IOValueLow;
-            ControlBord_OutputPoint KeyLed = ControlBord_OutputPoint.IO_OUT_LedKeyRun;
+            ARM_OutputPoint KeyLed = ARM_OutputPoint.IO_OUT_LedKeyRun;
 
             switch (Key)
             {
-                case ControlBord_InputPoint.IO_IN_KeyRun:
-                    KeyLed = ControlBord_OutputPoint.IO_OUT_LedKeyRun;
+                case ARM_InputPoint.IO_IN_KeyRun:
+                    KeyLed = ARM_OutputPoint.IO_OUT_LedKeyRun;
                     break;
-                case ControlBord_InputPoint.IO_IN_KeyPause:
-                    KeyLed = ControlBord_OutputPoint.IO_OUT_LedKeyPause;
+                case ARM_InputPoint.IO_IN_KeyPause:
+                    KeyLed = ARM_OutputPoint.IO_OUT_LedKeyPause;
                     break;
-                case ControlBord_InputPoint.IO_IN_KeyStop:
-                    KeyLed = ControlBord_OutputPoint.IO_OUT_LedKeyStop;
+                case ARM_InputPoint.IO_IN_KeyStop:
+                    KeyLed = ARM_OutputPoint.IO_OUT_LedKeyStop;
                     break;
-                case ControlBord_InputPoint.IO_IN_KeyReset:
-                    KeyLed = ControlBord_OutputPoint.IO_OUT_LedKeyReset;
+                case ARM_InputPoint.IO_IN_KeyReset:
+                    KeyLed = ARM_OutputPoint.IO_OUT_LedKeyReset;
                     break;
                 default:
                     break;

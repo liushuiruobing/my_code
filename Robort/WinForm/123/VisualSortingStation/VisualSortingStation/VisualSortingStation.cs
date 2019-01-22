@@ -384,54 +384,38 @@ namespace RobotWorkstation
                 {
                     case Message.MessageCodeARM.GetOutput:   //读取输出口缓冲区数据
                         {
-                            byte data1 = meassage.Param[Message.MessageCommandIndex + 1];
-                            byte data2 = meassage.Param[Message.MessageCommandIndex + 2];
-                            byte data3 = meassage.Param[Message.MessageCommandIndex + 3];
-                            byte data4 = meassage.Param[Message.MessageCommandIndex + 4];
 
-                            //根据实际的接线解析所需IO的状态,对SysStat中的相应标志进行设置
-                            /*
-                            DataStruct.SysStat.EmptySalverAirCylUpArrive;           //空盘气缸上升到位
-                            DataStruct.SysStat.EmptySalverAirCylDownArrive;         //空盘气缸下降到位
-                            DataStruct.SysStat.OverturnSalverArrive;                //翻转托盘到位
-                            DataStruct.SysStat.OverturnSalverAirCylGoArrive;        //翻转托盘锁定气缸进到位
-                            DataStruct.SysStat.OverturnSalverAirCylBackArrive;      //翻转托盘锁定气缸退到位
-                            DataStruct.SysStat.ReceiveSalverArrive;                 //翻转后接收托盘到位
-                            */
-                        }
-                        break;
+                        }break;
                     case Message.MessageCodeARM.GetInput:    //读取输入口的IO
                         {
                             int DataIndex = Message.MessageCommandIndex + 1;
-                            uint dataInput = (uint)meassage.Param[DataIndex + 3] * 0x1000000
+                            uint dataInput =  (uint)meassage.Param[DataIndex + 3] * 0x1000000
                                             + (uint)meassage.Param[DataIndex + 2] * 0x10000
                                             + (uint)meassage.Param[DataIndex + 1] * 0x100
-                                            + (uint)meassage.Param[DataIndex];
-                            m_ArmControler.m_IoInValue[(int)board] = dataInput;
-                            ProcessArmIoIn(board, m_ArmControler.m_IoInValue[(int)board]);
-                        }
-                        break;
+                                            + (uint)meassage.Param[DataIndex + 0];
+                            m_ArmControler.m_InputValue[(int)board] = dataInput;
+                            ProcessArmControlerInputPoint(board, m_ArmControler.m_InputValue[(int)board]);
+                        }break;
                     case Message.MessageCodeARM.GetAxisState:
                         {
                             int DataIndex = Message.MessageCommandIndex + 2;
 
                             //m_AxisState 中轴的索引为DataIndex - 1
                             m_ArmControler.m_AxisState[(int)board, meassage.Param[DataIndex - 1] ] = meassage.Param[DataIndex];
-                        }
-                        break;
+                        }break;
                     case Message.MessageCodeARM.GetAxisStepsAbs:
                         {
                             int DataIndex = Message.MessageCommandIndex + 2;
-                            uint steps = (uint)meassage.Param[DataIndex] * 0x1000000
-                                + (uint)meassage.Param[DataIndex + 1] * 0x10000
+                            uint steps = (uint)meassage.Param[DataIndex + 3] * 0x1000000
+                                + (uint)meassage.Param[DataIndex + 2] * 0x10000
                                 + (uint)meassage.Param[DataIndex + 1] * 0x100
-                                + (uint)meassage.Param[DataIndex + 1];
+                                + (uint)meassage.Param[DataIndex + 0];
 
                             //m_AxisPostion 中轴的索引为DataIndex - 1
                             m_ArmControler.m_AxisPostion[(int)board, meassage.Param[DataIndex - 1]] = (int)steps;  //有负值
-                        }
+                        }break;
+                    default:
                         break;
-                    default: break;
                 }
             }
         }
@@ -649,7 +633,7 @@ namespace RobotWorkstation
                     break;
                 case AutoRunAction.AutoRunLockDevices:        //计数满则锁定翻转盘器件
                     {
-                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
+                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
                         if (Re)
                             m_AutoRunAction = AutoRunAction.AuoRunNone;
                     }break;
@@ -660,7 +644,7 @@ namespace RobotWorkstation
                     }break;
                 case AutoRunAction.AutoRunUnLockDevices:          //翻转成功，解锁器件
                     {
-                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
+                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
                         if(Re)
                             m_AutoRunAction = AutoRunAction.AuoRunNone;
                     } break;
@@ -790,27 +774,27 @@ namespace RobotWorkstation
         {
             if (AlarmType == 0)
             {
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueHigh);
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
             }
             else if (AlarmType == 1)
             {
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
             }
             else if (AlarmType == 2)
             {
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
             }
             else if (AlarmType == 3)
             {
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
-                m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
             }
         }
 
@@ -880,33 +864,65 @@ namespace RobotWorkstation
                 m_MyTcpClientCamera.ClientWrite(StrSend);
         }
 
-        public static void ProcessArmIoIn(Board board, uint Data)
+        public static void ProcessArmControlerInputPoint(Board board, uint Data)
         {
             //解析IoIn
-            //for (int i = 0; i < m_TotalInputPoint; i++)
-            //{
-            //    bool state = m_ArmControler.ReadPoint(m_InputPoint[i]);
-            //    if (state != m_InputPointState[(int)m_InputPoint[i]])  //状态改变,才刷新图片显示
-            //    {
-            //        m_InputPointState[(int)m_InputPoint[i]] = state;
-            //        m_PicInput[i].Image = (state == ARMBoard.INPUT_STATE_OK) ? bmpGreen : bmpDarkGreen;
-            //        //Console.WriteLine(i + "disp");
-            //    }
-            //}
+            for (int i = 0; i < m_ArmControler.m_InputPoint.Length; i++)
+            {
+                bool State = m_ArmControler.ReadPoint(m_ArmControler.m_InputPoint[i]);
+                LED_State LedState = State ? LED_State.LED_ON : LED_State.LED_OFF;
 
-            //根据实际的接线解析所需IO的状态,对SysStat中的相应标志进行设置
-            /*
-            DataStruct.SysStat.EmptySalverAirCylUpArrive;           //空盘气缸上升到位
-            DataStruct.SysStat.EmptySalverAirCylDownArrive;         //空盘气缸下降到位
-            DataStruct.SysStat.OverturnSalverArrive;                //翻转托盘到位
-            DataStruct.SysStat.OverturnSalverAirCylGoArrive;        //翻转托盘锁定气缸进到位
-            DataStruct.SysStat.OverturnSalverAirCylBackArrive;      //翻转托盘锁定气缸退到位
-            DataStruct.SysStat.ReceiveSalverArrive;                 //翻转后接收托盘到位
-            */
-
-            //设置按键灯
-            //ProcessKey(Key.Key_Run);
-            //SetKeyLedByKey(ControlBord_IO_IN.IO_IN_KeyRun, LED_State.LED_ON);
+                ARM_InputPoint temp = (ARM_InputPoint)i;
+                switch (temp)
+                {
+                    case ARM_InputPoint.IO_IN_KeyRun:
+                        {
+                            ProcessKey(Key.Key_Run);
+                            m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyRun, LedState);
+                        }break;
+                    case ARM_InputPoint.IO_IN_KeyPause:
+                        {
+                            ProcessKey(Key.Key_Pause);
+                            m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyPause, LedState);
+                        }break;
+                    case ARM_InputPoint.IO_IN_KeyStop:
+                        {
+                            ProcessKey(Key.Key_Stop);
+                            m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyStop, LedState);
+                        } break;
+                    case ARM_InputPoint.IO_IN_KeyReset:
+                        {
+                            ProcessKey(Key.Key_Reset);
+                            m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyReset, LedState);
+                        }break;
+                    case ARM_InputPoint.IO_IN_EmptySalverAirCylUpArrive:
+                        {
+                            DataStruct.SysStat.EmptySalverAirCylUpArrive = State;
+                        }break;
+                    case ARM_InputPoint.IO_IN_EmptySalverAirCylDownArrive:
+                        {
+                            DataStruct.SysStat.EmptySalverAirCylDownArrive = State;
+                        }break;
+                    case ARM_InputPoint.IO_IN_ReceiveSalverArrive:
+                        {
+                            DataStruct.SysStat.ReceiveSalverArrive = State;
+                        }break;
+                    case ARM_InputPoint.IO_IN_OverturnSalverArrive:
+                        {
+                            DataStruct.SysStat.OverturnSalverArrive = State;
+                        }break;
+                    case ARM_InputPoint.IO_IN_OverturnSalverAirCylGoArrive:
+                        {
+                            DataStruct.SysStat.OverturnSalverAirCylGoArrive = State;
+                        }break;
+                    case ARM_InputPoint.IO_IN_OverturnSalverAirCylBackArrive:
+                        {
+                            DataStruct.SysStat.OverturnSalverAirCylBackArrive = State;
+                        }break;
+                    default:
+                        break;
+                }
+            }
         }
 
         public static void ProcessKey(Key key)

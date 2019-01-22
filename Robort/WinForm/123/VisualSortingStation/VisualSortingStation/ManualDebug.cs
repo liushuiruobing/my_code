@@ -18,11 +18,6 @@ namespace RobotWorkstation
         private QRCode m_QRCode = QRCode.GetInstance();
         private ArmControler m_ArmControler = ArmControler.GetInstance();
 
-        private ControlBord_InputPoint[] m_InputPoint = new ControlBord_InputPoint[(int)ControlBord_InputPoint.IO_IN_MAX];  //输入点数组
-        private PictureBox[] m_PicInput = new PictureBox[(int)ControlBord_InputPoint.IO_IN_MAX];  //输入点对应的PictureBox
-        private int m_TotalInputPoint = 0;  //输入点总数
-
-
         SynchronizationContext m_SyncContext = null;
 
         //防止闪屏
@@ -813,62 +808,62 @@ namespace RobotWorkstation
 
         private void BtnLampRedOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
         }
 
         private void BtnLampRedOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
         }
 
         private void BtnLampOrangeOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
         }
 
         private void BtnLampOrangeOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
         }
 
         private void BtnLampGreenOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueHigh);
         }
 
         private void BtnLampGreenOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
         }
 
         private void BtnLampBlueOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueHigh);
         }
 
         private void BtnLampBlueOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueLow);
         }
 
         private void BtnBeepOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_Beep, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_Beep, IOValue.IOValueHigh);
         }
 
         private void BtnBeepOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_Beep, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_Beep, IOValue.IOValueLow);
         }
 
         private void CButtonIoEmptyPlateUp_Click_1(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_EmptySalverAirCylUp, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverAirCylUp, IOValue.IOValueHigh);
         }
 
         private void CButtonIoEmptyPlateDown_Click_1(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
         }
 
         #endregion
@@ -1006,12 +1001,12 @@ namespace RobotWorkstation
 
         private void CBtnTurnOverLockCylOpen_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
         }
 
         private void CBtnTurnOverLockCylClose_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ControlBord_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
         }
 
         private void CBtnTurnOverAxisErrorReset_Click(object sender, EventArgs e)
