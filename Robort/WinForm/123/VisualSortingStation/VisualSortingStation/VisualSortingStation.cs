@@ -291,12 +291,18 @@ namespace RobotWorkstation
             {
                 m_RFID.Read(m_RFID.m_CurCh);
                 Thread.Sleep(1);
+
                 if (m_RFID.m_QueueRead.Count > 0)
                 {
                     m_RfidRead = m_RFID.m_QueueRead.Dequeue();  //读取到盘，并设置盘到位
 
                     //检查数据格式正确，则设置标志
-                    DataStruct.SysStat.ReceiveSalverArrive = true;
+                    DataStruct.SysStat.ReceiveSalverArrive = true;  //在使用完成后置false
+                    DataStruct.SysStat.ManualDebugReceiveSalverArrive = true;
+                }
+                else
+                {
+                    DataStruct.SysStat.ManualDebugReceiveSalverArrive = false;
                 }
             }
         }
@@ -519,7 +525,7 @@ namespace RobotWorkstation
                                 else if (meassage.Param[Message.MessageCommandIndex + 2] == (byte)VisualAction.Visual_Error)  //视觉出现错误
                                 {
 #if DebugTest
-                                    System.Windows.Forms.MessageBox.Show("视觉出现错误！");
+                                    Global.MessageBoxShow(Global.StrVisualError);
 #endif
                                     DataStruct.SysStat.Camera = 1;
                                     m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
@@ -553,8 +559,10 @@ namespace RobotWorkstation
             {
                 case AutoRunAction.AuoRunStart:                 //开始
                     {
-                        bool Start = true;
+                        bool Start = false;
                         //检查各盘是否到位，都无误后 Start = true
+                        if (DataStruct.SysStat.ReceiveSalverArrive && DataStruct.SysStat.EmptySalverAirCylUpArrive)
+                            Start = true;
 
                         if (Start)
                         {
@@ -871,56 +879,77 @@ namespace RobotWorkstation
             {
                 bool State = m_ArmControler.ReadPoint(m_ArmControler.m_InputPoint[i]);
                 LED_State LedState = State ? LED_State.LED_ON : LED_State.LED_OFF;
-
-                ARM_InputPoint temp = (ARM_InputPoint)i;
-                switch (temp)
+                if (State != m_ArmControler.m_InputPointState[i])
                 {
-                    case ARM_InputPoint.IO_IN_KeyRun:
-                        {
-                            ProcessKey(Key.Key_Run);
-                            m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyRun, LedState);
-                        }break;
-                    case ARM_InputPoint.IO_IN_KeyPause:
-                        {
-                            ProcessKey(Key.Key_Pause);
-                            m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyPause, LedState);
-                        }break;
-                    case ARM_InputPoint.IO_IN_KeyStop:
-                        {
-                            ProcessKey(Key.Key_Stop);
-                            m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyStop, LedState);
-                        } break;
-                    case ARM_InputPoint.IO_IN_KeyReset:
-                        {
-                            ProcessKey(Key.Key_Reset);
-                            m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyReset, LedState);
-                        }break;
-                    case ARM_InputPoint.IO_IN_EmptySalverAirCylUpArrive:
-                        {
-                            DataStruct.SysStat.EmptySalverAirCylUpArrive = State;
-                        }break;
-                    case ARM_InputPoint.IO_IN_EmptySalverAirCylDownArrive:
-                        {
-                            DataStruct.SysStat.EmptySalverAirCylDownArrive = State;
-                        }break;
-                    case ARM_InputPoint.IO_IN_ReceiveSalverArrive:
-                        {
-                            DataStruct.SysStat.ReceiveSalverArrive = State;
-                        }break;
-                    case ARM_InputPoint.IO_IN_OverturnSalverArrive:
-                        {
-                            DataStruct.SysStat.OverturnSalverArrive = State;
-                        }break;
-                    case ARM_InputPoint.IO_IN_OverturnSalverAirCylGoArrive:
-                        {
-                            DataStruct.SysStat.OverturnSalverAirCylGoArrive = State;
-                        }break;
-                    case ARM_InputPoint.IO_IN_OverturnSalverAirCylBackArrive:
-                        {
-                            DataStruct.SysStat.OverturnSalverAirCylBackArrive = State;
-                        }break;
-                    default:
-                        break;
+                    m_ArmControler.m_InputPointState[i] = State;
+
+                    ARM_InputPoint temp = (ARM_InputPoint)i;
+                    switch (temp)
+                    {
+                        case ARM_InputPoint.IO_IN_KeyRun:
+                            {
+                                if (State)
+                                    ProcessKey(Key.Key_Run);
+
+                                DataStruct.SysStat.KeyRun = State;
+                                m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyRun, LedState);
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_KeyPause:
+                            {
+                                if (State)
+                                    ProcessKey(Key.Key_Pause);
+
+                                DataStruct.SysStat.KeyPause = State;
+                                m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyPause, LedState);
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_KeyStop:
+                            {
+                                if (State)
+                                    ProcessKey(Key.Key_Stop);
+
+                                DataStruct.SysStat.KeyStop = State;
+                                m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyStop, LedState);
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_KeyReset:
+                            {
+                                if (State)
+                                    ProcessKey(Key.Key_Reset);
+
+                                DataStruct.SysStat.KeyReset = State;
+                                m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyReset, LedState);
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_EmptySalverAirCylUpArrive:
+                            {
+                                DataStruct.SysStat.EmptySalverAirCylUpArrive = State;
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_EmptySalverAirCylDownArrive:
+                            {
+                                DataStruct.SysStat.EmptySalverAirCylDownArrive = State;
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_OverturnSalverArrive:
+                            {
+                                DataStruct.SysStat.OverturnSalverArrive = State;
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_OverturnSalverAirCylGoArrive:
+                            {
+                                DataStruct.SysStat.OverturnSalverAirCylGoArrive = State;
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_OverturnSalverAirCylBackArrive:
+                            {
+                                DataStruct.SysStat.OverturnSalverAirCylBackArrive = State;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
@@ -935,7 +964,7 @@ namespace RobotWorkstation
                         if (Re == 0)
                             m_MainThreadEvent.Set();
 
-                        if ((DataStruct.SysStat.Ready) && (!DataStruct.SysStat.Stop))
+                        //if ((DataStruct.SysStat.Ready) && (!DataStruct.SysStat.Stop))
                         {
                             DataStruct.SysStat.Run = true;
                             DataStruct.SysStat.Pause = false;

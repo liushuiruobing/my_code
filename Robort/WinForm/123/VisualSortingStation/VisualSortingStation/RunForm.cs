@@ -94,6 +94,16 @@ namespace RobotWorkstation
             else
                 PicLedStop.Image = Properties.Resources.DarkRed;
 
+            //设置报警灯的状态
+            if (DataStruct.SysStat.Run)
+                VisualSortingStation.SetSysAlarmLed(0);
+            else if (DataStruct.SysStat.Pause && !DataStruct.SysStat.Stop)
+                VisualSortingStation.SetSysAlarmLed(1);
+            else if (!DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
+                VisualSortingStation.SetSysAlarmLed(2);
+            else if (DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
+                VisualSortingStation.SetSysAlarmLed(3);
+
             //运行状态更新
             Bitmap bmpGreen = Properties.Resources.SmallGreen;
             Bitmap bmpRed = Properties.Resources.SmallRed;
@@ -120,15 +130,15 @@ namespace RobotWorkstation
             else
                 PicRfid.Image = bmpRed;
 
-            //设置报警灯的状态
-            if (DataStruct.SysStat.Run)
-                VisualSortingStation.SetSysAlarmLed(0);
-            else if (DataStruct.SysStat.Pause && !DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarmLed(1);
-            else if (!DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarmLed(2);
-            else if (DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarmLed(3);
+            if (DataStruct.SysStat.ARM == 0)
+                PicArm.Image = bmpGreen;
+            else
+                PicArm.Image = bmpRed;
+
+            if (DataStruct.SysStat.Salver == 0)
+                PicSalverEmpty.Image = bmpGreen;
+            else
+                PicSalverEmpty.Image = bmpRed;
 
             //添加报警信息
             for (int i = 0; i < (int)SysAlarm.Type.Max; i++)
@@ -147,7 +157,7 @@ namespace RobotWorkstation
             //轮询单片机的状态
             m_ArmControler.SendReadPoint(Board.Controler);
 
-            //刷新盘的状态
+            //刷新模拟物料盘的状态
             if (DataStruct.SysStat.GrapAndPutOneSuccessed)
             {
                 DataStruct.SysStat.GrapAndPutOneSuccessed = false;

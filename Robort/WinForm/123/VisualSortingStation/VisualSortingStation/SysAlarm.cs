@@ -53,25 +53,25 @@ namespace RobotWorkstation
         /*告警信息字符串*/
         public static readonly string[,] TABLE_INIT_INFORMAT = new string[(int)Type.Max, (int)LanguageId.Language_Total]
         {
-            {"相机未连接！", "相机未连接！"},
-            {"机械臂未连接！", "机械臂未连接！"},
-            {"二维码读码器未连接！", "二维码读码器未连接！"},
-            {"RFID读码器未连接！", "RFID读码器未连接！"},
-            {"缺少物料盘！", "缺少物料盘！"},
-            {"单片机控制板未连接！", "单片机控制板未连接！"},
-            {"服务器未连接！", "服务器未连接！"},
+            {"相机未连接！",          "Camera not connected!"},
+            {"机器人未连接！",        "Robot not connected!"},
+            {"二维码读码器未连接！",  "Qr code reader not connected!"},
+            {"RFID读码器未连接！",    "RFID reader not connected!"},
+            {"缺少物料盘！",          "Missing salver!"},
+            {"单片机控制板未连接！",  "Arm controller not connected!"},
+            {"服务器未连接！",        "Server not connected!"},
         };
 
         /*解决方法字符串*/
         public static readonly string[,] TABLE_INIT_SOLUTION = new string[(int)Type.Max, (int)LanguageId.Language_Total]
         {
-            {"请检查相机！", "请检查相机！"},
-            {"请检查机械臂！", "请检查机械臂！"},
-            {"请检查二维码读码器！", "请检查二维码读码器！"},
-            {"请检查RFID读码器！", "请检查RFID读码器！"},
-            {"请检查物料盘！", "请检查物料盘！"},
-            {"请检查单片机控制板连接！", "请检查单片机控制板连接！"},
-            {"请检查服务器！", "请检查服务器！"},
+            {"请检查相机！",               "Please check the camera!"},
+            {"请检查机器人！",             "Please check the robot!"},
+            {"请检查二维码读码器！",       "Please check the qr code reader!"},
+            {"请检查RFID读码器！",         "Please check the RFID reader!"},
+            {"请检查物料盘！",             "Please check the salver!"},
+            {"请检查单片机控制板连接！",   "Please check the arm controller!"},
+            {"请检查服务器！",             "Please check the server!"},
         };
         
         private static SysAlarm m_UniqueSysAlarm;  // 定义一个静态变量来保存类的实例

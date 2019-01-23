@@ -39,6 +39,8 @@ namespace RobotWorkstation
 
         private void SystemSeting_Load(object sender, EventArgs e)
         {
+            CGroupBoxSysLanguage.Visible = false;  //隐藏掉系统语言的设置
+
             tabControlSystemSeting.Width = this.Width - tabControlSystemSeting.Location.X;
             tabControlSystemSeting.Height = this.Height - tabControlSystemSeting.Location.Y;
 
@@ -115,5 +117,6 @@ namespace RobotWorkstation
         {
             Profile.m_Config.SelectedSortMode = (SortMode)ComBoxSortMode.SelectedIndex;
         }
+
     }
 }

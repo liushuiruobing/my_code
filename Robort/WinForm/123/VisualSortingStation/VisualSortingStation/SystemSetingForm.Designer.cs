@@ -30,19 +30,19 @@
         {
             this.tabControlSystemSeting = new RobotWorkstation.CustomTabControl();
             this.SystemSetPageRobot = new System.Windows.Forms.TabPage();
-            this.customGroupBox2 = new RobotWorkstation.CustomGroupBox();
+            this.CTextBoxSysSetRobotIP = new RobotWorkstation.CustomTextBox();
+            this.CGroupBoxSysLanguage = new RobotWorkstation.CustomGroupBox();
             this.customLabel2 = new RobotWorkstation.CustomLabel();
             this.ComBoxSysLanguage = new System.Windows.Forms.ComboBox();
-            this.customGroupBox1 = new RobotWorkstation.CustomGroupBox();
-            this.CTextBoxSysSetRobotIP = new RobotWorkstation.CustomTextBox();
+            this.CGroupBoxRobot = new RobotWorkstation.CustomGroupBox();
             this.ComBoxSortMode = new System.Windows.Forms.ComboBox();
-            this.CLabelRobotIp = new RobotWorkstation.CustomLabel();
             this.customLabel1 = new RobotWorkstation.CustomLabel();
             this.SystemSetPageOthers = new System.Windows.Forms.TabPage();
+            this.CLabelIp = new RobotWorkstation.CustomLabel();
             this.tabControlSystemSeting.SuspendLayout();
             this.SystemSetPageRobot.SuspendLayout();
-            this.customGroupBox2.SuspendLayout();
-            this.customGroupBox1.SuspendLayout();
+            this.CGroupBoxSysLanguage.SuspendLayout();
+            this.CGroupBoxRobot.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlSystemSeting
@@ -62,8 +62,8 @@
             // SystemSetPageRobot
             // 
             this.SystemSetPageRobot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.SystemSetPageRobot.Controls.Add(this.customGroupBox2);
-            this.SystemSetPageRobot.Controls.Add(this.customGroupBox1);
+            this.SystemSetPageRobot.Controls.Add(this.CGroupBoxSysLanguage);
+            this.SystemSetPageRobot.Controls.Add(this.CGroupBoxRobot);
             this.SystemSetPageRobot.Font = new System.Drawing.Font("微软雅黑", 10.5F);
             this.SystemSetPageRobot.ForeColor = System.Drawing.Color.White;
             this.SystemSetPageRobot.Location = new System.Drawing.Point(0, 29);
@@ -74,24 +74,38 @@
             this.SystemSetPageRobot.TabIndex = 0;
             this.SystemSetPageRobot.Text = "系统设置";
             // 
-            // customGroupBox2
+            // CTextBoxSysSetRobotIP
             // 
-            this.customGroupBox2.Controls.Add(this.customLabel2);
-            this.customGroupBox2.Controls.Add(this.ComBoxSysLanguage);
-            this.customGroupBox2.Font = new System.Drawing.Font("微软雅黑", 12F);
-            this.customGroupBox2.Location = new System.Drawing.Point(5, 141);
-            this.customGroupBox2.Name = "customGroupBox2";
-            this.customGroupBox2.Size = new System.Drawing.Size(282, 91);
-            this.customGroupBox2.TabIndex = 5;
-            this.customGroupBox2.TabStop = false;
-            this.customGroupBox2.Text = "系统语言";
+            this.CTextBoxSysSetRobotIP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            this.CTextBoxSysSetRobotIP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.CTextBoxSysSetRobotIP.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CTextBoxSysSetRobotIP.ForeColor = System.Drawing.Color.White;
+            this.CTextBoxSysSetRobotIP.Location = new System.Drawing.Point(127, 28);
+            this.CTextBoxSysSetRobotIP.Multiline = true;
+            this.CTextBoxSysSetRobotIP.Name = "CTextBoxSysSetRobotIP";
+            this.CTextBoxSysSetRobotIP.Size = new System.Drawing.Size(131, 29);
+            this.CTextBoxSysSetRobotIP.TabIndex = 1;
+            this.CTextBoxSysSetRobotIP.Text = "192.168.1.48";
+            this.CTextBoxSysSetRobotIP.TextChanged += new System.EventHandler(this.CTextBoxSysSetRobotIP_TextChanged);
+            // 
+            // CGroupBoxSysLanguage
+            // 
+            this.CGroupBoxSysLanguage.Controls.Add(this.customLabel2);
+            this.CGroupBoxSysLanguage.Controls.Add(this.ComBoxSysLanguage);
+            this.CGroupBoxSysLanguage.Font = new System.Drawing.Font("微软雅黑", 12F);
+            this.CGroupBoxSysLanguage.Location = new System.Drawing.Point(5, 141);
+            this.CGroupBoxSysLanguage.Name = "CGroupBoxSysLanguage";
+            this.CGroupBoxSysLanguage.Size = new System.Drawing.Size(282, 91);
+            this.CGroupBoxSysLanguage.TabIndex = 5;
+            this.CGroupBoxSysLanguage.TabStop = false;
+            this.CGroupBoxSysLanguage.Text = "系统语言";
             // 
             // customLabel2
             // 
             this.customLabel2.AutoSize = true;
             this.customLabel2.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel2.Location = new System.Drawing.Point(31, 40);
+            this.customLabel2.Location = new System.Drawing.Point(18, 40);
             this.customLabel2.Name = "customLabel2";
             this.customLabel2.Size = new System.Drawing.Size(95, 23);
             this.customLabel2.TabIndex = 3;
@@ -107,38 +121,25 @@
             this.ComBoxSysLanguage.Items.AddRange(new object[] {
             "中文",
             "英文"});
-            this.ComBoxSysLanguage.Location = new System.Drawing.Point(127, 38);
+            this.ComBoxSysLanguage.Location = new System.Drawing.Point(125, 38);
             this.ComBoxSysLanguage.Name = "ComBoxSysLanguage";
             this.ComBoxSysLanguage.Size = new System.Drawing.Size(131, 29);
             this.ComBoxSysLanguage.TabIndex = 2;
+            this.ComBoxSysLanguage.SelectedIndexChanged += new System.EventHandler(this.ComBoxSysLanguage_SelectedIndexChanged);
             // 
-            // customGroupBox1
+            // CGroupBoxRobot
             // 
-            this.customGroupBox1.Controls.Add(this.CTextBoxSysSetRobotIP);
-            this.customGroupBox1.Controls.Add(this.ComBoxSortMode);
-            this.customGroupBox1.Controls.Add(this.CLabelRobotIp);
-            this.customGroupBox1.Controls.Add(this.customLabel1);
-            this.customGroupBox1.Font = new System.Drawing.Font("微软雅黑", 12F);
-            this.customGroupBox1.Location = new System.Drawing.Point(3, 3);
-            this.customGroupBox1.Name = "customGroupBox1";
-            this.customGroupBox1.Size = new System.Drawing.Size(282, 132);
-            this.customGroupBox1.TabIndex = 4;
-            this.customGroupBox1.TabStop = false;
-            this.customGroupBox1.Text = "机器人";
-            // 
-            // CTextBoxSysSetRobotIP
-            // 
-            this.CTextBoxSysSetRobotIP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            this.CTextBoxSysSetRobotIP.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.CTextBoxSysSetRobotIP.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.CTextBoxSysSetRobotIP.ForeColor = System.Drawing.Color.White;
-            this.CTextBoxSysSetRobotIP.Location = new System.Drawing.Point(127, 28);
-            this.CTextBoxSysSetRobotIP.Multiline = true;
-            this.CTextBoxSysSetRobotIP.Name = "CTextBoxSysSetRobotIP";
-            this.CTextBoxSysSetRobotIP.Size = new System.Drawing.Size(131, 29);
-            this.CTextBoxSysSetRobotIP.TabIndex = 1;
-            this.CTextBoxSysSetRobotIP.Text = "192.168.1.48";
-            this.CTextBoxSysSetRobotIP.TextChanged += new System.EventHandler(this.CTextBoxSysSetRobotIP_TextChanged);
+            this.CGroupBoxRobot.Controls.Add(this.CLabelIp);
+            this.CGroupBoxRobot.Controls.Add(this.CTextBoxSysSetRobotIP);
+            this.CGroupBoxRobot.Controls.Add(this.ComBoxSortMode);
+            this.CGroupBoxRobot.Controls.Add(this.customLabel1);
+            this.CGroupBoxRobot.Font = new System.Drawing.Font("微软雅黑", 12F);
+            this.CGroupBoxRobot.Location = new System.Drawing.Point(3, 3);
+            this.CGroupBoxRobot.Name = "CGroupBoxRobot";
+            this.CGroupBoxRobot.Size = new System.Drawing.Size(282, 132);
+            this.CGroupBoxRobot.TabIndex = 4;
+            this.CGroupBoxRobot.TabStop = false;
+            this.CGroupBoxRobot.Text = "机器人";
             // 
             // ComBoxSortMode
             // 
@@ -156,24 +157,12 @@
             this.ComBoxSortMode.TabIndex = 3;
             this.ComBoxSortMode.SelectedIndexChanged += new System.EventHandler(this.ComBoxSortMode_SelectedIndexChanged);
             // 
-            // CLabelRobotIp
-            // 
-            this.CLabelRobotIp.AutoSize = true;
-            this.CLabelRobotIp.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.CLabelRobotIp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.CLabelRobotIp.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.CLabelRobotIp.Location = new System.Drawing.Point(31, 30);
-            this.CLabelRobotIp.Name = "CLabelRobotIp";
-            this.CLabelRobotIp.Size = new System.Drawing.Size(81, 23);
-            this.CLabelRobotIp.TabIndex = 0;
-            this.CLabelRobotIp.Text = "IP 地址：";
-            // 
             // customLabel1
             // 
             this.customLabel1.AutoSize = true;
             this.customLabel1.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel1.Location = new System.Drawing.Point(31, 79);
+            this.customLabel1.Location = new System.Drawing.Point(18, 79);
             this.customLabel1.Name = "customLabel1";
             this.customLabel1.Size = new System.Drawing.Size(95, 23);
             this.customLabel1.TabIndex = 2;
@@ -189,6 +178,17 @@
             this.SystemSetPageOthers.Size = new System.Drawing.Size(777, 547);
             this.SystemSetPageOthers.TabIndex = 2;
             this.SystemSetPageOthers.Text = "其他";
+            // 
+            // CLabelIp
+            // 
+            this.CLabelIp.AutoSize = true;
+            this.CLabelIp.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.CLabelIp.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.CLabelIp.Location = new System.Drawing.Point(31, 30);
+            this.CLabelIp.Name = "CLabelIp";
+            this.CLabelIp.Size = new System.Drawing.Size(82, 23);
+            this.CLabelIp.TabIndex = 4;
+            this.CLabelIp.Text = "Ip 地址：";
             // 
             // SystemSetingForm
             // 
@@ -212,10 +212,10 @@
             this.Load += new System.EventHandler(this.SystemSeting_Load);
             this.tabControlSystemSeting.ResumeLayout(false);
             this.SystemSetPageRobot.ResumeLayout(false);
-            this.customGroupBox2.ResumeLayout(false);
-            this.customGroupBox2.PerformLayout();
-            this.customGroupBox1.ResumeLayout(false);
-            this.customGroupBox1.PerformLayout();
+            this.CGroupBoxSysLanguage.ResumeLayout(false);
+            this.CGroupBoxSysLanguage.PerformLayout();
+            this.CGroupBoxRobot.ResumeLayout(false);
+            this.CGroupBoxRobot.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -225,13 +225,13 @@
         private CustomTabControl tabControlSystemSeting;
         private System.Windows.Forms.TabPage SystemSetPageRobot;
         private CustomTextBox CTextBoxSysSetRobotIP;
-        private CustomLabel CLabelRobotIp;
         private System.Windows.Forms.TabPage SystemSetPageOthers;
         private System.Windows.Forms.ComboBox ComBoxSortMode;
         private CustomLabel customLabel1;
-        private CustomGroupBox customGroupBox2;
+        private CustomGroupBox CGroupBoxSysLanguage;
         private System.Windows.Forms.ComboBox ComBoxSysLanguage;
-        private CustomGroupBox customGroupBox1;
+        private CustomGroupBox CGroupBoxRobot;
         private CustomLabel customLabel2;
+        private CustomLabel CLabelIp;
     }
 }

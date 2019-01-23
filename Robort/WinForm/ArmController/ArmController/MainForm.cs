@@ -29,7 +29,7 @@ namespace ArmController
         public string m_UpdateFileName = null;
         public short m_CurrentPage = 0;
         public int m_TotalPages = 0;
-        public const short m_OnePageMaxBytes = 256;
+        public const short m_OnePageMaxBytes = 512;
         public byte[] m_SendFileDataTemp = new byte[m_OnePageMaxBytes];  //10个协议字节，256个数据字节
         public byte[] m_SendFileData = new byte[m_OnePageMaxBytes + 10];  //10个协议字节，256个数据字节
         public byte[] m_SendCommand = new byte[Message.MessageLength];

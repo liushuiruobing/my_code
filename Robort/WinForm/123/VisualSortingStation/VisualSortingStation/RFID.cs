@@ -189,7 +189,7 @@ namespace RobotWorkstation
 
             if ((str == "") || (str.Length != 16) || (m_RfidStatus[Ch].Tp != true))
             {
-                MessageBox.Show("请输入要写入的16个字节的数据,并确保载码体在感应范围内！");
+                Global.MessageBoxShow(Global.StrRFIDInputError);
             }
             else
             {
@@ -263,7 +263,7 @@ namespace RobotWorkstation
                 sendCmdData[0] = 0;//起始地址
                 sendCmdData[1] = 0;
                 m_ModbusMaster.WriteSingleRegister(ID, unit, StartAddress, sendCmdData);
-                Thread.Sleep(30);
+                Thread.Sleep(10);
 
                 cmdByte = Set_bit(cmdByte, 5, true);
                 ID = 3;
@@ -275,21 +275,21 @@ namespace RobotWorkstation
                 //sendCmdData[2] = 0;//起始地址
                 //sendCmdData[3] = 0;
                 m_ModbusMaster.WriteSingleRegister(ID, unit, StartAddress, sendCmdData);
-                Thread.Sleep(30);
+                Thread.Sleep(10);
 
                 cmdByte = Set_bit(cmdByte, 5, false);
                 sendCmdData[0] = 7;
                 sendCmdData[1] = cmdByte;
                 m_ModbusMaster.WriteSingleRegister(ID, unit, StartAddress, sendCmdData);
-                Thread.Sleep(30);
+                Thread.Sleep(10);
 
                 ID = 6;
                 StartAddress = 2;
                 //byte Length = 4;
-                byte Length = 1;
+                byte Length = 2;  //读取4位数
 
                 m_ModbusMaster.ReadInputRegister(ID, unit, StartAddress, Length);
-                Thread.Sleep(30);
+                Thread.Sleep(10);
 
                 /*
                 ID = 3;
@@ -465,7 +465,10 @@ namespace RobotWorkstation
                             tmp1[i] = (char)data[i];
                             m_StrReadTemp = m_StrReadTemp + tmp1[i].ToString();
                         }
-                        m_QueueRead.Enqueue(m_StrReadTemp);
+
+                        if(!m_QueueRead.Contains(m_StrReadTemp))
+                            m_QueueRead.Enqueue(m_StrReadTemp);
+                        
                         m_StrReadTemp = "";
                     }
                     break;
@@ -480,7 +483,10 @@ namespace RobotWorkstation
                             tmp[i] = (char)data[i];
                             m_StrReadTemp = m_StrReadTemp + tmp[i].ToString();
                         }
-                        m_QueueRead.Enqueue(m_StrReadTemp);
+
+                        if (!m_QueueRead.Contains(m_StrReadTemp))
+                            m_QueueRead.Enqueue(m_StrReadTemp);
+
                         m_StrReadTemp = "";
                         //m_CheckStatusTimer.Stop();
 

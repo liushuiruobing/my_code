@@ -29,12 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PicLedStop = new System.Windows.Forms.PictureBox();
             this.PicLedAlarm = new System.Windows.Forms.PictureBox();
             this.PicLedRun = new System.Windows.Forms.PictureBox();
@@ -51,6 +51,8 @@
             this.customLabel7 = new RobotWorkstation.CustomLabel();
             this.customLabel6 = new RobotWorkstation.CustomLabel();
             this.customGroupBox1 = new RobotWorkstation.CustomGroupBox();
+            this.PicArm = new System.Windows.Forms.PictureBox();
+            this.customLabel9 = new RobotWorkstation.CustomLabel();
             this.CButtonClearSysAlarm = new RobotWorkstation.CustomButton();
             this.DgvSysAlarm = new System.Windows.Forms.DataGridView();
             this.ID = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -61,7 +63,7 @@
             this.customLabel5 = new RobotWorkstation.CustomLabel();
             this.PicQRCodeScanner = new System.Windows.Forms.PictureBox();
             this.customLabel4 = new RobotWorkstation.CustomLabel();
-            this.PicTrayEmpty = new System.Windows.Forms.PictureBox();
+            this.PicSalverEmpty = new System.Windows.Forms.PictureBox();
             this.PicCamera = new System.Windows.Forms.PictureBox();
             this.customLabel2 = new RobotWorkstation.CustomLabel();
             this.customLabel3 = new RobotWorkstation.CustomLabel();
@@ -76,10 +78,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.PicLedRun)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicLedReady)).BeginInit();
             this.customGroupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PicArm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DgvSysAlarm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRfid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicQRCodeScanner)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicTrayEmpty)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicSalverEmpty)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicCamera)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRobot)).BeginInit();
             this.SuspendLayout();
@@ -240,13 +243,15 @@
             // 
             // customGroupBox1
             // 
+            this.customGroupBox1.Controls.Add(this.PicArm);
+            this.customGroupBox1.Controls.Add(this.customLabel9);
             this.customGroupBox1.Controls.Add(this.CButtonClearSysAlarm);
             this.customGroupBox1.Controls.Add(this.DgvSysAlarm);
             this.customGroupBox1.Controls.Add(this.PicRfid);
             this.customGroupBox1.Controls.Add(this.customLabel5);
             this.customGroupBox1.Controls.Add(this.PicQRCodeScanner);
             this.customGroupBox1.Controls.Add(this.customLabel4);
-            this.customGroupBox1.Controls.Add(this.PicTrayEmpty);
+            this.customGroupBox1.Controls.Add(this.PicSalverEmpty);
             this.customGroupBox1.Controls.Add(this.PicCamera);
             this.customGroupBox1.Controls.Add(this.customLabel2);
             this.customGroupBox1.Controls.Add(this.customLabel3);
@@ -259,6 +264,27 @@
             this.customGroupBox1.TabIndex = 9;
             this.customGroupBox1.TabStop = false;
             this.customGroupBox1.Text = "运行状态";
+            // 
+            // PicArm
+            // 
+            this.PicArm.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
+            this.PicArm.Location = new System.Drawing.Point(830, 23);
+            this.PicArm.Name = "PicArm";
+            this.PicArm.Size = new System.Drawing.Size(24, 24);
+            this.PicArm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.PicArm.TabIndex = 13;
+            this.PicArm.TabStop = false;
+            // 
+            // customLabel9
+            // 
+            this.customLabel9.AutoSize = true;
+            this.customLabel9.Font = new System.Drawing.Font("微软雅黑", 12.5F);
+            this.customLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            this.customLabel9.Location = new System.Drawing.Point(734, 24);
+            this.customLabel9.Name = "customLabel9";
+            this.customLabel9.Size = new System.Drawing.Size(95, 23);
+            this.customLabel9.TabIndex = 12;
+            this.customLabel9.Text = "Arm控制板";
             // 
             // CButtonClearSysAlarm
             // 
@@ -276,23 +302,23 @@
             // 
             // DgvSysAlarm
             // 
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DgvSysAlarm.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DgvSysAlarm.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.DgvSysAlarm.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.DgvSysAlarm.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("微软雅黑", 12F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DgvSysAlarm.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("微软雅黑", 12F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DgvSysAlarm.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.DgvSysAlarm.ColumnHeadersHeight = 25;
             this.DgvSysAlarm.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.DgvSysAlarm.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -300,33 +326,34 @@
             this.Level,
             this.AlarmText,
             this.Dealwith});
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle10.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("微软雅黑", 12F);
-            dataGridViewCellStyle10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DgvSysAlarm.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("微软雅黑", 12F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DgvSysAlarm.DefaultCellStyle = dataGridViewCellStyle4;
             this.DgvSysAlarm.EnableHeadersVisualStyles = false;
             this.DgvSysAlarm.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.DgvSysAlarm.Location = new System.Drawing.Point(43, 52);
             this.DgvSysAlarm.Name = "DgvSysAlarm";
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle11.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("微软雅黑", 12F);
-            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DgvSysAlarm.RowHeadersDefaultCellStyle = dataGridViewCellStyle11;
+            this.DgvSysAlarm.ReadOnly = true;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("微软雅黑", 12F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DgvSysAlarm.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.DgvSysAlarm.RowHeadersVisible = false;
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle12.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.White;
-            this.DgvSysAlarm.RowsDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White;
+            this.DgvSysAlarm.RowsDefaultCellStyle = dataGridViewCellStyle6;
             this.DgvSysAlarm.RowTemplate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             this.DgvSysAlarm.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.Black;
             this.DgvSysAlarm.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
@@ -340,16 +367,17 @@
             // 
             // ID
             // 
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            dataGridViewCellStyle9.BackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ID.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ID.DefaultCellStyle = dataGridViewCellStyle3;
             this.ID.DividerWidth = 1;
             this.ID.HeaderText = "ID";
             this.ID.Name = "ID";
+            this.ID.ReadOnly = true;
             this.ID.Width = 75;
             // 
             // Level
@@ -357,6 +385,7 @@
             this.Level.DividerWidth = 1;
             this.Level.HeaderText = "等级";
             this.Level.Name = "Level";
+            this.Level.ReadOnly = true;
             this.Level.Width = 75;
             // 
             // AlarmText
@@ -365,6 +394,7 @@
             this.AlarmText.HeaderText = "报警描述";
             this.AlarmText.MinimumWidth = 20;
             this.AlarmText.Name = "AlarmText";
+            this.AlarmText.ReadOnly = true;
             this.AlarmText.Width = 360;
             // 
             // Dealwith
@@ -373,12 +403,13 @@
             this.Dealwith.HeaderText = "处理方法";
             this.Dealwith.MinimumWidth = 10;
             this.Dealwith.Name = "Dealwith";
+            this.Dealwith.ReadOnly = true;
             this.Dealwith.Width = 500;
             // 
             // PicRfid
             // 
             this.PicRfid.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicRfid.Location = new System.Drawing.Point(828, 23);
+            this.PicRfid.Location = new System.Drawing.Point(649, 23);
             this.PicRfid.Name = "PicRfid";
             this.PicRfid.Size = new System.Drawing.Size(24, 24);
             this.PicRfid.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -390,7 +421,7 @@
             this.customLabel5.AutoSize = true;
             this.customLabel5.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel5.Location = new System.Drawing.Point(723, 22);
+            this.customLabel5.Location = new System.Drawing.Point(553, 23);
             this.customLabel5.Name = "customLabel5";
             this.customLabel5.Size = new System.Drawing.Size(99, 23);
             this.customLabel5.TabIndex = 8;
@@ -399,7 +430,7 @@
             // PicQRCodeScanner
             // 
             this.PicQRCodeScanner.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicQRCodeScanner.Location = new System.Drawing.Point(584, 23);
+            this.PicQRCodeScanner.Location = new System.Drawing.Point(468, 23);
             this.PicQRCodeScanner.Name = "PicQRCodeScanner";
             this.PicQRCodeScanner.Size = new System.Drawing.Size(24, 24);
             this.PicQRCodeScanner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -411,26 +442,26 @@
             this.customLabel4.AutoSize = true;
             this.customLabel4.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel4.Location = new System.Drawing.Point(468, 22);
+            this.customLabel4.Location = new System.Drawing.Point(357, 22);
             this.customLabel4.Name = "customLabel4";
             this.customLabel4.Size = new System.Drawing.Size(112, 23);
             this.customLabel4.TabIndex = 6;
             this.customLabel4.Text = "二维码读码器";
             // 
-            // PicTrayEmpty
+            // PicSalverEmpty
             // 
-            this.PicTrayEmpty.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicTrayEmpty.Location = new System.Drawing.Point(1015, 23);
-            this.PicTrayEmpty.Name = "PicTrayEmpty";
-            this.PicTrayEmpty.Size = new System.Drawing.Size(24, 24);
-            this.PicTrayEmpty.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.PicTrayEmpty.TabIndex = 5;
-            this.PicTrayEmpty.TabStop = false;
+            this.PicSalverEmpty.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
+            this.PicSalverEmpty.Location = new System.Drawing.Point(1011, 23);
+            this.PicSalverEmpty.Name = "PicSalverEmpty";
+            this.PicSalverEmpty.Size = new System.Drawing.Size(24, 24);
+            this.PicSalverEmpty.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.PicSalverEmpty.TabIndex = 5;
+            this.PicSalverEmpty.TabStop = false;
             // 
             // PicCamera
             // 
             this.PicCamera.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicCamera.Location = new System.Drawing.Point(127, 23);
+            this.PicCamera.Location = new System.Drawing.Point(106, 23);
             this.PicCamera.Name = "PicCamera";
             this.PicCamera.Size = new System.Drawing.Size(24, 24);
             this.PicCamera.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -442,7 +473,7 @@
             this.customLabel2.AutoSize = true;
             this.customLabel2.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel2.Location = new System.Drawing.Point(77, 23);
+            this.customLabel2.Location = new System.Drawing.Point(56, 22);
             this.customLabel2.Name = "customLabel2";
             this.customLabel2.Size = new System.Drawing.Size(44, 23);
             this.customLabel2.TabIndex = 2;
@@ -462,7 +493,7 @@
             // PicRobot
             // 
             this.PicRobot.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicRobot.Location = new System.Drawing.Point(329, 23);
+            this.PicRobot.Location = new System.Drawing.Point(287, 23);
             this.PicRobot.Name = "PicRobot";
             this.PicRobot.Size = new System.Drawing.Size(24, 24);
             this.PicRobot.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -474,7 +505,7 @@
             this.customLabel1.AutoSize = true;
             this.customLabel1.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel1.Location = new System.Drawing.Point(264, 22);
+            this.customLabel1.Location = new System.Drawing.Point(220, 23);
             this.customLabel1.Name = "customLabel1";
             this.customLabel1.Size = new System.Drawing.Size(61, 23);
             this.customLabel1.TabIndex = 0;
@@ -578,10 +609,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.PicLedReady)).EndInit();
             this.customGroupBox1.ResumeLayout(false);
             this.customGroupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PicArm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DgvSysAlarm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRfid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicQRCodeScanner)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicTrayEmpty)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicSalverEmpty)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicCamera)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRobot)).EndInit();
             this.ResumeLayout(false);
@@ -600,7 +632,7 @@
         private CustomButton CButtonStop;
         private CustomButton CButtonReset;
         private CustomGroupBox customGroupBox1;
-        private System.Windows.Forms.PictureBox PicTrayEmpty;
+        private System.Windows.Forms.PictureBox PicSalverEmpty;
         private CustomLabel customLabel3;
         private System.Windows.Forms.PictureBox PicCamera;
         private CustomLabel customLabel2;
@@ -627,5 +659,7 @@
         private CustomLabel CLabelTotalDeveices;
         private CustomLabel CLabelTotalTrays;
         private CustomLabel CLabelCurDevices;
+        private System.Windows.Forms.PictureBox PicArm;
+        private CustomLabel customLabel9;
     }
 }

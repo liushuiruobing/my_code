@@ -18,13 +18,21 @@ namespace RobotWorkstation
             public static byte ARM;                                             // 0 -- not , 1 -- ARM alarm
             public static byte Server;                                          // 0 -- not , 1 -- Server alarm
 
+            //系统的运行状态
             public static bool Ready;          
-            public static bool Run;   //按键
+            public static bool Run;   
             public static bool Pause;
             public static bool Stop;
             public static bool Reset;
-           
-            public static bool LedRed;  //塔灯
+
+            //外部按键输入
+            public static bool KeyRun;
+            public static bool KeyPause;
+            public static bool KeyStop;
+            public static bool KeyReset;
+
+            //塔灯
+            public static bool LedRed;  
             public static bool LedOriange;
             public static bool LedGreen;
             public static bool LedBlue;        
@@ -33,11 +41,12 @@ namespace RobotWorkstation
             //单片机控制的气缸和托盘
             public static bool EmptySalverAirCylUpArrive;           //空盘气缸上升到位
             public static bool EmptySalverAirCylDownArrive;         //空盘气缸下降到位
-            public static bool ReceiveSalverArrive;                 //翻转后接收托盘到位
             public static bool OverturnSalverArrive;                //翻转托盘到位
             public static bool OverturnSalverAirCylGoArrive;        //翻转托盘锁定气缸进到位
             public static bool OverturnSalverAirCylBackArrive;      //翻转托盘锁定气缸退到位
-            
+            public static bool ReceiveSalverArrive;                 //翻转后接收盘经过RFID扫描后置true,用于自动测试中
+            public static bool ManualDebugReceiveSalverArrive;      //翻转后接收盘经过RFID扫描后置true，仅用于ManualDebug的测试中
+
             //机械臂
             public static bool RobotCylGoArrive;        //机械臂抓手气缸进到位
             public static bool RobotCylBackArrive;      //机械臂抓手气缸退到位
@@ -74,6 +83,11 @@ namespace RobotWorkstation
             SysStat.Stop = false;
             SysStat.Reset = false;
 
+            SysStat.KeyRun = false;
+            SysStat.KeyPause = false;
+            SysStat.KeyStop = false;
+            SysStat.KeyReset = false;
+
             SysStat.LedRed = false;
             SysStat.LedOriange = false;
             SysStat.LedGreen = false;
@@ -86,6 +100,7 @@ namespace RobotWorkstation
             SysStat.OverturnSalverAirCylGoArrive = false;
             SysStat.OverturnSalverAirCylBackArrive = false;
             SysStat.ReceiveSalverArrive = false;
+            SysStat.ManualDebugReceiveSalverArrive = false;
 
             SysStat.RobotCylGoArrive = false;
             SysStat.RobotCylBackArrive = false;

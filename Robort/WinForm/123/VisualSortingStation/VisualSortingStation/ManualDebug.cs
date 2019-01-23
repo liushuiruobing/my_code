@@ -60,6 +60,8 @@ namespace RobotWorkstation
 
         private void RefreshTimer_Tick(object sender, EventArgs e)
         {
+            InitUIControlEnableState();
+
             Bitmap bmpGreen = Properties.Resources.SmallGreen;
             Bitmap bmpDarkGreen = Properties.Resources.SmallDarkGreen;
             Bitmap bmpRed = Properties.Resources.SmallRed;
@@ -77,9 +79,9 @@ namespace RobotWorkstation
                 m_ManualRobot.m_PointList = m_ManualRobot.GetGlobalPointData();
 
             //抓手
-            PicBoxRobotGrapGoArrive.Image = DataStruct.SysStat.RobotCylGoArrive ? bmpRed : bmpDarkGreen;
-            PicBoxRobotGrapBackArrive.Image = DataStruct.SysStat.RobotCylBackArrive ? bmpRed : bmpDarkGreen;
-            PicBoxRobotGrapVacuumCheck.Image = DataStruct.SysStat.RobotVacuoCheck ? bmpRed : bmpDarkGreen;
+            PicBoxRobotGrapGoArrive.Image = DataStruct.SysStat.RobotCylGoArrive ? bmpGreen : bmpDarkGreen;
+            PicBoxRobotGrapBackArrive.Image = DataStruct.SysStat.RobotCylBackArrive ? bmpGreen : bmpDarkGreen;
+            PicBoxRobotGrapVacuumCheck.Image = DataStruct.SysStat.RobotVacuoCheck ? bmpGreen : bmpDarkGreen;
 
             //二维码
             if (m_QRCode != null && m_QRCode.m_IsConnect)
@@ -94,43 +96,35 @@ namespace RobotWorkstation
             //RFID
             if (m_RFID.IsConnected)
             {
-                if (m_RFID.Read(m_RFID.m_CurCh))
+                if (DataStruct.SysStat.ManualDebugReceiveSalverArrive)
                 {
-                    Thread.Sleep(1);
-                    if (m_RFID.m_QueueRead.Count > 0)
-                    {
-                        PicTrayDeviceInRFID.Image = bmpDarkGreen;
-                        CTextBoxTrayDeviceRfidSn.Text = VisualSortingStation.m_RfidRead;
-                    }
-                    else
-                    {
-                        PicTrayDeviceInRFID.Image = bmpDarkRed;
-                        CTextBoxTrayDeviceRfidSn.Text = "";
-                    }
+                    PicTrayDeviceInRFID.Image = bmpGreen;
+                    CTextBoxTrayDeviceRfidSn.Text = VisualSortingStation.m_RfidRead;
                 }
                 else
                 {
-                    MessageBox.Show("请先将载码体放入读写区域！");
+                    PicTrayDeviceInRFID.Image = bmpDarkGreen;
+                    CTextBoxTrayDeviceRfidSn.Text = "";
                 }
             }
 
             //Arm Controler
             //空盘气缸
-            PicBoxEmptySalverUpArrive.Image = DataStruct.SysStat.EmptySalverAirCylUpArrive ? bmpRed : bmpDarkGreen;
-            PicBoxEmptySalverDownArrive.Image = DataStruct.SysStat.EmptySalverAirCylDownArrive ? bmpRed : bmpDarkGreen;
+            PicBoxEmptySalverUpArrive.Image = DataStruct.SysStat.EmptySalverAirCylUpArrive ? bmpGreen : bmpDarkGreen;
+            PicBoxEmptySalverDownArrive.Image = DataStruct.SysStat.EmptySalverAirCylDownArrive ? bmpGreen : bmpDarkGreen;
 
             //按键
-            PicKeyRun.Image = DataStruct.SysStat.Run ? bmpRed : bmpDarkGreen;
-            PicKeyPause.Image = DataStruct.SysStat.Pause ? bmpRed : bmpDarkGreen;
-            PicKeyStop.Image = DataStruct.SysStat.Stop ? bmpRed : bmpDarkGreen;
-            PicKeyReset.Image = DataStruct.SysStat.Reset ? bmpRed : bmpDarkGreen;
+            PicKeyRun.Image = DataStruct.SysStat.KeyRun ? bmpGreen : bmpDarkGreen;
+            PicKeyPause.Image = DataStruct.SysStat.KeyPause ? bmpGreen : bmpDarkGreen;
+            PicKeyStop.Image = DataStruct.SysStat.KeyStop ? bmpGreen : bmpDarkGreen;
+            PicKeyReset.Image = DataStruct.SysStat.KeyReset ? bmpGreen : bmpDarkGreen;
 
             //翻转机构
-            PicOverturn.Image = DataStruct.SysStat.OverturnSalverArrive ? bmpRed : bmpDarkGreen;
-            PicOverturnCylLock.Image = DataStruct.SysStat.OverturnSalverAirCylGoArrive ? bmpRed : bmpDarkGreen;
-            PicOverturnCylUnLock.Image = DataStruct.SysStat.OverturnSalverAirCylBackArrive ? bmpRed : bmpDarkGreen;
+            PicOverturn.Image = DataStruct.SysStat.OverturnSalverArrive ? bmpGreen : bmpDarkGreen;
+            PicOverturnCylLock.Image = DataStruct.SysStat.OverturnSalverAirCylGoArrive ? bmpGreen : bmpDarkGreen;
+            PicOverturnCylUnLock.Image = DataStruct.SysStat.OverturnSalverAirCylBackArrive ? bmpGreen : bmpDarkGreen;
 
-            if (m_ArmControler.m_IsOpened[(int)Board.Controler])
+            if (m_ArmControler.IsBoardConnected(Board.Controler))
             {
                 m_ArmControler.SendReadPostion(Axis.Conveyor);
                 int postion = m_ArmControler.ReadPostion(Axis.Conveyor);
@@ -164,6 +158,36 @@ namespace RobotWorkstation
         private void ManualDebugForm_Shown(object sender, EventArgs e)
         {
             RefreshTimer.Start();
+        }
+
+        public void InitUIControlEnableState()
+        {
+            //Robot
+            bool RobotConnectState = m_ManualRobot.IsConnected();
+            if (tabPageRobot.Enabled != RobotConnectState)
+                tabPageRobot.Enabled = RobotConnectState;
+
+            //QRCode
+            bool QRCodeConnectState = m_QRCode.m_IsConnect;
+            if (CGroupBoxQRCode.Enabled != QRCodeConnectState)
+                CGroupBoxQRCode.Enabled = QRCodeConnectState;
+
+            //ArmControler
+            bool ArmConnectState = m_ArmControler.IsBoardConnected(Board.Controler);
+            if (CGroupBoxArmTowerLight.Enabled != ArmConnectState)
+                CGroupBoxArmTowerLight.Enabled = ArmConnectState;
+
+            if (CGroupBoxArmAireCyl.Enabled != ArmConnectState)
+                CGroupBoxArmAireCyl.Enabled = ArmConnectState;
+
+            if (CGroupBoxArmKeyIn.Enabled != ArmConnectState)
+                CGroupBoxArmKeyIn.Enabled = ArmConnectState;
+
+            if (CGrpAxisConveyor.Enabled != ArmConnectState)
+                CGrpAxisConveyor.Enabled = ArmConnectState;
+
+            if (CGrpTurnOver.Enabled != ArmConnectState)
+                CGrpTurnOver.Enabled = ArmConnectState;
         }
 
         public void InitRobot()
@@ -579,7 +603,7 @@ namespace RobotWorkstation
             }
             else
             {
-                MessageBox.Show("机械臂未连接或未获取到点位信息！", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Global.MessageBoxShow(Global.StrRobotGetPointsError);              
             }
         }
 
@@ -665,7 +689,7 @@ namespace RobotWorkstation
             if (DataStruct.SysStat.RobotVacuoCheck) //监听机器人的通信线程设置此RobotVacuoCheck
             {
                 TimerRobotTestRunAction.Stop();
-                MessageBox.Show("放置完成！");
+                Global.MessageBoxShow(Global.StrRobotSortFinished);
             }
         }
 
@@ -902,7 +926,7 @@ namespace RobotWorkstation
             }
             catch
             {
-                MessageBox.Show("请输入正确的数值", Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Global.MessageBoxShow(Global.StrInputError);
                 return;
             }
 
@@ -950,7 +974,7 @@ namespace RobotWorkstation
             }
             catch
             {
-                MessageBox.Show("请输入正确的数值", Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Global.MessageBoxShow(Global.StrInputError);
                 return;
             }
 
@@ -977,7 +1001,7 @@ namespace RobotWorkstation
             }
             catch
             {
-                MessageBox.Show("请输入正确的数值", Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Global.MessageBoxShow(Global.StrInputError);
                 return;
             }
 

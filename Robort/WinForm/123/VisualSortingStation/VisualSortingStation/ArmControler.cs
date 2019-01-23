@@ -25,10 +25,9 @@ namespace RobotWorkstation
         IO_IN_KeyReset = 3 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
         IO_IN_EmptySalverAirCylUpArrive = 4 + Board.Controler * ArmControler.MAX_IO_CHANNEL,         //空盘气缸上升到位
         IO_IN_EmptySalverAirCylDownArrive = 5 + Board.Controler * ArmControler.MAX_IO_CHANNEL,       //空盘气缸下降到位
-        IO_IN_ReceiveSalverArrive = 6 + Board.Controler * ArmControler.MAX_IO_CHANNEL,               //接收盘到位
-        IO_IN_OverturnSalverArrive = 7 + Board.Controler * ArmControler.MAX_IO_CHANNEL,              //翻转托盘到位
-        IO_IN_OverturnSalverAirCylGoArrive = 8 + Board.Controler * ArmControler.MAX_IO_CHANNEL,      //翻转托盘进到位
-        IO_IN_OverturnSalverAirCylBackArrive = 9 + Board.Controler * ArmControler.MAX_IO_CHANNEL,    //翻转托盘退到位    
+        IO_IN_OverturnSalverArrive = 6 + Board.Controler * ArmControler.MAX_IO_CHANNEL,              //翻转托盘到位
+        IO_IN_OverturnSalverAirCylGoArrive = 7 + Board.Controler * ArmControler.MAX_IO_CHANNEL,      //翻转托盘进到位
+        IO_IN_OverturnSalverAirCylBackArrive = 8 + Board.Controler * ArmControler.MAX_IO_CHANNEL,    //翻转托盘退到位    
         IO_IN_MAX
     }
 
@@ -36,17 +35,17 @@ namespace RobotWorkstation
     {
         //Out
         IO_OUT_LedRed = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
-        IO_OUT_LedOriange = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
-        IO_OUT_LedGreen = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
-        IO_OUT_LedBlue = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
-        IO_OUT_LedKeyRun = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
-        IO_OUT_LedKeyPause = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
-        IO_OUT_LedKeyStop = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
-        IO_OUT_LedKeyReset = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
-        IO_OUT_Beep = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
-        IO_OUT_EmptySalverAirCylUp = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,        //空盘气缸上升
-        IO_OUT_EmptySalverAirCylDown = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,     //空盘气缸下降
-        IO_OUT_OverturnSalverAirCyl = 0 + Board.Controler * ArmControler.MAX_IO_CHANNEL,      //翻转托盘气缸
+        IO_OUT_LedOriange = 1 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedGreen = 2 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedBlue = 3 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedKeyRun = 4 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedKeyPause = 5 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedKeyStop = 6 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_LedKeyReset = 7 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_Beep = 8 + Board.Controler * ArmControler.MAX_IO_CHANNEL,
+        IO_OUT_EmptySalverAirCylUp = 9 + Board.Controler * ArmControler.MAX_IO_CHANNEL,        //空盘气缸上升
+        IO_OUT_EmptySalverAirCylDown = 10 + Board.Controler * ArmControler.MAX_IO_CHANNEL,     //空盘气缸下降
+        IO_OUT_OverturnSalverAirCyl = 11 + Board.Controler * ArmControler.MAX_IO_CHANNEL,      //翻转托盘气缸
         IO_OUT_MAX
     }
 
@@ -100,19 +99,25 @@ namespace RobotWorkstation
         public const int MAX_AXIS_CHANNEL = 8;    //一块板卡包括8个电机轴
 
         public MyTcpClient[] m_MyTcpClientArm = new MyTcpClient[(int)Board.Max];
-        public bool[] m_IsOpened = new bool[(int)Board.Max];
         public Axis[] m_AxisNumber = new Axis[(int)Axis.Max] { Axis.Conveyor, Axis.TurnOver };
         public uint[] m_InputValue = new uint[(int)Board.Max];  //ARM控制板IO输入的缓存 4个byte，每位代表1个IO，共32个,从而用uint来表示，32位每个位代表1个IO  
         public ARM_InputPoint[] m_InputPoint = new ARM_InputPoint[(int)ARM_InputPoint.IO_IN_MAX];  //输入点数组
-
+        public bool[] m_InputPointState = new bool[(int)ARM_InputPoint.IO_IN_MAX];  //输入点状态备份
         public int[,] m_AxisState = new int[(int)Board.Max, MAX_AXIS_CHANNEL]{ { 0, 0, 0, 0, 0, 0, 0, 0, } };  //电机轴状态
         public int[,] m_AxisPostion = new int[(int)Board.Max, MAX_AXIS_CHANNEL] { { 0, 0, 0, 0, 0, 0, 0, 0, } };  //电机轴当前位置
 
+
         private ArmControler()
         {
-            for (int i = 0; i < m_IsOpened.Length; i++)
+            for (int i = 0; i < m_AxisNumber.Length; i++)
             {
-                m_IsOpened[i] = false;
+                m_AxisNumber[i] = (Axis)i;
+            }
+
+            for (int i = 0; i < (int)ARM_InputPoint.IO_IN_MAX; i++)
+            {
+                m_InputPoint[i] = (ARM_InputPoint)i;
+                m_InputPointState[i] = false;
             }
         }
 
@@ -139,24 +144,21 @@ namespace RobotWorkstation
         public void Open()
         {
             //传输线上的Arm控制板
-            if (!m_IsOpened[(int)Board.Controler])
-            {
-                m_MyTcpClientArm[(int)Board.Controler] = new MyTcpClient();
-                IPAddress ControlIp = IPAddress.Parse(Profile.m_Config.ControlerArmIp);
-                int ControlPort = Profile.m_Config.ControlerArmPort;
-                m_MyTcpClientArm[(int)Board.Controler].CreateConnect(ControlIp, ControlPort);
-            }
+            m_MyTcpClientArm[(int)Board.Controler] = new MyTcpClient();
+            IPAddress ControlIp = IPAddress.Parse(Profile.m_Config.ControlerArmIp);
+            int ControlPort = Profile.m_Config.ControlerArmPort;
+            m_MyTcpClientArm[(int)Board.Controler].CreateConnect(ControlIp, ControlPort);
 
             //其他Arm控制板
 
+        }
 
-            for (int i = 0; i < (int)Board.Max; i++)
-            {
-                if (m_MyTcpClientArm[i].IsConnected)
-                {
-                    m_IsOpened[i] = true;
-                }
-            }
+        public bool IsBoardConnected(Board board)
+        {
+            if (m_MyTcpClientArm[(int)board] != null)
+                return m_MyTcpClientArm[(int)board].IsConnected;
+            else
+                return false;            
         }
 
         /// <summary>
@@ -166,7 +168,7 @@ namespace RobotWorkstation
         {
             for (int i = 0; i < (int)Board.Max; i++)
             {
-                if (m_IsOpened[i])
+                if (IsBoardConnected((Board)i))
                 {
                     m_MyTcpClientArm[i].Close();
                 }
@@ -190,7 +192,7 @@ namespace RobotWorkstation
         //给单片机发送非电机轴的指令，仅指令，无参数
         public void SendCommandToArm(Board board, byte Code)
         {
-            if (!m_IsOpened[(int)board])
+            if (!IsBoardConnected(board))
                 return;
 
             Message.MakeSendArrayByCode(Code, ref m_SendMeas);
@@ -203,7 +205,7 @@ namespace RobotWorkstation
             int indexBoard = (int)axis / MAX_AXIS_CHANNEL;  //板卡索引
             int indexAxis = (int)axis % MAX_AXIS_CHANNEL;  //板卡内轴号索引
 
-            if (!m_IsOpened[indexBoard])
+            if (!IsBoardConnected((Board)indexBoard))
                 return false;
 
             Message.MakeSendArrayByCode(Code, ref m_SendMeas);
@@ -253,7 +255,7 @@ namespace RobotWorkstation
             int indexBoard = (int)axis / MAX_AXIS_CHANNEL;  //板卡索引
             int indexAxis = (int)axis % MAX_AXIS_CHANNEL;   //板卡内轴号索引
 
-            if (!m_IsOpened[indexBoard])
+            if (!IsBoardConnected((Board)indexBoard))
                 return false;
 
             Message.MakeSendArrayByCode((byte)Message.MessageCodeARM.SetAxisStepsAbs, ref m_SendMeas);
@@ -284,7 +286,7 @@ namespace RobotWorkstation
             int indexBoard = (int)axis / MAX_AXIS_CHANNEL;  //板卡索引
             int indexAxis = (int)axis % MAX_AXIS_CHANNEL;  //板卡内轴号索引
 
-            if (!m_IsOpened[indexBoard])
+            if (!IsBoardConnected((Board)indexBoard))
                 return false;
 
             Message.MakeSendArrayByCode((byte)Message.MessageCodeARM.SetAxisStepsRef, ref m_SendMeas);
@@ -360,7 +362,7 @@ namespace RobotWorkstation
             int indexBoard = (int)axis / MAX_AXIS_CHANNEL;  //板卡索引
             int indexAxis = (int)axis % MAX_AXIS_CHANNEL;  //板卡内轴号索引
 
-            if (!m_IsOpened[indexBoard])
+            if (!IsBoardConnected((Board)indexBoard))
                 return false;
 
             Message.MessageCodeARM Code = Default ? Message.MessageCodeARM.SetAxisParametersDefault : Message.MessageCodeARM.SetAxisParameters;
@@ -403,10 +405,8 @@ namespace RobotWorkstation
             int indexBoard = (int)axis / MAX_AXIS_CHANNEL;  //板卡索引
             int indexAxis = (int)axis % MAX_AXIS_CHANNEL;  //板卡内轴号索引
 
-            if (!m_IsOpened[indexBoard])
-            {
+            if (!IsBoardConnected((Board)indexBoard))
                 return 0;
-            }
 
             return m_AxisPostion[indexBoard, indexAxis];
         }
@@ -421,10 +421,8 @@ namespace RobotWorkstation
             int indexBoard = (int)axis / MAX_AXIS_CHANNEL;  //板卡索引
             int indexAxis = (int)axis % MAX_AXIS_CHANNEL;  //板卡内轴号索引
 
-            if (!m_IsOpened[indexBoard])
-            {
+            if (!IsBoardConnected((Board)indexBoard))
                 return " ";
-            }
 
             string retStr = " ";
             AxisState State = (AxisState)m_AxisState[indexBoard, indexAxis];
@@ -448,7 +446,7 @@ namespace RobotWorkstation
         //设置单片机控制板的IO
         public bool SetArmControlBoardIo(Board board, ARM_OutputPoint Io, IOValue Value)
         {
-            if (!m_IsOpened[(int)board])
+            if (!IsBoardConnected(board))
                 return false;
 
             int data1 = 8;  //1~8输出口使能控制字节, 最大是0x80

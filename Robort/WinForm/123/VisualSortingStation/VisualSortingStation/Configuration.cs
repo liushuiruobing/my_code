@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using System.IO;
-using System.Windows.Forms;
+
 
 namespace RobotWorkstation
 {
@@ -29,7 +29,7 @@ namespace RobotWorkstation
 
         //RFID
         public string RfidIp;
-        public int RfidCh;
+        public ushort RfidCh;
         public string RfidSn;
 
         //Controler Arm
@@ -96,7 +96,7 @@ namespace RobotWorkstation
                 }
                 catch //(InvalidOperationException)
                 {
-                    MessageBox.Show(ConstString.StrLoadConfigFailed[0], Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Global.MessageBoxShow(Global.StrLoadConfigFailed);
                     //return;
                 }
             }
@@ -114,7 +114,7 @@ namespace RobotWorkstation
                 }
                 catch
                 {
-                    MessageBox.Show(ConstString.StrSaveConfigFailed[0], Global.StationName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Global.MessageBoxShow(Global.StrSaveConfigFailed);
                     //return;
                 }
             }
