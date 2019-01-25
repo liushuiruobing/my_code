@@ -74,25 +74,11 @@ namespace RobotWorkstation
         private void TimerCheckAllStatus_Tick(object sender, EventArgs e)
         {
             //运行指示灯
-            if (DataStruct.SysStat.Ready)
-                PicLedReady.Image = Properties.Resources.LightBlue;
-            else
-                PicLedReady.Image = Properties.Resources.DarkBlue;
 
-            if (DataStruct.SysStat.Run)
-                PicLedRun.Image = Properties.Resources.LightGreen;
-            else
-                PicLedRun.Image = Properties.Resources.DarkGreen;
-
-            if (DataStruct.SysStat.Pause)
-                PicLedAlarm.Image = Properties.Resources.LightYellow;
-            else
-                PicLedAlarm.Image = Properties.Resources.DarkYellow;
-
-            if (DataStruct.SysStat.Stop)
-                PicLedStop.Image = Properties.Resources.LightRed;
-            else
-                PicLedStop.Image = Properties.Resources.DarkRed;
+            PicLedReady.Image = DataStruct.SysStat.Ready ? Properties.Resources.LightBlue : Properties.Resources.DarkBlue;
+            PicLedRun.Image = DataStruct.SysStat.Run ? Properties.Resources.LightGreen : Properties.Resources.DarkGreen;
+            PicLedAlarm.Image = DataStruct.SysStat.Pause ? Properties.Resources.LightYellow : Properties.Resources.DarkYellow;
+            PicLedStop.Image = DataStruct.SysStat.Stop ? Properties.Resources.LightRed : Properties.Resources.DarkRed;
 
             //设置报警灯的状态
             if (DataStruct.SysStat.Run)
@@ -107,38 +93,13 @@ namespace RobotWorkstation
             //运行状态更新
             Bitmap bmpGreen = Properties.Resources.SmallGreen;
             Bitmap bmpRed = Properties.Resources.SmallRed;
-            if (m_Robot != null && m_Robot.IsConnected())
-                m_Robot.GetState();
 
-            if (DataStruct.SysStat.Robot == 0)
-                PicRobot.Image = bmpGreen;
-            else
-                PicRobot.Image = bmpRed;
-
-            if (DataStruct.SysStat.Camera == 0)
-                PicCamera.Image = bmpGreen;
-            else
-                PicCamera.Image = bmpRed;
-
-            if (DataStruct.SysStat.QRCode == 0)
-                PicQRCodeScanner.Image = bmpGreen;
-            else
-                PicQRCodeScanner.Image = bmpRed;
-
-            if (DataStruct.SysStat.RFID == 0)
-                PicRfid.Image = bmpGreen;
-            else
-                PicRfid.Image = bmpRed;
-
-            if (DataStruct.SysStat.ARM == 0)
-                PicArm.Image = bmpGreen;
-            else
-                PicArm.Image = bmpRed;
-
-            if (DataStruct.SysStat.Salver == 0)
-                PicSalverEmpty.Image = bmpGreen;
-            else
-                PicSalverEmpty.Image = bmpRed;
+            PicRobot.Image = DataStruct.SysStat.RobotOk ? bmpGreen : bmpRed;
+            PicCamera.Image = DataStruct.SysStat.CameraOk? bmpGreen : bmpRed;
+            PicQRCodeScanner.Image = DataStruct.SysStat.QRCodeOk ? bmpGreen : bmpRed;
+            PicRfid.Image = DataStruct.SysStat.RfidOk ? bmpGreen : bmpRed;
+            PicArm.Image = DataStruct.SysStat.ArmControlerOk ? bmpGreen : bmpRed;
+            PicOverturnSalver.Image = DataStruct.SysStat.OverturnSalverOk ? bmpGreen : bmpRed;
 
             //添加报警信息
             for (int i = 0; i < (int)SysAlarm.Type.Max; i++)
@@ -153,9 +114,6 @@ namespace RobotWorkstation
                 }
                 m_SysAlarmState[i] = data.IsAlarm;
             }
-
-            //轮询单片机的状态
-            m_ArmControler.SendReadPoint(Board.Controler);
 
             //刷新模拟物料盘的状态
             if (DataStruct.SysStat.GrapAndPutOneSuccessed)

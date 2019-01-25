@@ -10,13 +10,15 @@ namespace RobotWorkstation
     {
         public struct SysStat
         {
-            public static byte Robot;                                           // 0 -- not , 1 -- device robot alarm
-            public static byte Camera;                                          // 0 -- not , 1 -- Camera alarm
-            public static byte QRCode;                                          // 0 -- not , 1 -- QRCode alarm
-            public static byte RFID;                                            // 0 -- not , 1 -- RFID alarm
-            public static byte Salver;                                          // 0 -- not , 1 -- RFID alarm
-            public static byte ARM;                                             // 0 -- not , 1 -- ARM alarm
-            public static byte Server;                                          // 0 -- not , 1 -- Server alarm
+            public static bool RobotAlarm;
+            public static bool RobotWarning;
+            public static bool RobotOk;                                          
+            public static bool CameraOk;                                        
+            public static bool QRCodeOk;                                         
+            public static bool RfidOk;                                           
+            public static bool OverturnSalverOk;                                         
+            public static bool ArmControlerOk;                                        
+            public static bool ServerOk;                                        
 
             //系统的运行状态
             public static bool Ready;          
@@ -39,11 +41,20 @@ namespace RobotWorkstation
             public static bool Beep;    //报警蜂鸣
 
             //单片机控制的气缸和托盘
-            public static bool EmptySalverAirCylUpArrive;           //空盘气缸上升到位
-            public static bool EmptySalverAirCylDownArrive;         //空盘气缸下降到位
-            public static bool OverturnSalverArrive;                //翻转托盘到位
-            public static bool OverturnSalverAirCylGoArrive;        //翻转托盘锁定气缸进到位
-            public static bool OverturnSalverAirCylBackArrive;      //翻转托盘锁定气缸退到位
+            public static bool EmptySalverObstructAirCylUpArrive;           //空盘阻挡气缸上升到位
+            public static bool EmptySalverObstructAirCylDownArrive;         //空盘阻挡气缸下降到位
+            public static bool EmptySalverObstructSensor;                   //空盘阻挡传感器
+            public static bool ReceiveSalverLiftingAirCylUpArrive;          //空盘升降气缸上升到位
+            public static bool ReceiveSalverLiftingAirCylDownArrive;        //空盘升降气缸下降到位
+            public static bool ConveyorLiftingAirCylUpArrive;               //传输线升降气缸上升到位
+            public static bool ConveyorLiftingAirCylDownArrive;             //传输线升降气缸下降到位  
+            public static bool OverturnSalverHomeArrive;                    //翻转托盘在原点         
+            public static bool OverturnSalverTurnArrive;                    //翻转托盘翻转到位
+            public static bool OverturnSalverLockAirCylGoArrive;            //翻转托盘锁定气缸进到位
+            public static bool OverturnSalverLockAirCylBackArrive;          //翻转托盘锁定气缸退到位
+            public static bool SalverRunOutStationSensor;                   //物料盘出站传感器
+
+            //RFID
             public static bool ReceiveSalverArrive;                 //翻转后接收盘经过RFID扫描后置true,用于自动测试中
             public static bool ManualDebugReceiveSalverArrive;      //翻转后接收盘经过RFID扫描后置true，仅用于ManualDebug的测试中
 
@@ -56,26 +67,17 @@ namespace RobotWorkstation
             public static bool GrapAndPutOneSuccessed;
         }
 
-        public struct SysStateAlarm
-        {
-            public static ushort Robot;        // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
-            public static ushort Camera;       // ID = 2 , Level = 1 ; 0 -- normal , 1 -- Alarm
-            public static ushort QRCode;       // ID = 3 , Level = 1 ; 0 -- normal , 1 -- Alarm
-            public static ushort RFID;         // ID = 4 , Level = 2 ; 0 -- normal , 1 -- Alarm
-            public static ushort Salver;       // ID = 5 , Level = 2 ; 0 -- normal , 1 -- Alarm
-            public static ushort ARM;          // ID = 6 , Level = 2 ; 0 -- normal , 1 -- Alarm
-            public static ushort Server;       // ID = 7 , Level = 2 ; 0 -- normal , 1 -- Alarm
-        }
-
         public static void InitSysStat()
         {
-            SysStat.Robot = 1;                   // 0 -- not , 1 -- device robot alarm
-            SysStat.Camera = 1;
-            SysStat.QRCode = 1;
-            SysStat.RFID = 1;
-            SysStat.Salver = 1;
-            SysStat.ARM = 1;
-            SysStat.Server = 1;
+            SysStat.RobotAlarm = false;
+            SysStat.RobotWarning = false;
+            SysStat.RobotOk = false;                   
+            SysStat.CameraOk = false;
+            SysStat.QRCodeOk = false;
+            SysStat.RfidOk = false;
+            SysStat.OverturnSalverOk = false;
+            SysStat.ArmControlerOk = false;
+            SysStat.ServerOk = false;
 
             SysStat.Ready = false;
             SysStat.Run = false;
@@ -94,11 +96,24 @@ namespace RobotWorkstation
             SysStat.LedBlue = false;
             SysStat.Beep = false;
 
-            SysStat.EmptySalverAirCylUpArrive = false;
-            SysStat.EmptySalverAirCylDownArrive = false;
-            SysStat.OverturnSalverArrive = false;
-            SysStat.OverturnSalverAirCylGoArrive = false;
-            SysStat.OverturnSalverAirCylBackArrive = false;
+
+        }
+
+        public static void InitAirCylAndSalverAndAxis()
+        {
+            SysStat.EmptySalverObstructAirCylUpArrive = false;
+            SysStat.EmptySalverObstructAirCylDownArrive = false;
+            SysStat.EmptySalverObstructSensor = false;
+            SysStat.ReceiveSalverLiftingAirCylUpArrive = false;
+            SysStat.ReceiveSalverLiftingAirCylDownArrive = false;
+            SysStat.ConveyorLiftingAirCylUpArrive = false;
+            SysStat.ConveyorLiftingAirCylDownArrive = false;
+            SysStat.OverturnSalverHomeArrive = false;
+            SysStat.OverturnSalverTurnArrive = false;
+            SysStat.OverturnSalverLockAirCylGoArrive = false;
+            SysStat.OverturnSalverLockAirCylBackArrive = false;
+            SysStat.SalverRunOutStationSensor = false;
+
             SysStat.ReceiveSalverArrive = false;
             SysStat.ManualDebugReceiveSalverArrive = false;
 
@@ -109,21 +124,10 @@ namespace RobotWorkstation
             SysStat.GrapAndPutOneSuccessed = false;
         }
 
-        public static void InitSysStateAlarm()
-        {
-            SysStateAlarm.Robot = 0x00;      // ID = 1 , Level = 1 ; 0 -- normal , 1 -- pause(ID = 2) , 2 -- Alarm
-            SysStateAlarm.Camera = 0x00;
-            SysStateAlarm.QRCode = 0x00;
-            SysStateAlarm.RFID = 0x00;
-            SysStateAlarm.Salver = 0x00;       // ID = 5 , Level = 2 ; 0 -- normal , 1 -- Alarm
-            SysStateAlarm.ARM = 0x00;          // ID = 6 , Level = 2 ; 0 -- normal , 1 -- Alarm
-            SysStateAlarm.Server = 0x00;       // ID = 7 , Level = 2 ; 0 -- normal , 1 -- Alarm
-        }
-
         public static void InitDataStruct()
         {
             InitSysStat();
-            InitSysStateAlarm();
+            InitAirCylAndSalverAndAxis();
         }
     }
 }

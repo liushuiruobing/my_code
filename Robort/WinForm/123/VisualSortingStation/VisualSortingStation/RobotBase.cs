@@ -574,34 +574,5 @@ namespace RobotWorkstation
             }
 #endif
         }
-
-        /*
-        * **********************************************************************************************************************
-        * Hand , 0 -> right hand, 1 -> left hand
-        * X,Y,Z unit is mm
-        * **********************************************************************************************************************
-        */
-        public void GetState()
-        {
-            if (m_Robot.HasAlarm())
-            {
-                DataStruct.SysStat.Robot = 2;
-                DataStruct.SysStateAlarm.Robot = 2;  // alarm
-            }
-            else
-            {
-                if (m_Robot.HasWarning())
-                {
-                    DataStruct.SysStat.Robot = 1;
-                    DataStruct.SysStateAlarm.Robot = 1;  // warn
-                }
-                else
-                {
-                    DataStruct.SysStat.Robot = 0;
-                    DataStruct.SysStateAlarm.Robot = 0;
-                }
-            }
-        }
-
     }
 }

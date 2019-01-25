@@ -17,6 +17,16 @@ namespace RobotWorkstation
             "视觉分拣站", "Visual Sorting Station"
         };
 
+        public static readonly string[] StrRunError = new string[(int)LanguageId.Language_Total]
+        {
+            "无法正常启动，请进行检查！",  "Could not start normally, please check!"
+        };
+
+        public static readonly string[] StrStartVisualServiceError = new string[(int)LanguageId.Language_Total]
+        {
+             "视觉检测服务启动失败！", "Visual detection service failed to start!"
+        };
+
         public static readonly string[] StrInputError = new string[(int)LanguageId.Language_Total]
         {
              "请输入正确的数值！",  "Please Input the right data!"

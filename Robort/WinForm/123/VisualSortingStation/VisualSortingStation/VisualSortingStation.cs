@@ -1,4 +1,5 @@
 ﻿#define DebugTest
+#define HasObstructAirCyl
 
 using System;
 using System.Collections.Generic;
@@ -85,10 +86,18 @@ namespace RobotWorkstation
         AutoRunLockDevices,                 //计数满则,控制翻转盘气缸锁定器件
         AutoRunTurnOverSalver,              //翻盘托盘
         AutoRunUnLockDevices,               //翻转成功则，控制托盘气缸解锁器件
+        AutoRunSaveNetShareFile,            //保存网络共享文件
         AutoRunTransportReceiveSalver       //运走接收盘
     }
 
-    public enum StationState  //工作站状态
+    public enum StationAlarmState  //工作站状态
+    {
+        NoAlarm = 0,
+        OrangeAlarm,
+        RedAlarm,
+    }
+
+    public enum StationWorkState  //工作站状态
     {
         Stop = 0x00,
         Run,
@@ -107,6 +116,7 @@ namespace RobotWorkstation
         public const int m_OnePanelDevicesMax = 16;
         private static int m_DevicesTotal = 0;
         private static int m_TempCount = 0;
+        private static StationAlarmState m_StationAlarmState = StationAlarmState.RedAlarm;
         private static AutoRunAction m_AutoRunAction = AutoRunAction.AuoRunStart;
         private volatile static bool m_ShouldExit = false;
         private static bool m_GetNextGrapPoint = false;
@@ -120,8 +130,13 @@ namespace RobotWorkstation
         public static List<string> m_QRCodeStr = new List<string>();
         private static SysAlarm m_SysAlarm = SysAlarm.GetInstance();
 
+        //Arm Controller
+        private static ArmControler m_ArmControler = ArmControler.GetInstance();
+        public static int m_ConveyorAxisCurPos = 0;       //站内传输线电机轴的当前位置
+        public static int m_OverTurnAxisCurPos = 0;       //翻转电机轴的当前位置
+        private static int m_ConveyorAxisAbsStep = 0;     //站内传输线电机在运动前的绝对位置
+
         //Tcp
-        public static ArmControler m_ArmControler = ArmControler.GetInstance();
         private static MyTcpClient m_MyTcpClientCamera = MainForm.GetMyTcpClientCamera();
         private static MyTcpServer m_MyTcpServer = MyTcpServer.GetInstance();
         private static byte[] m_SendMeas = new byte[Message.MessageLength];      
@@ -136,9 +151,13 @@ namespace RobotWorkstation
 
         //线程
         private static Thread m_MainThread = null;
-        public static ManualResetEvent m_MainThreadEvent = new ManualResetEvent(false);
-        private static Thread m_MeassageProcessThread = null;
-              
+        private static Thread m_MeassageThread = null;
+        public static ManualResetEvent m_ThreadEvent = new ManualResetEvent(false);
+
+        private static bool m_FirstPrepareBeforeStart = false;    //开始前准备工作1，翻转盘回到Home点，并且锁定气缸退到位后置true
+        private static bool m_SecondPrepareBeforeStart = false;   //开始前准备工作2，传输线降低到位并且空盘顶升气缸降低到位后置true
+        private static bool m_ThirdPrepareBeforeStart = false;    //开始前准备工作3，阻挡气缸升起到位，并且电机运转到位,保证盘到后置true
+
         public static bool ShouldExit
         {
             set
@@ -151,17 +170,37 @@ namespace RobotWorkstation
             }
         }
 
+        public static void InitPrepareBeforeStart()
+        {
+            m_FirstPrepareBeforeStart = false;
+            m_SecondPrepareBeforeStart = false;
+            m_ThirdPrepareBeforeStart = false;
+
+            m_ConveyorAxisCurPos = 0;       //站内传输线电机轴的当前位置
+            m_OverTurnAxisCurPos = 0;       //翻转电机轴的当前位置
+            m_ConveyorAxisAbsStep = 0;     //站内传输线电机在运动前的绝对位置
+
+            m_ScanQRCode = false;
+            m_QRCodeStr.Clear();
+            m_RfidRead = "";
+            m_TempCount = 0;
+            m_GetNextGrapPoint = false;
+            Array.Clear(m_VisualCoords, 0, m_VisualCoords.Length);
+            m_StationAlarmState = StationAlarmState.RedAlarm;            
+            m_AutoRunAction = AutoRunAction.AuoRunStart;
+        }
+
         public static void CreateAllThread()
         {
             //创建主线程
-            m_MainThread = new Thread(new ThreadStart(VisualSortingStation.MainThreadFunc));
+            m_MainThread = new Thread(new ThreadStart(MainThreadFunc));
             m_MainThread.IsBackground = true;
             m_MainThread.Start();
 
             //创建消息处理线程
-            m_MeassageProcessThread = new Thread(new ThreadStart(VisualSortingStation.MessageProcessThreadFunc));
-            m_MeassageProcessThread.IsBackground = true;
-            m_MeassageProcessThread.Start();
+            m_MeassageThread = new Thread(new ThreadStart(MessageThreadFunc));
+            m_MeassageThread.IsBackground = true;
+            m_MeassageThread.Start();
         }
 
         public static void MainThreadFunc()
@@ -169,30 +208,31 @@ namespace RobotWorkstation
             m_QRCodeStr.Clear();
             m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
 
+            InitPrepareBeforeStart();
+
             while (!m_ShouldExit)
             {
-                m_MainThreadEvent.WaitOne();
+                m_ThreadEvent.WaitOne();
 
                 if (DataStruct.SysStat.Run)
                     AutoSortingRun();
 
                 Thread.Sleep(0);  //Sleep(0),则线程会将时间片的剩余部分让给任何已经准备好的具有同等优先级的线程
-
-                Debug.WriteLine("MainThreadFunc Runing...");
             }
         }
 
-        public static void MessageProcessThreadFunc()
+        public static void MessageThreadFunc()
         {
             while (!m_ShouldExit)
-            {             
-                ProcessRobotMessage();      //处理Robot消息
-              
-                ProcessRFIDMessage();       //处理RFID的数据
-              
-                ProcessTcpClientMessage();  //作为客户端处理和单片机控制板、相机的消息队列
-               
+            {
+                ProcessRobotMessage();              
+                ProcessRFIDMessage();               
+                ProcessTcpClientMessage();  //作为客户端处理和单片机控制板、相机的消息队列            
                 ProcessTcpServerMessage();  //作为服务端处理和MIS及PLC之间的消息
+               
+                
+                CheckStationCurrentAlarmState();         //轮询工作站的状态
+                SendCommandToReadAllArmController();     //轮询单片机
 
                 Thread.Sleep(0);
             }
@@ -207,6 +247,21 @@ namespace RobotWorkstation
 
                 if (m_MyTcpClientCamera != null)
                     m_MyTcpClientCamera.Close();
+            }
+        }
+
+        //轮询机器人的状态
+        public static void CheckRobotState()
+        {
+            if (m_Robot != null && m_Robot.IsConnected())
+            {
+                DataStruct.SysStat.RobotAlarm = m_Robot.HasAlarm();
+                DataStruct.SysStat.RobotWarning = m_Robot.HasWarning();
+
+                if(!DataStruct.SysStat.RobotAlarm && !DataStruct.SysStat.RobotWarning)
+                    DataStruct.SysStat.RobotOk = true;
+                else
+                    DataStruct.SysStat.RobotOk = false;
             }
         }
 
@@ -380,6 +435,24 @@ namespace RobotWorkstation
             }
         }
 
+        //轮询所有单片机控制板的状态
+        public static void SendCommandToReadAllArmController()
+        {
+            for (int i = 0; i < (int)Board.Max; i++)
+            {
+                if (m_ArmControler.IsBoardConnected((Board)i))
+                {
+                    m_ArmControler.SendReadInputPoint((Board)i);   //读取IO输入点的状态
+
+                    for (int j = 0; j < (int)Axis.Max; j++)
+                    {
+                        m_ArmControler.SendReadAxisPostion((Axis)j);   //读取传输线各电机的当前位置
+                        m_ArmControler.SendReadAxisState((Axis)j);
+                    }
+                }
+            }
+        }
+
         //处理和单片机控制板的消息
         public static void ProcessArmMessage(Board board, TcpMeas meassage)
         {
@@ -399,15 +472,9 @@ namespace RobotWorkstation
                                             + (uint)meassage.Param[DataIndex + 2] * 0x10000
                                             + (uint)meassage.Param[DataIndex + 1] * 0x100
                                             + (uint)meassage.Param[DataIndex + 0];
-                            m_ArmControler.m_InputValue[(int)board] = dataInput;
-                            ProcessArmControlerInputPoint(board, m_ArmControler.m_InputValue[(int)board]);
-                        }break;
-                    case Message.MessageCodeARM.GetAxisState:
-                        {
-                            int DataIndex = Message.MessageCommandIndex + 2;
 
-                            //m_AxisState 中轴的索引为DataIndex - 1
-                            m_ArmControler.m_AxisState[(int)board, meassage.Param[DataIndex - 1] ] = meassage.Param[DataIndex];
+                            m_ArmControler.SetInputPoint(board, dataInput);
+                            ProcessArmControlerInputPoint(board);
                         }break;
                     case Message.MessageCodeARM.GetAxisStepsAbs:
                         {
@@ -417,9 +484,18 @@ namespace RobotWorkstation
                                 + (uint)meassage.Param[DataIndex + 1] * 0x100
                                 + (uint)meassage.Param[DataIndex + 0];
 
-                            //m_AxisPostion 中轴的索引为DataIndex - 1
-                            m_ArmControler.m_AxisPostion[(int)board, meassage.Param[DataIndex - 1]] = (int)steps;  //有负值
-                        }break;
+                            Axis axis = (Axis)meassage.Param[Message.MessageCommandIndex + 1];
+                            m_ArmControler.SetAxisPostion(axis, steps);
+                            ProcessArmControlerAxisPosition(board);
+                        }
+                        break;
+                    case Message.MessageCodeARM.GetAxisState:
+                        {
+                            Axis AxisNum = (Axis)meassage.Param[Message.MessageCommandIndex + 1];
+                            byte State = meassage.Param[Message.MessageCommandIndex + 2];
+                            m_ArmControler.SetAxisState(AxisNum, State);
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -527,7 +603,7 @@ namespace RobotWorkstation
 #if DebugTest
                                     Global.MessageBoxShow(Global.StrVisualError);
 #endif
-                                    DataStruct.SysStat.Camera = 1;
+                                    DataStruct.SysStat.CameraOk = false;
                                     m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
                                 }
                             }
@@ -543,27 +619,15 @@ namespace RobotWorkstation
             }
         }
 
-#if DebugTest  //测试执行时间
-        public static DateTime T1 = DateTime.Now;
-        public static DateTime T2 = DateTime.Now;
-        public static DateTime T3 = DateTime.Now;
-        public static DateTime T4 = DateTime.Now;
-#endif
-
         public static void AutoSortingRun()
         {
             SortMode CurSortMode = Profile.m_Config.SelectedSortMode;  //获取当前抓取模式
 
-            //执行各动作
             switch (m_AutoRunAction)
             {
-                case AutoRunAction.AuoRunStart:                 //开始
+                case AutoRunAction.AuoRunStart:             
                     {
-                        bool Start = false;
-                        //检查各盘是否到位，都无误后 Start = true
-                        if (DataStruct.SysStat.ReceiveSalverArrive && DataStruct.SysStat.EmptySalverAirCylUpArrive)
-                            Start = true;
-
+                        bool Start = CheckAndTryToLoadSalverBeforeSorting();  //检查各盘是否到位，都无误后 Start = true
                         if (Start)
                         {
                             m_GetNextGrapPoint = false;
@@ -576,11 +640,6 @@ namespace RobotWorkstation
                     }break;
                 case AutoRunAction.AutoRunGetGrapCoords:        //获得抓取坐标
                     {
-#if DebugTest
-                        T1 = DateTime.Now;
-                        if (m_TempCount > 0)
-                            Debug.WriteLine("T1 - T4:  " + (T1 - T4).TotalMilliseconds);
-#endif
                         if (m_MyTcpClientCamera != null && m_MyTcpClientCamera.IsConnected)
                         {
                             GetVisualCoords((int)VisualAction.Visual_GrapPoint, m_TempCount);   //Visual_QRCodeScanPoint  和 Visual_PutPoint在ProcessCameraMessage中获取
@@ -589,12 +648,6 @@ namespace RobotWorkstation
                     }break;
                 case AutoRunAction.AutoRunMoveToGrap:           //移动到位并抓取   
                     {
-#if DebugTest
-                        T2 = DateTime.Now;
-                        Debug.WriteLine("T2:  " + (T2 - T1).TotalMilliseconds);
-                        if(m_TempCount > 0)
-                            Debug.WriteLine("T2 - T4:  " + (T2 - T4).TotalMilliseconds);
-#endif
                         Debug.Assert(m_TempCount <= m_OnePanelDevicesMax);
 
                         //移动到指定位置抓手气缸进到位，后吸起器件，上位机发指令，机械臂脚本解析，执行动作
@@ -605,31 +658,19 @@ namespace RobotWorkstation
 
                         m_AutoRunAction = AutoRunAction.AuoRunNone;
                     }break;
-                case AutoRunAction.AutoRunMoveToScanQRCode:     //移动到位并扫码,检查扫码格式，不正确则依然执行此动作v          
+                case AutoRunAction.AutoRunMoveToScanQRCode:    
                     {
-#if DebugTest
-                        T3 = DateTime.Now;
-                        Debug.WriteLine("T3:  " + (T3 - T2).TotalMilliseconds);
-#endif
-                        m_Robot.RunAction((short)RobotAction.Action_QRCodeScan);  //移动到位,读取二维码
+                        m_Robot.RunAction((short)RobotAction.Action_QRCodeScan);  
                         m_AutoRunAction = AutoRunAction.AuoRunNone;
                     }
                     break;
                 case AutoRunAction.AutoRunMoveToPut:    //移动到位并放下，计数后开始下一个，满总数后下一步    
                     {
-#if DebugTest
-                        T4 = DateTime.Now;
-                        Debug.WriteLine("T4:  " + (T4 - T3).TotalMilliseconds);
-#endif
                         Debug.Assert(m_TempCount <= m_OnePanelDevicesMax);
                         if (m_TempCount == m_OnePanelDevicesMax - 1)
-                        {
                             GetVisualCoords((int)VisualAction.Visual_RunCamera, 0);  //下一盘时
-                        }
                         else
-                        {
                             GetVisualCoords((int)VisualAction.Visual_RunCamera, m_TempCount + 1);
-                        }
 
                         if (CurSortMode == SortMode.SortWithVisual)
                             m_Robot.RunAction((short)RobotAction.Action_Visual_Put);
@@ -641,65 +682,218 @@ namespace RobotWorkstation
                     break;
                 case AutoRunAction.AutoRunLockDevices:        //计数满则锁定翻转盘器件
                     {
-                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
+                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverLockAirCyl, IOValue.IOValueHigh);
                         if (Re)
                             m_AutoRunAction = AutoRunAction.AuoRunNone;
                     }break;
                 case AutoRunAction.AutoRunTurnOverSalver:         //翻盘托盘
                     {
-                        //给单片机发消息，控制翻转电机翻转，翻转180度后，回复上位机，并设置 m_AutoRunAction = AutoRunAction.AutoRunUnLockDevices;
-
-                    }break;
+                        //给单片机发消息，控制翻转电机翻转，运行绝对步数，
+                        AxisState CurState = m_ArmControler.ReadAxisState(Axis.OverTurn);
+                        if (CurState == AxisState.Ready)
+                        {
+                            bool Re = m_ArmControler.MoveAbs(Axis.OverTurn, ArmControler.m_OverturnAxisMaxStep);
+                            if(Re)
+                                m_AutoRunAction = AutoRunAction.AuoRunNone;
+                        }                         
+                    }
+                    break;
                 case AutoRunAction.AutoRunUnLockDevices:          //翻转成功，解锁器件
                     {
-                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
+                        bool Re = m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverLockAirCyl, IOValue.IOValueLow);
                         if(Re)
                             m_AutoRunAction = AutoRunAction.AuoRunNone;
                     } break;
-                case AutoRunAction.AutoRunTransportReceiveSalver:  //存储文件，通知运走接收盘
+                case AutoRunAction.AutoRunSaveNetShareFile:  //存储文件，通知运走接收盘
                     {
                         if (m_QRCodeStr.Count >= m_OnePanelDevicesMax) //
                         {
                             List<string> QRCodeTemp = m_QRCodeStr.Distinct().ToList(); //却掉重复扫描的 
                             if (QRCodeTemp.Count() == m_OnePanelDevicesMax)
                             {
-                                //创建共享文件.xml,并写入到文件中
-                                int TrayNum = m_DevicesTotal / m_OnePanelDevicesMax + 1;  //当前测试为第几盘
-                                bool Re = m_NsfTrayModuleFile.CreateAndWriteFile(QRCodeTemp, TrayNum);
+                                int TraySn = int.Parse(m_RfidRead);
+                                bool Re = m_NsfTrayModuleFile.CreateAndWriteFile(QRCodeTemp, TraySn);  //创建共享文件.xml,并写入到文件中
                                 if (Re)
-                                {
-                                    m_AutoRunAction = AutoRunAction.AuoRunStart;
+                                {                             
                                     m_DevicesTotal += m_OnePanelDevicesMax;
                                     RunForm.m_GrapAndPutTotal = m_DevicesTotal;
-                                    //清除掉之前的各到位信号，在AuoRunStart时重新检查
-
-                                    //让单片机控制运输电机来运走托盘
+                                    m_AutoRunAction = AutoRunAction.AutoRunTransportReceiveSalver;
                                 }
                             }
                         }
                     }break;
+                case AutoRunAction.AutoRunTransportReceiveSalver:
+                    {                     
+                        bool Re = TryToTransportReceiveSalverAfterSorting();
+                        if (Re)
+                        {
+                            //清除掉之前的各到位信号，在AuoRunStart时重新检查
+                            DataStruct.InitAirCylAndSalverAndAxis();
+                            InitPrepareBeforeStart();
+                            m_AutoRunAction = AutoRunAction.AuoRunStart;
+                        }
+                    }
+                    break;
                 default:
                     break;
+            }
+        }
+
+        //进行抓取前，检查接收盘是都到位，未到位则控制其运动到位
+        public static bool CheckAndTryToLoadSalverBeforeSorting()
+        {
+            bool Re = false;
+
+            if (!m_FirstPrepareBeforeStart)
+            {
+                if (!DataStruct.SysStat.OverturnSalverHomeArrive)  //翻转托盘未在原点
+                {
+                    m_ArmControler.BackHome(Axis.OverTurn, AxisDir.Reverse);
+                }
+                else
+                {
+                    if (!DataStruct.SysStat.OverturnSalverLockAirCylBackArrive)  //翻转托盘锁气缸未退到位
+                        m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverLockAirCyl, IOValue.IOValueLow);
+                    else
+                        m_FirstPrepareBeforeStart = true;
+                }
+            }
+
+            if (m_FirstPrepareBeforeStart && !m_SecondPrepareBeforeStart)
+            {
+                if (!DataStruct.SysStat.ConveyorLiftingAirCylDownArrive)  //传输线未降低到位
+                {
+                    m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_ConveyorLiftingAirCylRun, IOValue.IOValueLow);
+                }
+                else
+                {
+                    if (!DataStruct.SysStat.ReceiveSalverLiftingAirCylDownArrive)  //空盘顶升气缸未降低到位             
+                        m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverLiftingAirCylRun, IOValue.IOValueLow);
+                    else
+                        m_SecondPrepareBeforeStart = true;
+                }
+            }
+
+            if (m_SecondPrepareBeforeStart && !m_ThirdPrepareBeforeStart)
+            {
+                SalverState State = (SalverState)GetStationSalverState();
+                if (State == SalverState.HaveSalver)  //无盘时PLC会去调度盘，只要控制好ReceiveSalverArrive的标志位即可
+                {
+                    if (DataStruct.SysStat.EmptySalverObstructSensor)  //阻挡传感器被触发
+                    {
+
+#if HasObstructAirCyl  //有阻挡气缸
+                        if (!DataStruct.SysStat.EmptySalverObstructAirCylUpArrive)  //阻挡气缸未升到位
+                        {
+                            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverObstructAirCylRun, IOValue.IOValueHigh);//升起阻挡气缸
+                        }
+                        else
+                        {
+                            //电机运行到位后设置
+                            AxisState CurState = m_ArmControler.ReadAxisState(Axis.Conveyor);
+                            if (CurState == AxisState.Ready && m_ConveyorAxisCurPos == m_ConveyorAxisAbsStep + ArmControler.m_ConveyorAxisMaxStep) //运动后停止
+                                m_ThirdPrepareBeforeStart = true;
+                        }
+#else
+                            //电机运行到位后设置
+                            AxisState CurState = m_ArmControler.ReadAxisState(Axis.Conveyor);
+                            if (CurState == AxisState.Ready && m_ConveyorAxisCurPos == m_ConveyorAxisAbsStep + ArmControler.m_ConveyorAxisMaxStep) //运动后停止
+                                m_ThirdPrepareBeforeStart = true;
+#endif
+                    }
+                    else  //阻挡传感器未触发，控制电机向前运动输送空盘
+                    {
+                        AxisState CurState = m_ArmControler.ReadAxisState(Axis.Conveyor);
+                        if (CurState == AxisState.Ready)
+                        {
+                            m_ConveyorAxisAbsStep = m_ConveyorAxisCurPos;
+                            m_ArmControler.MoveAbs(Axis.Conveyor, m_ConveyorAxisAbsStep + ArmControler.m_ConveyorAxisMaxStep);
+                        }
+                    }
+                }
+            }
+
+            if (m_FirstPrepareBeforeStart && m_SecondPrepareBeforeStart && m_ThirdPrepareBeforeStart)
+            {            
+                if (!DataStruct.SysStat.ReceiveSalverLiftingAirCylUpArrive)  //空盘顶升气缸未升到位
+                    m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverLiftingAirCylRun, IOValue.IOValueHigh);//
+                else              
+                    Re = true; 
+            }
+
+            return Re;
+        }
+
+        //分拣完成后运走接收盘
+        public static bool TryToTransportReceiveSalverAfterSorting()
+        {
+            bool Re = false;
+
+            if (DataStruct.SysStat.ReceiveSalverLiftingAirCylDownArrive)  //接收盘顶升气缸未降到位
+            {
+                if (DataStruct.SysStat.ConveyorLiftingAirCylUpArrive)   //传输线气缸未升到位
+                {
+                    if (DataStruct.SysStat.SalverRunOutStationSensor)   //物料盘送出站
+                    {
+                        Re = true;
+                    }
+                    else
+                    {
+                        AxisState CurState = m_ArmControler.ReadAxisState(Axis.Conveyor);
+                        if (CurState == AxisState.Ready)
+                        {
+                            m_ArmControler.MoveAbs(Axis.Conveyor, m_ConveyorAxisCurPos + ArmControler.m_ConveyorAxisMaxStep);
+                        }
+                    }
+                }
+                else
+                {
+                    m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_ConveyorLiftingAirCylRun, IOValue.IOValueHigh);
+                }
+            }
+            else
+            {
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverLiftingAirCylRun, IOValue.IOValueLow);
+            }
+
+            return Re;
+        }
+
+        public static void ResetWorkStation()
+        {
+            DataStruct.InitDataStruct();
+            InitPrepareBeforeStart();
+
+            if(m_Robot.IsConnected())
+                m_Robot.RunAction((short)RobotAction.Action_Go_Home);
+
+            if (m_ArmControler.IsBoardConnected(Board.Controler))
+            {
+                m_ArmControler.BackHome(Axis.OverTurn, AxisDir.Reverse);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverLockAirCyl, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_ConveyorLiftingAirCylRun, IOValue.IOValueLow);
+                m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverLiftingAirCylRun, IOValue.IOValueLow);
             }
         }
 
         //获取工作站当前的运行状态
         public static byte GetStationCurState()    
         {
-            StationState State = StationState.Stop;
+            StationWorkState State = StationWorkState.Stop;
 
             if (DataStruct.SysStat.Run)
-                State = StationState.Run;
+                State = StationWorkState.Run;
             else if (DataStruct.SysStat.Pause)
-                State = StationState.Pause;
+                State = StationWorkState.Pause;
             else if (DataStruct.SysStat.Stop)
-                State = StationState.Stop;
+                State = StationWorkState.Stop;
             else if (DataStruct.SysStat.Reset)
-                State = StationState.Reset;
+                State = StationWorkState.Reset;
 
             return (byte)State;
         }
 
+        //检查工作站接收盘的状态
         public static byte GetStationSalverState()
         {
             SalverState State = SalverState.NoSalver;
@@ -710,71 +904,33 @@ namespace RobotWorkstation
         }
 
         //UI上的灯
-        public static int CheckSysAlarm()
+        public static void CheckStationCurrentAlarmState()
         {
-            // check robot
-            if (DataStruct.SysStateAlarm.Robot >= 1)
-            {
-                if (DataStruct.SysStateAlarm.Robot == 2)
-                {
-                    DataStruct.SysStat.LedRed = true;
-                }
-                else if (DataStruct.SysStateAlarm.Robot == 1)
-                {
-                    DataStruct.SysStat.LedOriange = true;
-                }
-            }
+            CheckRobotState();  //轮询机械臂
 
-            //check camera
-            if (DataStruct.SysStateAlarm.Camera == 1)
-            {
-                DataStruct.SysStat.Camera = 1;
+            if (DataStruct.SysStat.RobotAlarm)
                 DataStruct.SysStat.LedRed = true;
-            }
+            else if (DataStruct.SysStat.RobotWarning)
+                DataStruct.SysStat.LedOriange = true;
 
-            //check QRCode
-            if (DataStruct.SysStateAlarm.QRCode == 1)
+            //Check Robot Camera、 QRCode、 RFID、 ARM、 Salver、 Server
+            if (!DataStruct.SysStat.RobotOk || !DataStruct.SysStat.CameraOk || !DataStruct.SysStat.QRCodeOk || !DataStruct.SysStat.RfidOk ||
+                !DataStruct.SysStat.ArmControlerOk || !DataStruct.SysStat.OverturnSalverOk || !DataStruct.SysStat.ServerOk)
             {
-                DataStruct.SysStat.QRCode = 1;
-                DataStruct.SysStat.LedRed = true;
-            }
-
-            //check RFID
-            if (DataStruct.SysStateAlarm.RFID == 1)
-            {
-                DataStruct.SysStat.RFID = 1;
-                DataStruct.SysStat.LedRed = true;
-            }
-
-            //check IO Control Board
-            if (DataStruct.SysStateAlarm.ARM == 1)
-            {
-                DataStruct.SysStat.ARM = 1;
-                DataStruct.SysStat.LedRed = true;
-            }
-
-            //check Salver
-            if (DataStruct.SysStateAlarm.Salver == 1)
-            {
-                DataStruct.SysStat.Salver = 1;
-                DataStruct.SysStat.LedRed = true;
-            }
-
-            //check Server
-            if (DataStruct.SysStateAlarm.Server == 1)
-            {
-                DataStruct.SysStat.Server = 1;
                 DataStruct.SysStat.LedRed = true;
             }
 
             if ((!DataStruct.SysStat.LedOriange) && (!DataStruct.SysStat.LedRed))
-                return 0;
+                m_StationAlarmState =  StationAlarmState.NoAlarm;
             else if (DataStruct.SysStat.LedOriange && !DataStruct.SysStat.LedRed)
-                return 1;
-            else if (DataStruct.SysStat.LedRed && !DataStruct.SysStat.LedOriange)
-                return 2;
+                m_StationAlarmState = StationAlarmState.OrangeAlarm;
+            else if (DataStruct.SysStat.LedRed)
+                m_StationAlarmState = StationAlarmState.RedAlarm;
+
+            if (m_StationAlarmState == StationAlarmState.NoAlarm)
+                DataStruct.SysStat.Ready = true;
             else
-                return 3;
+                DataStruct.SysStat.Ready = false;
         }
 
         //工作站的塔灯 Alarm type , 0 = Green ; 1 = Yellow ; 2 = Red ; 3 = Red & Yellow
@@ -872,16 +1028,16 @@ namespace RobotWorkstation
                 m_MyTcpClientCamera.ClientWrite(StrSend);
         }
 
-        public static void ProcessArmControlerInputPoint(Board board, uint Data)
+        public static void ProcessArmControlerInputPoint(Board board)
         {
             //解析IoIn
-            for (int i = 0; i < m_ArmControler.m_InputPoint.Length; i++)
+            for (int i = 0; i < (int) ARM_InputPoint.IO_IN_MAX; i++)
             {
-                bool State = m_ArmControler.ReadPoint(m_ArmControler.m_InputPoint[i]);
+                bool State = m_ArmControler.ReadInputPoint((ARM_InputPoint)i);
                 LED_State LedState = State ? LED_State.LED_ON : LED_State.LED_OFF;
-                if (State != m_ArmControler.m_InputPointState[i])
+                if (State != m_ArmControler.ReadInputPointStateBackups((ARM_InputPoint)i))
                 {
-                    m_ArmControler.m_InputPointState[i] = State;
+                    m_ArmControler.SetInputPointStateBackups((ARM_InputPoint)i, State);
 
                     ARM_InputPoint temp = (ARM_InputPoint)i;
                     switch (temp)
@@ -922,29 +1078,63 @@ namespace RobotWorkstation
                                 m_ArmControler.SetKeyLedByKey(board, ARM_InputPoint.IO_IN_KeyReset, LedState);
                             }
                             break;
-                        case ARM_InputPoint.IO_IN_EmptySalverAirCylUpArrive:
+                        case ARM_InputPoint.IO_IN_EmptySalverObstructAirCylUpArrive:
                             {
-                                DataStruct.SysStat.EmptySalverAirCylUpArrive = State;
+                                DataStruct.SysStat.EmptySalverObstructAirCylUpArrive = State;
                             }
                             break;
-                        case ARM_InputPoint.IO_IN_EmptySalverAirCylDownArrive:
+                        case ARM_InputPoint.IO_IN_EmptySalverObstructAirCylDownArrive:
                             {
-                                DataStruct.SysStat.EmptySalverAirCylDownArrive = State;
+                                DataStruct.SysStat.EmptySalverObstructAirCylDownArrive = State;
                             }
                             break;
-                        case ARM_InputPoint.IO_IN_OverturnSalverArrive:
+                        case ARM_InputPoint.IO_IN_EmptySalverObstructSensor:
                             {
-                                DataStruct.SysStat.OverturnSalverArrive = State;
+                                DataStruct.SysStat.EmptySalverObstructSensor = State;
                             }
                             break;
-                        case ARM_InputPoint.IO_IN_OverturnSalverAirCylGoArrive:
+                        case ARM_InputPoint.IO_IN_EmptySalverLiftingAirCylUpArrive:
                             {
-                                DataStruct.SysStat.OverturnSalverAirCylGoArrive = State;
+                                DataStruct.SysStat.ReceiveSalverLiftingAirCylUpArrive = State;
                             }
                             break;
-                        case ARM_InputPoint.IO_IN_OverturnSalverAirCylBackArrive:
+                        case ARM_InputPoint.IO_IN_EmptySalverLiftingAirCylDownArrive:
                             {
-                                DataStruct.SysStat.OverturnSalverAirCylBackArrive = State;
+                                DataStruct.SysStat.ReceiveSalverLiftingAirCylDownArrive    = State;
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_ConveyorLiftingAirCylUpArrive:
+                            {
+                                DataStruct.SysStat.ConveyorLiftingAirCylUpArrive = State;
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_ConveyorLiftingAirCylDownArrive:
+                            {
+                                DataStruct.SysStat.ConveyorLiftingAirCylDownArrive = State;
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_OverturnSalverTurnArrive:
+                            {
+                                DataStruct.SysStat.OverturnSalverTurnArrive = State;
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_OverturnSalverLockAirCylGoArrive:
+                            {
+                                DataStruct.SysStat.OverturnSalverLockAirCylGoArrive = State;
+                                if (State)
+                                    m_AutoRunAction = AutoRunAction.AutoRunTurnOverSalver;   //锁定成功后翻转
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_OverturnSalverLockAirCylBackArrive:
+                            {
+                                DataStruct.SysStat.OverturnSalverLockAirCylBackArrive = State;
+                                if (State)
+                                    m_AutoRunAction = AutoRunAction.AutoRunSaveNetShareFile;  //解锁成功后保存文件                     
+                            }
+                            break;
+                        case ARM_InputPoint.IO_IN_SalverRunOutStationSensor:
+                            {
+                                DataStruct.SysStat.SalverRunOutStationSensor = State;
                             }
                             break;
                         default:
@@ -954,29 +1144,60 @@ namespace RobotWorkstation
             }
         }
 
+        public static void ProcessArmControlerAxisPosition(Board board)
+        {
+            for (int i = 0; i < (int)Axis.Max; i++)  //处理需要处理轴的位置
+            {
+                switch ((Axis)i)
+                {
+                    case Axis.Conveyor:
+                        {
+                            m_ConveyorAxisCurPos = m_ArmControler.ReadAxisPostion(Axis.Conveyor);
+                        }
+                        break;
+                    case Axis.OverTurn:
+                        {
+                            m_OverTurnAxisCurPos = m_ArmControler.ReadAxisPostion(Axis.OverTurn);
+                            if (m_OverTurnAxisCurPos == 0)  //翻转托盘在原点位置
+                            {
+                                DataStruct.SysStat.OverturnSalverHomeArrive = true;
+                                DataStruct.SysStat.OverturnSalverOk = true;
+                            }
+                            else if (m_OverTurnAxisCurPos == ArmControler.m_OverturnAxisMaxStep && DataStruct.SysStat.OverturnSalverTurnArrive)
+                            {
+                                m_AutoRunAction = AutoRunAction.AutoRunUnLockDevices;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         public static void ProcessKey(Key key)
         {
             switch (key)
             {
-                case Key.Key_Run:
+                case Key.Key_Run:  //开始启动和暂停启动
                     {
-                        int Re = CheckSysAlarm();
-                        if (Re == 0)
-                            m_MainThreadEvent.Set();
-
-                        //if ((DataStruct.SysStat.Ready) && (!DataStruct.SysStat.Stop))
+                        if (DataStruct.SysStat.Ready && !DataStruct.SysStat.Stop)
                         {
+                            m_ThreadEvent.Set();
                             DataStruct.SysStat.Run = true;
                             DataStruct.SysStat.Pause = false;
+                        }
+                        else
+                        {
+                            Global.MessageBoxShow(Global.StrRunError);
                         }
                     }
                     break;
                 case Key.Key_Pause:
-                    {
-                        m_MainThreadEvent.Reset();
-
-                        if (!DataStruct.SysStat.Stop)
+                    {                     
+                        if (DataStruct.SysStat.Run && !DataStruct.SysStat.Stop)
                         {
+                            m_ThreadEvent.Reset();
                             DataStruct.SysStat.Pause = true;
                             DataStruct.SysStat.Run = false;
                         }
@@ -984,8 +1205,7 @@ namespace RobotWorkstation
                     break;
                 case Key.Key_Stop:
                     {
-                        m_MainThreadEvent.Reset();
-
+                        m_ThreadEvent.Reset();
                         DataStruct.SysStat.Ready = false;
                         DataStruct.SysStat.Run = false;
                         DataStruct.SysStat.Pause = false;
@@ -993,37 +1213,23 @@ namespace RobotWorkstation
                     }
                     break;
                 case Key.Key_Reset:
-                    {
-                        DataStruct.InitDataStruct();
-
-                        int Rtn = CheckSysAlarm();
-                        if (Rtn == 0)
+                    {                        
+                        ResetWorkStation();
+                        if (m_StationAlarmState == StationAlarmState.NoAlarm)
                         {
                             DataStruct.SysStat.Ready = true;
                             DataStruct.SysStat.Run = false;
-                            DataStruct.SysStat.Stop = false;
                             DataStruct.SysStat.Pause = false;
+                            DataStruct.SysStat.Stop = false;
+                            DataStruct.SysStat.Reset = false;
                         }
-                        else if (Rtn == 1)
+                        else  //存在警告
                         {
-                            DataStruct.SysStat.Pause = true;
                             DataStruct.SysStat.Ready = false;
                             DataStruct.SysStat.Run = false;
-                            DataStruct.SysStat.Stop = false;
-                        }
-                        else if (Rtn == 2)
-                        {
+                            DataStruct.SysStat.Pause = false;                                                       
                             DataStruct.SysStat.Stop = true;
-                            DataStruct.SysStat.Ready = false;
-                            DataStruct.SysStat.Run = false;
-                            DataStruct.SysStat.Pause = false;
-                        }
-                        else
-                        {
-                            DataStruct.SysStat.Pause = true;
-                            DataStruct.SysStat.Stop = false;
-                            DataStruct.SysStat.Ready = false;
-                            DataStruct.SysStat.Run = false;
+                            DataStruct.SysStat.Reset = true;
                         }
                     }
                     break;

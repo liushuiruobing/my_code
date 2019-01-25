@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Net;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 namespace RobotWorkstation
 {   
@@ -16,6 +17,7 @@ namespace RobotWorkstation
         private UserLimitsForm m_UserLimitsForm = null;
 
         //所需模块
+        private Process m_VisualProcess = new Process();
         private RobotDevice m_Robot = null;  //机械臂             
         private RFID m_RFID = null;   //RFID      
         private QRCode m_QRCode = null; //二维码
@@ -239,8 +241,13 @@ namespace RobotWorkstation
             if (m_Robot != null)
                 m_Robot.Close();
 
+            if (m_VisualProcess != null)
+                m_VisualProcess.Dispose();
+
             Profile.SaveConfigFile();
             this.Close();
+
+            
         }
 
         public void InitWorkStation()
@@ -248,9 +255,29 @@ namespace RobotWorkstation
             DataStruct.InitDataStruct();
             Profile.LoadConfigFile();
 
-            //InitTcp();
+            InitAndRunVisualService();
+            InitTcp();
             InitWorkstatiionAndStart();
             InitAndCreateAllThread();  //创建所有线程
+        }
+
+        //启动视觉服务程序
+        public void InitAndRunVisualService()
+        {
+            const string VisualService = "VisualService.exe";
+            string VisualServicePath = AppDomain.CurrentDomain.BaseDirectory + "VisualService\\" + VisualService;
+
+            if (File.Exists(VisualServicePath))
+            {
+                m_VisualProcess.StartInfo.FileName = VisualService;
+                m_VisualProcess.StartInfo.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory + "VisualService";
+                m_VisualProcess.StartInfo.CreateNoWindow = true;
+                m_VisualProcess.Start();
+            }
+            else
+            {
+                Global.MessageBoxShow(Global.StrStartVisualServiceError);
+            }
         }
 
         public void InitTcp()
@@ -264,12 +291,12 @@ namespace RobotWorkstation
                 m_MyTcpClientCamera.CreateConnect(CameraIp, CameraPort);
                 if (!m_MyTcpClientCamera.IsConnected)
                 {
-                    DataStruct.SysStat.Camera = 1;
+                    DataStruct.SysStat.CameraOk = false;
                     m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
                 }
                 else
                 {
-                    DataStruct.SysStat.Camera = 0;
+                    DataStruct.SysStat.CameraOk = true;
                     m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, false);
                 }
             }
@@ -279,12 +306,12 @@ namespace RobotWorkstation
             m_MyTcpClientArm = m_ArmControler.m_MyTcpClientArm[(int)Board.Controler];
             if (!m_MyTcpClientArm.IsConnected)
             {
-                DataStruct.SysStat.ARM = 1;
+                DataStruct.SysStat.ArmControlerOk = false;
                 m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, true);
             }
             else
             {
-                DataStruct.SysStat.ARM = 0;
+                DataStruct.SysStat.ArmControlerOk = true;
                 m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, false);
             }
 
@@ -297,12 +324,12 @@ namespace RobotWorkstation
                 bool Re = m_MyTcpServer.CreatServer(ServerIp, ServerPort);
                 if (!Re)
                 {
-                    DataStruct.SysStat.Server = 1;
+                    DataStruct.SysStat.ServerOk = false;
                     m_SysAlarm.SetAlarm(SysAlarm.Type.Server, true);
                 }
                 else
                 {
-                    DataStruct.SysStat.Server = 0;
+                    DataStruct.SysStat.ServerOk = true;
                     m_SysAlarm.SetAlarm(SysAlarm.Type.Server, false);
                 }
             }
@@ -318,28 +345,29 @@ namespace RobotWorkstation
                 Global.MessageBoxShow(Global.StrCreateShareFolder);
             }
 
-            ////Robot
-            //m_Robot = RobotDevice.GetInstance();  
-            //bool Re = m_Robot.InitRobot();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.Robot = 1;
-            //    m_SysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
-            //    Global.MessageBoxShow(Global.StrRobotInitError);
-            //}
-            //else
-            //{
-            //    m_Robot.ServoOn();
-            //    //m_Robot.RunSelectedProgram(1);
-            //    m_Robot.m_PointList = m_Robot.GetGlobalPointData();
-            //}
+            //Robot
+            m_Robot = RobotDevice.GetInstance();  
+            bool Re = m_Robot.InitRobot();
+            if (!Re)
+            {
+                DataStruct.SysStat.RobotOk = false;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
+                Global.MessageBoxShow(Global.StrRobotInitError);
+            }
+            else
+            {
+                DataStruct.SysStat.RobotOk = true;
+                m_Robot.ServoOn();
+                //m_Robot.RunSelectedProgram(1);
+                m_Robot.m_PointList = m_Robot.GetGlobalPointData();
+            }
 
             //RFID
             m_RFID = RFID.GetInstance();
-            bool Re = m_RFID.Connect(Profile.m_Config.RfidIp);
+            Re = m_RFID.Connect(Profile.m_Config.RfidIp);
             if (!Re)
             {
-                DataStruct.SysStat.RFID = 1;
+                DataStruct.SysStat.RfidOk = false;
                 m_SysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
             }
             else
@@ -348,27 +376,27 @@ namespace RobotWorkstation
                 m_RFID.Init(m_RFID.m_CurCh);
                 m_RFID.Enable(m_RFID.m_CurCh);
 
-                DataStruct.SysStat.RFID = 0;
+                DataStruct.SysStat.RfidOk = true;
                 m_SysAlarm.SetAlarm(SysAlarm.Type.RFID, false);
             }
 
-            ////二维码
-            //m_QRCode = QRCode.GetInstance(); 
-            //string Port = Profile.m_Config.QRCodePort;
-            //string BandRate = Profile.m_Config.QRCodeBandRate;
+            //二维码
+            m_QRCode = QRCode.GetInstance(); 
+            string Port = Profile.m_Config.QRCodePort;
+            string BandRate = Profile.m_Config.QRCodeBandRate;
 
-            //m_QRCode.QRCodeCommunParamInit(Port, BandRate);
-            //Re = m_QRCode.QRCodeInit();
-            //if (!Re)
-            //{
-            //    DataStruct.SysStat.QRCode = 1;
-            //    m_SysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
-            //}
-            //else
-            //{
-            //    DataStruct.SysStat.QRCode = 0;
-            //    m_SysAlarm.SetAlarm(SysAlarm.Type.QRCode, false);
-            //}
+            m_QRCode.QRCodeCommunParamInit(Port, BandRate);
+            Re = m_QRCode.QRCodeInit();
+            if (!Re)
+            {
+                DataStruct.SysStat.QRCodeOk = false;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
+            }
+            else
+            {
+                DataStruct.SysStat.QRCodeOk = true;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.QRCode, false);
+            }
         }
 
         public void InitAndCreateAllThread()

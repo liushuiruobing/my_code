@@ -63,7 +63,7 @@
             this.customLabel5 = new RobotWorkstation.CustomLabel();
             this.PicQRCodeScanner = new System.Windows.Forms.PictureBox();
             this.customLabel4 = new RobotWorkstation.CustomLabel();
-            this.PicSalverEmpty = new System.Windows.Forms.PictureBox();
+            this.PicOverturnSalver = new System.Windows.Forms.PictureBox();
             this.PicCamera = new System.Windows.Forms.PictureBox();
             this.customLabel2 = new RobotWorkstation.CustomLabel();
             this.customLabel3 = new RobotWorkstation.CustomLabel();
@@ -82,7 +82,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.DgvSysAlarm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRfid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicQRCodeScanner)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicSalverEmpty)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicOverturnSalver)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicCamera)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRobot)).BeginInit();
             this.SuspendLayout();
@@ -251,7 +251,7 @@
             this.customGroupBox1.Controls.Add(this.customLabel5);
             this.customGroupBox1.Controls.Add(this.PicQRCodeScanner);
             this.customGroupBox1.Controls.Add(this.customLabel4);
-            this.customGroupBox1.Controls.Add(this.PicSalverEmpty);
+            this.customGroupBox1.Controls.Add(this.PicOverturnSalver);
             this.customGroupBox1.Controls.Add(this.PicCamera);
             this.customGroupBox1.Controls.Add(this.customLabel2);
             this.customGroupBox1.Controls.Add(this.customLabel3);
@@ -268,7 +268,7 @@
             // PicArm
             // 
             this.PicArm.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicArm.Location = new System.Drawing.Point(830, 23);
+            this.PicArm.Location = new System.Drawing.Point(835, 22);
             this.PicArm.Name = "PicArm";
             this.PicArm.Size = new System.Drawing.Size(24, 24);
             this.PicArm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -280,7 +280,7 @@
             this.customLabel9.AutoSize = true;
             this.customLabel9.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel9.Location = new System.Drawing.Point(734, 24);
+            this.customLabel9.Location = new System.Drawing.Point(734, 22);
             this.customLabel9.Name = "customLabel9";
             this.customLabel9.Size = new System.Drawing.Size(95, 23);
             this.customLabel9.TabIndex = 12;
@@ -409,7 +409,7 @@
             // PicRfid
             // 
             this.PicRfid.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicRfid.Location = new System.Drawing.Point(649, 23);
+            this.PicRfid.Location = new System.Drawing.Point(658, 22);
             this.PicRfid.Name = "PicRfid";
             this.PicRfid.Size = new System.Drawing.Size(24, 24);
             this.PicRfid.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -421,7 +421,7 @@
             this.customLabel5.AutoSize = true;
             this.customLabel5.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel5.Location = new System.Drawing.Point(553, 23);
+            this.customLabel5.Location = new System.Drawing.Point(553, 22);
             this.customLabel5.Name = "customLabel5";
             this.customLabel5.Size = new System.Drawing.Size(99, 23);
             this.customLabel5.TabIndex = 8;
@@ -430,7 +430,7 @@
             // PicQRCodeScanner
             // 
             this.PicQRCodeScanner.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicQRCodeScanner.Location = new System.Drawing.Point(468, 23);
+            this.PicQRCodeScanner.Location = new System.Drawing.Point(472, 22);
             this.PicQRCodeScanner.Name = "PicQRCodeScanner";
             this.PicQRCodeScanner.Size = new System.Drawing.Size(24, 24);
             this.PicQRCodeScanner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -442,26 +442,26 @@
             this.customLabel4.AutoSize = true;
             this.customLabel4.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel4.Location = new System.Drawing.Point(357, 22);
+            this.customLabel4.Location = new System.Drawing.Point(354, 22);
             this.customLabel4.Name = "customLabel4";
             this.customLabel4.Size = new System.Drawing.Size(112, 23);
             this.customLabel4.TabIndex = 6;
             this.customLabel4.Text = "二维码读码器";
             // 
-            // PicSalverEmpty
+            // PicOverturnSalver
             // 
-            this.PicSalverEmpty.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicSalverEmpty.Location = new System.Drawing.Point(1011, 23);
-            this.PicSalverEmpty.Name = "PicSalverEmpty";
-            this.PicSalverEmpty.Size = new System.Drawing.Size(24, 24);
-            this.PicSalverEmpty.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.PicSalverEmpty.TabIndex = 5;
-            this.PicSalverEmpty.TabStop = false;
+            this.PicOverturnSalver.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
+            this.PicOverturnSalver.Location = new System.Drawing.Point(1015, 22);
+            this.PicOverturnSalver.Name = "PicOverturnSalver";
+            this.PicOverturnSalver.Size = new System.Drawing.Size(24, 24);
+            this.PicOverturnSalver.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.PicOverturnSalver.TabIndex = 5;
+            this.PicOverturnSalver.TabStop = false;
             // 
             // PicCamera
             // 
             this.PicCamera.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicCamera.Location = new System.Drawing.Point(106, 23);
+            this.PicCamera.Location = new System.Drawing.Point(106, 22);
             this.PicCamera.Name = "PicCamera";
             this.PicCamera.Size = new System.Drawing.Size(24, 24);
             this.PicCamera.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -484,16 +484,16 @@
             this.customLabel3.AutoSize = true;
             this.customLabel3.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel3.Location = new System.Drawing.Point(965, 22);
+            this.customLabel3.Location = new System.Drawing.Point(948, 22);
             this.customLabel3.Name = "customLabel3";
-            this.customLabel3.Size = new System.Drawing.Size(44, 23);
+            this.customLabel3.Size = new System.Drawing.Size(61, 23);
             this.customLabel3.TabIndex = 4;
-            this.customLabel3.Text = "缺盘";
+            this.customLabel3.Text = "翻转盘";
             // 
             // PicRobot
             // 
             this.PicRobot.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicRobot.Location = new System.Drawing.Point(287, 23);
+            this.PicRobot.Location = new System.Drawing.Point(287, 22);
             this.PicRobot.Name = "PicRobot";
             this.PicRobot.Size = new System.Drawing.Size(24, 24);
             this.PicRobot.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -505,7 +505,7 @@
             this.customLabel1.AutoSize = true;
             this.customLabel1.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel1.Location = new System.Drawing.Point(220, 23);
+            this.customLabel1.Location = new System.Drawing.Point(220, 22);
             this.customLabel1.Name = "customLabel1";
             this.customLabel1.Size = new System.Drawing.Size(61, 23);
             this.customLabel1.TabIndex = 0;
@@ -613,7 +613,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.DgvSysAlarm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRfid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicQRCodeScanner)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicSalverEmpty)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PicOverturnSalver)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicCamera)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRobot)).EndInit();
             this.ResumeLayout(false);
@@ -632,7 +632,7 @@
         private CustomButton CButtonStop;
         private CustomButton CButtonReset;
         private CustomGroupBox customGroupBox1;
-        private System.Windows.Forms.PictureBox PicSalverEmpty;
+        private System.Windows.Forms.PictureBox PicOverturnSalver;
         private CustomLabel customLabel3;
         private System.Windows.Forms.PictureBox PicCamera;
         private CustomLabel customLabel2;

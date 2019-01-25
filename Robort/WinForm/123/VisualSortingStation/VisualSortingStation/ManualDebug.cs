@@ -109,9 +109,13 @@ namespace RobotWorkstation
             }
 
             //Arm Controler
-            //空盘气缸
-            PicBoxEmptySalverUpArrive.Image = DataStruct.SysStat.EmptySalverAirCylUpArrive ? bmpGreen : bmpDarkGreen;
-            PicBoxEmptySalverDownArrive.Image = DataStruct.SysStat.EmptySalverAirCylDownArrive ? bmpGreen : bmpDarkGreen;
+            //气缸
+            PicBoxEmptySalverObstructUpArrive.Image = DataStruct.SysStat.EmptySalverObstructAirCylUpArrive ? bmpGreen : bmpDarkGreen;
+            PicBoxEmptySalverObstructDownArrive.Image = DataStruct.SysStat.EmptySalverObstructAirCylDownArrive ? bmpGreen : bmpDarkGreen;
+            PicBoxEmptySalverUpArrive.Image = DataStruct.SysStat.ReceiveSalverLiftingAirCylUpArrive ? bmpGreen : bmpDarkGreen;
+            PicBoxEmptySalverDownArrive.Image = DataStruct.SysStat.ReceiveSalverLiftingAirCylDownArrive ? bmpGreen : bmpDarkGreen;
+            PicBoxConveyorUpArrive.Image = DataStruct.SysStat.ConveyorLiftingAirCylUpArrive ? bmpGreen : bmpDarkGreen;
+            PicBoxConveyorDownArrive.Image = DataStruct.SysStat.ConveyorLiftingAirCylDownArrive ? bmpGreen : bmpDarkGreen;
 
             //按键
             PicKeyRun.Image = DataStruct.SysStat.KeyRun ? bmpGreen : bmpDarkGreen;
@@ -119,22 +123,23 @@ namespace RobotWorkstation
             PicKeyStop.Image = DataStruct.SysStat.KeyStop ? bmpGreen : bmpDarkGreen;
             PicKeyReset.Image = DataStruct.SysStat.KeyReset ? bmpGreen : bmpDarkGreen;
 
+            //传感器
+            PicBoxEmptySalverObstructSensor.Image = DataStruct.SysStat.EmptySalverObstructSensor ? bmpGreen : bmpDarkGreen;
+            PicBoxSalverRunOutStationSensor.Image = DataStruct.SysStat.SalverRunOutStationSensor ? bmpGreen : bmpDarkGreen;
+
             //翻转机构
-            PicOverturn.Image = DataStruct.SysStat.OverturnSalverArrive ? bmpGreen : bmpDarkGreen;
-            PicOverturnCylLock.Image = DataStruct.SysStat.OverturnSalverAirCylGoArrive ? bmpGreen : bmpDarkGreen;
-            PicOverturnCylUnLock.Image = DataStruct.SysStat.OverturnSalverAirCylBackArrive ? bmpGreen : bmpDarkGreen;
+            PicOverturn.Image = DataStruct.SysStat.OverturnSalverTurnArrive ? bmpGreen : bmpDarkGreen;
+            PicOverturnCylLock.Image = DataStruct.SysStat.OverturnSalverLockAirCylGoArrive ? bmpGreen : bmpDarkGreen;
+            PicOverturnCylUnLock.Image = DataStruct.SysStat.OverturnSalverLockAirCylBackArrive ? bmpGreen : bmpDarkGreen;
 
             if (m_ArmControler.IsBoardConnected(Board.Controler))
             {
-                m_ArmControler.SendReadPostion(Axis.Conveyor);
-                int postion = m_ArmControler.ReadPostion(Axis.Conveyor);
-                CTxtAxisConveyorCurPos.Text = Convert.ToString(postion);
+                CTxtAxisConveyorCurPos.Text = Convert.ToString(VisualSortingStation.m_ConveyorAxisCurPos);
 
                 TextBox[] txtState = new TextBox[(int)Axis.Max] { CTxtAxisConveyorrState, CTxtAxisTurnOverState };
                 for (int i = 0; i < (int)Axis.Max; i++)
                 {
-                    m_ArmControler.SendReadState(m_ArmControler.m_AxisNumber[i]);
-                    txtState[i].Text = m_ArmControler.ReadState(m_ArmControler.m_AxisNumber[i]);
+                    txtState[i].Text = m_ArmControler.ReadAxisStateString((Axis)i);
                 }
             }
         }
@@ -182,6 +187,9 @@ namespace RobotWorkstation
 
             if (CGroupBoxArmKeyIn.Enabled != ArmConnectState)
                 CGroupBoxArmKeyIn.Enabled = ArmConnectState;
+
+            if (CGroupBoxArmSensor.Enabled != ArmConnectState)
+                CGroupBoxArmSensor.Enabled = ArmConnectState;
 
             if (CGrpAxisConveyor.Enabled != ArmConnectState)
                 CGrpAxisConveyor.Enabled = ArmConnectState;
@@ -695,7 +703,11 @@ namespace RobotWorkstation
 
         private void CBtnRobotTestTurnOver_Click(object sender, EventArgs e)
         {
-            CBtnTurnOver_Click(null, null);
+            AxisState CurState = m_ArmControler.ReadAxisState(Axis.OverTurn);
+            if (CurState == AxisState.Ready)
+            {
+                m_ArmControler.MoveAbs(Axis.OverTurn, ArmControler.m_OverturnAxisMaxStep);
+            }
         }
 
         private void CBtnRobotGrapGo_Click(object sender, EventArgs e)
@@ -880,14 +892,34 @@ namespace RobotWorkstation
             m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_Beep, IOValue.IOValueLow);
         }
 
-        private void CButtonIoEmptyPlateUp_Click_1(object sender, EventArgs e)
+        private void CButtonEmptySalverObstructUp_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverAirCylUp, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverObstructAirCylRun, IOValue.IOValueHigh);
         }
 
-        private void CButtonIoEmptyPlateDown_Click_1(object sender, EventArgs e)
+        private void CButtonEmptySalverObstructDown_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverAirCylDown, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverObstructAirCylRun, IOValue.IOValueLow);
+        }
+
+        private void CButtonIoEmptySalverLiftingUp_Click(object sender, EventArgs e)
+        {
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverLiftingAirCylRun, IOValue.IOValueHigh);
+        }
+
+        private void CButtonIoEmptySalverLiftingDown_Click(object sender, EventArgs e)
+        {
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverLiftingAirCylRun, IOValue.IOValueLow);
+        }
+
+        private void CButtonConveyorUp_Click(object sender, EventArgs e)
+        {
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_ConveyorLiftingAirCylRun, IOValue.IOValueHigh);
+        }
+
+        private void CButtonConveyorDown_Click(object sender, EventArgs e)
+        {
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_ConveyorLiftingAirCylRun, IOValue.IOValueLow);
         }
 
         #endregion
@@ -1010,7 +1042,7 @@ namespace RobotWorkstation
 
         private void CBtnTurnOver_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.TurnOver;
+            Axis AxisIndex = Axis.OverTurn;
             m_ArmControler.ResetError(AxisIndex);
             SetSpeedParamTurnOverAxis(AxisIndex);
             MoveMaual(AxisIndex, CTxtAxisTurnOverStep, true);
@@ -1018,29 +1050,28 @@ namespace RobotWorkstation
 
         private void CBtnTurnOverReset_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.TurnOver;
+            Axis AxisIndex = Axis.OverTurn;
             m_ArmControler.ResetError(AxisIndex);
             m_ArmControler.BackHome(AxisIndex, AxisDir.Reverse);
         }
 
         private void CBtnTurnOverLockCylOpen_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverLockAirCyl, IOValue.IOValueHigh);
         }
 
         private void CBtnTurnOverLockCylClose_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverAirCyl, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverLockAirCyl, IOValue.IOValueLow);
         }
 
         private void CBtnTurnOverAxisErrorReset_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.TurnOver;
+            Axis AxisIndex = Axis.OverTurn;
             m_ArmControler.ResetError(AxisIndex);
         }
 
+
         #endregion
-
-
     }
 }

@@ -122,11 +122,11 @@ namespace RobotWorkstation
             }
         }
 
-        public string GetSaveFileName(int TrayNum)
+        public string GetSaveFileName(int TraySn)
         {
             DateTime CurentDate = DateTime.Now;
 
-            string Header = TrayNum.ToString() + "_RFID_";
+            string Header = TraySn.ToString() + "_RFID_";
             string Date = CurentDate.Year.ToString() + CurentDate.Month.ToString("D2") + CurentDate.Day.ToString("D2") + "_";
             string Time = CurentDate.Hour.ToString("D2") + CurentDate.Minute.ToString("D2") + CurentDate.Second.ToString("D2");
             string FileSuffix = ".xml";
