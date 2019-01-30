@@ -17,12 +17,11 @@ namespace RobotWorkstation
         public string CameraIp;
         public int CameraPort;
 
-        //RFID
-        public string RfidIp;
-        public ushort RfidCh;
-        public string RfidSn;
+        //QRCode
+        public string QRCodePort;
+        public string QRCodeBandRate;
 
-        //Controler Arm
+        //Conveyor_Empty Arm
         public string ControlerArmIp;
         public string ControlerArmMac;
         public int ControlerArmPort;
@@ -46,12 +45,11 @@ namespace RobotWorkstation
             CameraIp = "192.168.1.46";
             CameraPort = 20002;
 
-            //RFID
-            RfidIp = "192.168.1.24";
-            RfidCh = 0;
-            RfidSn = "0001";
+            //QRCode
+            QRCodePort = "COM1";
+            QRCodeBandRate = "115200";
 
-            //Controler Arm
+            //Conveyor_Empty Arm
             ControlerArmIp = "192.168.1.42";
             ControlerArmPort = 20001;
             ControlerArmMac = "94-F7-20-01-BD-10";

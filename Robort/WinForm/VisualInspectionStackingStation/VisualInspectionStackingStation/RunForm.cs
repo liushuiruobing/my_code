@@ -68,20 +68,20 @@ namespace RobotWorkstation
         private void TimerCheckAllStatus_Tick(object sender, EventArgs e)
         {
             //运行指示灯
-            PicLedReady.Image = DataStruct.SysStat.Ready ? Properties.Resources.LightBlue : Properties.Resources.DarkBlue;
-            PicLedRun.Image = DataStruct.SysStat.Run ? Properties.Resources.LightGreen : Properties.Resources.DarkGreen;
-            PicLedAlarm.Image = DataStruct.SysStat.Pause ? Properties.Resources.LightYellow : Properties.Resources.DarkYellow;
-            PicLedStop.Image = DataStruct.SysStat.Stop ? Properties.Resources.LightRed : Properties.Resources.DarkRed;
+            PicLedReady.Image = DataStruct.SysStat.StationReady ? Properties.Resources.LightBlue : Properties.Resources.DarkBlue;
+            PicLedRun.Image = DataStruct.SysStat.StationRun ? Properties.Resources.LightGreen : Properties.Resources.DarkGreen;
+            PicLedAlarm.Image = DataStruct.SysStat.StationPause ? Properties.Resources.LightYellow : Properties.Resources.DarkYellow;
+            PicLedStop.Image = DataStruct.SysStat.StationStop ? Properties.Resources.LightRed : Properties.Resources.DarkRed;
 
             //设置报警灯的状态
-            if (DataStruct.SysStat.Run)
-                WorkStation.SetSysAlarmLed(0);
-            else if (DataStruct.SysStat.Pause && !DataStruct.SysStat.Stop)
-                WorkStation.SetSysAlarmLed(1);
-            else if (!DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                WorkStation.SetSysAlarmLed(2);
-            else if (DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                WorkStation.SetSysAlarmLed(3);
+            if (DataStruct.SysStat.StationRun)
+                WorkStation.SetSysAlarmTowerLed(AlarmLed.AlarmLed_Green);
+            else if (DataStruct.SysStat.StationPause && !DataStruct.SysStat.StationStop)
+                WorkStation.SetSysAlarmTowerLed(AlarmLed.AlarmLed_Oriange);
+            else if (!DataStruct.SysStat.StationPause && DataStruct.SysStat.StationStop)
+                WorkStation.SetSysAlarmTowerLed(AlarmLed.AlarmLed_Red);
+            else if (DataStruct.SysStat.StationPause && DataStruct.SysStat.StationStop)
+                WorkStation.SetSysAlarmTowerLed(AlarmLed.AlarmLed_OriangeAndRed);
 
             //运行状态更新
             Bitmap bmpGreen = Properties.Resources.SmallGreen;
@@ -89,7 +89,6 @@ namespace RobotWorkstation
 
             PicRobot.Image = DataStruct.SysStat.RobotOk ? bmpGreen : bmpRed;
             PicCamera.Image = DataStruct.SysStat.CameraOk? bmpGreen : bmpRed;
-            PicRfid.Image = DataStruct.SysStat.RfidOk ? bmpGreen : bmpRed;
             PicArm.Image = DataStruct.SysStat.ArmControlerOk ? bmpGreen : bmpRed;
 
             //添加报警信息

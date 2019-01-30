@@ -19,11 +19,12 @@ namespace RobotWorkstation
         private UserLimitsForm m_UserLimitsForm = null;
 
         //所需模块
-        private Process m_VisualProcess = new Process();       
-        private RFID m_RFID = null;   //RFID      
+        private Process m_VisualProcess = new Process();        
         public static ArmControler m_ArmControler = ArmControler.GetInstance();
+        public static GraspRobot m_GraspRobot = GraspRobot.GetInstance();
+        public static QRCode m_QRCode = QRCode.GetInstance();
         private static MyTcpClient m_MyTcpClientArm = null;
-        private static MyTcpClient m_MyTcpClientCamera = null;
+        private static MyTcpClient m_MyTcpClientVisual = null;
         private MyTcpServer m_MyTcpServer = null;
         private SysAlarm m_SysAlarm = SysAlarm.GetInstance();
 
@@ -58,9 +59,9 @@ namespace RobotWorkstation
             MultiLanguage.LoadLanguage(this, typeof(MainForm));
         }
 
-        public static MyTcpClient GetMyTcpClientCamera()
+        public static MyTcpClient GetMyTcpClientVisual()
         {
-            return m_MyTcpClientCamera;
+            return m_MyTcpClientVisual;
         }
 
         public void InitWindowSize()
@@ -284,13 +285,13 @@ namespace RobotWorkstation
         public void InitTcp()
         {
             //和Camera通信
-            m_MyTcpClientCamera = new MyTcpClient();
-            if (m_MyTcpClientCamera != null)
+            m_MyTcpClientVisual = new MyTcpClient();
+            if (m_MyTcpClientVisual != null)
             {
                 IPAddress CameraIp = IPAddress.Parse(Profile.m_Config.CameraIp);
                 int CameraPort = Profile.m_Config.CameraPort;
-                m_MyTcpClientCamera.CreateConnect(CameraIp, CameraPort);
-                if (!m_MyTcpClientCamera.IsConnected)
+                m_MyTcpClientVisual.CreateConnect(CameraIp, CameraPort);
+                if (!m_MyTcpClientVisual.IsConnected)
                 {
                     DataStruct.SysStat.CameraOk = false;
                     m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
@@ -304,7 +305,7 @@ namespace RobotWorkstation
 
             //和单片机通信
             m_ArmControler.Open();
-            m_MyTcpClientArm = m_ArmControler.m_MyTcpClientArm[(int)Board.Controler];
+            m_MyTcpClientArm = m_ArmControler.m_MyTcpClientArm[(int)Board.Conveyor_Empty];
             if (!m_MyTcpClientArm.IsConnected)
             {
                 DataStruct.SysStat.ArmControlerOk = false;
@@ -341,22 +342,34 @@ namespace RobotWorkstation
 
         public void InitWorkstatiionAndStart()
         {
-            //RFID
-            m_RFID = RFID.GetInstance();
-            bool Re = m_RFID.Connect(Profile.m_Config.RfidIp);
+            //Robot
+            bool Re = m_GraspRobot.InitRobot();
             if (!Re)
             {
-                DataStruct.SysStat.RfidOk = false;
-                m_SysAlarm.SetAlarm(SysAlarm.Type.RFID, true);
+                DataStruct.SysStat.RobotOk = false;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.Robot, true);
+                Global.MessageBoxShow(Global.StrRobotInitError);
             }
             else
             {
-                m_RFID.m_CurCh = Profile.m_Config.RfidCh;
-                m_RFID.Init(m_RFID.m_CurCh);
-                m_RFID.Enable(m_RFID.m_CurCh);
+                DataStruct.SysStat.RobotOk = true;
+            }
 
-                DataStruct.SysStat.RfidOk = true;
-                m_SysAlarm.SetAlarm(SysAlarm.Type.RFID, false);
+            //二维码
+            string Port = Profile.m_Config.QRCodePort;
+            string BandRate = Profile.m_Config.QRCodeBandRate;
+
+            m_QRCode.QRCodeCommunParamInit(Port, BandRate);
+            Re = m_QRCode.QRCodeInit();
+            if (!Re)
+            {
+                DataStruct.SysStat.QRCodeOk = false;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.QRCode, true);
+            }
+            else
+            {
+                DataStruct.SysStat.QRCodeOk = true;
+                m_SysAlarm.SetAlarm(SysAlarm.Type.QRCode, false);
             }
         }
 
@@ -379,16 +392,8 @@ namespace RobotWorkstation
                 Axis axis = (Axis)i;
                 switch (axis)
                 {
-                    case Axis.Conveyor:
+                    case Axis.Conveyor_EmptyOuterBasket:
                         {
-                            int RunSpeed = Profile.m_Config.ConveyorAxisRunSpeed;
-                            m_ArmControler.SetSpeedParam(Axis.Conveyor, StartSpeed, RunSpeed, AddSpeed, DecSpeed, true);
-                        }
-                        break;
-                    case Axis.OverTurn:
-                        {
-                            int RunSpeed = Profile.m_Config.OverturnAxisRunSpeed;
-                            m_ArmControler.SetSpeedParam(Axis.OverTurn, StartSpeed, RunSpeed, AddSpeed, DecSpeed, true);
                         }
                         break;
                     default:

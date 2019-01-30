@@ -49,8 +49,6 @@
             this.Level = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AlarmText = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Dealwith = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PicRfid = new System.Windows.Forms.PictureBox();
-            this.customLabel5 = new RobotWorkstation.CustomLabel();
             this.PicCamera = new System.Windows.Forms.PictureBox();
             this.customLabel2 = new RobotWorkstation.CustomLabel();
             this.PicRobot = new System.Windows.Forms.PictureBox();
@@ -66,7 +64,6 @@
             this.customGroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicArm)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DgvSysAlarm)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicRfid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicCamera)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRobot)).BeginInit();
             this.SuspendLayout();
@@ -123,8 +120,6 @@
             this.customGroupBox1.Controls.Add(this.customLabel9);
             this.customGroupBox1.Controls.Add(this.CButtonClearSysAlarm);
             this.customGroupBox1.Controls.Add(this.DgvSysAlarm);
-            this.customGroupBox1.Controls.Add(this.PicRfid);
-            this.customGroupBox1.Controls.Add(this.customLabel5);
             this.customGroupBox1.Controls.Add(this.PicCamera);
             this.customGroupBox1.Controls.Add(this.customLabel2);
             this.customGroupBox1.Controls.Add(this.PicRobot);
@@ -140,7 +135,7 @@
             // PicArm
             // 
             this.PicArm.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicArm.Location = new System.Drawing.Point(835, 22);
+            this.PicArm.Location = new System.Drawing.Point(476, 22);
             this.PicArm.Name = "PicArm";
             this.PicArm.Size = new System.Drawing.Size(24, 24);
             this.PicArm.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -152,7 +147,7 @@
             this.customLabel9.AutoSize = true;
             this.customLabel9.Font = new System.Drawing.Font("微软雅黑", 12.5F);
             this.customLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel9.Location = new System.Drawing.Point(734, 22);
+            this.customLabel9.Location = new System.Drawing.Point(375, 22);
             this.customLabel9.Name = "customLabel9";
             this.customLabel9.Size = new System.Drawing.Size(95, 23);
             this.customLabel9.TabIndex = 12;
@@ -277,27 +272,6 @@
             this.Dealwith.Name = "Dealwith";
             this.Dealwith.ReadOnly = true;
             this.Dealwith.Width = 500;
-            // 
-            // PicRfid
-            // 
-            this.PicRfid.Image = global::RobotWorkstation.Properties.Resources.SmallGreen;
-            this.PicRfid.Location = new System.Drawing.Point(658, 22);
-            this.PicRfid.Name = "PicRfid";
-            this.PicRfid.Size = new System.Drawing.Size(24, 24);
-            this.PicRfid.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.PicRfid.TabIndex = 9;
-            this.PicRfid.TabStop = false;
-            // 
-            // customLabel5
-            // 
-            this.customLabel5.AutoSize = true;
-            this.customLabel5.Font = new System.Drawing.Font("微软雅黑", 12.5F);
-            this.customLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(210)))), ((int)(((byte)(210)))));
-            this.customLabel5.Location = new System.Drawing.Point(553, 22);
-            this.customLabel5.Name = "customLabel5";
-            this.customLabel5.Size = new System.Drawing.Size(99, 23);
-            this.customLabel5.TabIndex = 8;
-            this.customLabel5.Text = "RFID读码器";
             // 
             // PicCamera
             // 
@@ -431,7 +405,6 @@
             this.customGroupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PicArm)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DgvSysAlarm)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PicRfid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicCamera)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PicRobot)).EndInit();
             this.ResumeLayout(false);
@@ -453,8 +426,6 @@
         private CustomLabel customLabel2;
         private System.Windows.Forms.PictureBox PicRobot;
         private CustomLabel customLabel1;
-        private System.Windows.Forms.PictureBox PicRfid;
-        private CustomLabel customLabel5;
         private System.Windows.Forms.DataGridView DgvSysAlarm;
         private System.Windows.Forms.DataGridViewTextBoxColumn ID;
         private System.Windows.Forms.DataGridViewTextBoxColumn Level;

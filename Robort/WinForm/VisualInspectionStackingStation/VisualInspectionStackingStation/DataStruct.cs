@@ -11,17 +11,17 @@ namespace RobotWorkstation
         public struct SysStat
         {
             public static bool RobotOk;                                          
-            public static bool CameraOk;                                                                               
-            public static bool RfidOk;                                                                             
+            public static bool CameraOk;
+            public static bool QRCodeOk;
             public static bool ArmControlerOk;                                        
             public static bool ServerOk;                                        
 
             //系统的运行状态
-            public static bool Ready;          
-            public static bool Run;   
-            public static bool Pause;
-            public static bool Stop;
-            public static bool Reset;
+            public static bool StationReady;          
+            public static bool StationRun;   
+            public static bool StationPause;
+            public static bool StationStop;
+            public static bool StationReset;
 
             //外部按键输入
             public static bool KeyRun;
@@ -35,28 +35,21 @@ namespace RobotWorkstation
             public static bool LedGreen;
             public static bool LedBlue;        
             public static bool Beep;    //报警蜂鸣
-
-            //RFID
-            public static bool ReceiveSalverArrive;                 //翻转后接收盘经过RFID扫描后置true,用于自动测试中
-            public static bool ManualDebugReceiveSalverArrive;      //翻转后接收盘经过RFID扫描后置true，仅用于ManualDebug的测试中
-
-            public static bool EmptySalverObstructAirCylUpArrive;
         }
 
         public static void InitSysStat()
         {
             SysStat.RobotOk = false;                   
             SysStat.CameraOk = false;
-
-            SysStat.RfidOk = false;
+            SysStat.QRCodeOk = false;
             SysStat.ArmControlerOk = false;
             SysStat.ServerOk = false;
 
-            SysStat.Ready = false;
-            SysStat.Run = false;
-            SysStat.Pause = false;
-            SysStat.Stop = false;
-            SysStat.Reset = false;
+            SysStat.StationReady = false;
+            SysStat.StationRun = false;
+            SysStat.StationPause = false;
+            SysStat.StationStop = false;
+            SysStat.StationReset = false;
 
             SysStat.KeyRun = false;
             SysStat.KeyPause = false;
@@ -68,20 +61,17 @@ namespace RobotWorkstation
             SysStat.LedGreen = false;
             SysStat.LedBlue = false;
             SysStat.Beep = false;
-
-            SysStat.EmptySalverObstructAirCylUpArrive = false;
         }
 
-        public static void InitAirCylAndSalverAndAxis()
+        public static void InitAirCylAndAxis()
         {
-            SysStat.ReceiveSalverArrive = false;
-            SysStat.ManualDebugReceiveSalverArrive = false;
+
         }
 
         public static void InitDataStruct()
         {
             InitSysStat();
-            InitAirCylAndSalverAndAxis();
+            InitAirCylAndAxis();
         }
     }
 }

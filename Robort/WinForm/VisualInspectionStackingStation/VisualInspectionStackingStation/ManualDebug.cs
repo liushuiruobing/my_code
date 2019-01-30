@@ -5,12 +5,16 @@ using System.Threading;
 using System.Windows.Forms;
 using System.IO.Ports;
 
+
 namespace RobotWorkstation
 {
     public partial class ManualDebugForm : Form
     {
-        private RFID m_RFID = RFID.GetInstance();
         private ArmControler m_ArmControler = ArmControler.GetInstance();
+        private GraspRobot m_GraspRobot = GraspRobot.GetInstance();
+        private QRCode m_QRCode = QRCode.GetInstance();
+
+        SynchronizationContext m_SyncContext = null;  //更新二维码数据
 
         //防止闪屏
         protected override CreateParams CreateParams
@@ -43,35 +47,30 @@ namespace RobotWorkstation
             Bitmap bmpRed = Properties.Resources.SmallRed;
             Bitmap bmpDarkRed = Properties.Resources.SmallDarkRed;
 
-            //RFID
-            if (m_RFID.IsConnected)
-            {
-                if (DataStruct.SysStat.ManualDebugReceiveSalverArrive)
-                {
-                    PicTrayDeviceInRFID.Image = bmpGreen;
-                    CTextBoxTrayDeviceRfidSn.Text = WorkStation.m_RfidRead;
-                }
-                else
-                {
-                    PicTrayDeviceInRFID.Image = bmpDarkGreen;
-                    CTextBoxTrayDeviceRfidSn.Text = "";
-                }
-            }
-
             //按键
             PicKeyRun.Image = DataStruct.SysStat.KeyRun ? bmpGreen : bmpDarkGreen;
             PicKeyPause.Image = DataStruct.SysStat.KeyPause ? bmpGreen : bmpDarkGreen;
             PicKeyStop.Image = DataStruct.SysStat.KeyStop ? bmpGreen : bmpDarkGreen;
             PicKeyReset.Image = DataStruct.SysStat.KeyReset ? bmpGreen : bmpDarkGreen;
 
-            if (m_ArmControler.IsBoardConnected(Board.Controler))
+            if (m_ArmControler.IsBoardConnected(Board.Conveyor_Empty))
             {
-                CTxtAxisConveyorCurPos.Text = Convert.ToString(m_ArmControler.ReadAxisPostion(Axis.Conveyor));
+                //CTxtAxisConveyorCurPos.Text = Convert.ToString(m_ArmControler.ReadAxisPostion(Axis.Conveyor));
 
-                TextBox[] txtState = new TextBox[(int)Axis.Max] { CTxtAxisConveyorrState, CTxtAxisTurnOverState };
-                for (int i = 0; i < (int)Axis.Max; i++)
+                //TextBox[] txtState = new TextBox[(int)Axis.Max] { CTxtAxisConveyorrState, CTxtAxisConveyorrState };
+                //for (int i = 0; i < (int)Axis.Max; i++)
+                //{
+                //    txtState[i].Text = m_ArmControler.ReadAxisStateString((Axis)i);
+                //}
+            }
+
+            //二维码
+            if (m_QRCode != null && m_QRCode.m_IsConnect)
+            {
+                lock (this)
                 {
-                    txtState[i].Text = m_ArmControler.ReadAxisStateString((Axis)i);
+                    if (m_QRCode.m_ReadQueue.Count > 0)
+                        ComBoxQRCodeReadShow.Text += m_QRCode.m_ReadQueue.Dequeue();
                 }
             }
         }
@@ -89,10 +88,43 @@ namespace RobotWorkstation
             RefreshTimer.Start();
         }
 
+        private void tabControlManualDebug_Selected(object sender, TabControlEventArgs e)
+        {
+            switch (tabControlManualDebug.SelectedIndex)
+            {
+                case 0:  //相机
+                    break;
+                case 1:  //四轴模组
+                    {
+                        //if (!m_GraspRobot.m_bInitBoard)
+                        //    m_GraspRobot.InitMotionControler();
+
+                        //if (m_GraspRobot.m_DeviceCount > 0)
+                        //{
+                        //    ComBoxMotionControlDevice.Items.Clear();
+                        //    for (int i = 0; i < m_GraspRobot.m_DeviceCount; i++)
+                        //    {
+                        //        ComBoxMotionControlDevice.Items.Add(m_GraspRobot.m_CurAvailableDevs[i].DeviceName);
+                        //        ComBoxMotionControlDevice.SelectedIndex = 0;
+                        //    }
+                        //}
+
+                        //TimerMotionControlGetState.Start();
+                    }
+                    break;
+
+                default: break;
+            }
+
+            if (tabControlManualDebug.SelectedIndex == 4)  //选择其他页时
+                m_QRCode.QRCodeRecvDataEvent += new EventHandler(QRCodeRecvData);
+            else
+                m_QRCode.QRCodeRecvDataEvent -= new EventHandler(QRCodeRecvData);
+        }
         public void InitUIControlEnableState()
         {
             //ArmControler
-            bool ArmConnectState = m_ArmControler.IsBoardConnected(Board.Controler);
+            bool ArmConnectState = m_ArmControler.IsBoardConnected(Board.Conveyor_Empty);
             if (CGroupBoxArmTowerLight.Enabled != ArmConnectState)
                 CGroupBoxArmTowerLight.Enabled = ArmConnectState;
 
@@ -102,96 +134,96 @@ namespace RobotWorkstation
             if (CGroupBoxArmKeyIn.Enabled != ArmConnectState)
                 CGroupBoxArmKeyIn.Enabled = ArmConnectState;
 
-            if (CGroupBoxArmSensor.Enabled != ArmConnectState)
-                CGroupBoxArmSensor.Enabled = ArmConnectState;
-
             if (CGrpAxisConveyor.Enabled != ArmConnectState)
                 CGrpAxisConveyor.Enabled = ArmConnectState;
 
-            if (CGrpTurnOver.Enabled != ArmConnectState)
-                CGrpTurnOver.Enabled = ArmConnectState;
+            //QRCode
+            bool QRCodeConnectState = m_QRCode.m_IsConnect;
+            if (CGroupBoxQRCode.Enabled != QRCodeConnectState)
+                CGroupBoxQRCode.Enabled = QRCodeConnectState;
+
         }
 
         #region  //IO 控制
 
         private void BtnLampRedOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueHigh);
         }
 
         private void BtnLampRedOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_LedRed, IOValue.IOValueLow);
         }
 
         private void BtnLampOrangeOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueHigh);
         }
 
         private void BtnLampOrangeOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_LedOriange, IOValue.IOValueLow);
         }
 
         private void BtnLampGreenOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueHigh);
         }
 
         private void BtnLampGreenOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_LedGreen, IOValue.IOValueLow);
         }
 
         private void BtnLampBlueOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueHigh);
         }
 
         private void BtnLampBlueOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_LedBlue, IOValue.IOValueLow);
         }
 
         private void BtnBeepOn_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_Beep, IOValue.IOValueHigh);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_Beep, IOValue.IOValueHigh);
         }
 
         private void BtnBeepOff_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_Beep, IOValue.IOValueLow);
+            m_ArmControler.SetArmControlBoardIo(Board.Conveyor_Empty, ARM_OutputPoint.IO_OUT_Beep, IOValue.IOValueLow);
         }
 
         private void CButtonEmptySalverObstructUp_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverObstructAirCylRun, IOValue.IOValueHigh);
+           
         }
 
         private void CButtonEmptySalverObstructDown_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverObstructAirCylRun, IOValue.IOValueLow);
+           
         }
 
         private void CButtonIoEmptySalverLiftingUp_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverLiftingAirCylRun, IOValue.IOValueHigh);
+           
         }
 
         private void CButtonIoEmptySalverLiftingDown_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_EmptySalverLiftingAirCylRun, IOValue.IOValueLow);
+           
         }
 
         private void CButtonConveyorUp_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_ConveyorLiftingAirCylRun, IOValue.IOValueHigh);
+            
         }
 
         private void CButtonConveyorDown_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_ConveyorLiftingAirCylRun, IOValue.IOValueLow);
+            
         }
 
         #endregion
@@ -213,30 +245,30 @@ namespace RobotWorkstation
                 Global.MessageBoxShow(Global.StrInputError);
                 return;
             }
-            SetSpeedParamConveyorAxis(Axis.Conveyor, velStart, velRun, velAdd, velDec, Default);
+            //SetSpeedParamConveyorAxis(Axis.Conveyor, velStart, velRun, velAdd, velDec, Default);
         }
 
         private void CBtnAxisConveyorMoveForward_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.Conveyor;
-            m_ArmControler.ResetError(AxisIndex);
-            SetConveyorAxisParamWithInput(false);
-            m_ArmControler.MoveContinuous(AxisIndex, AxisDir.Forward);
+            //Axis AxisIndex = Axis.Conveyor;
+            //m_ArmControler.ResetError(AxisIndex);
+            //SetConveyorAxisParamWithInput(false);
+            //m_ArmControler.MoveContinuous(AxisIndex, AxisDir.Forward);
         }
 
         private void CBtnAxisConveyorMoveReverse_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.Conveyor;
-            m_ArmControler.ResetError(AxisIndex);
-            SetConveyorAxisParamWithInput(false);
-            m_ArmControler.MoveContinuous(AxisIndex, AxisDir.Reverse);
+            ////Axis AxisIndex = Axis.Conveyor;
+            //m_ArmControler.ResetError(AxisIndex);
+            //SetConveyorAxisParamWithInput(false);
+            //m_ArmControler.MoveContinuous(AxisIndex, AxisDir.Reverse);
         }
 
         private void CBtnAxisConveyorStop_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.Conveyor;
-            m_ArmControler.ResetError(AxisIndex);
-            m_ArmControler.Stop(AxisIndex);
+            ////Axis AxisIndex = Axis.Conveyor;
+            //m_ArmControler.ResetError(AxisIndex);
+            //m_ArmControler.Stop(AxisIndex);
         }
 
         private void MoveMaual(Axis axis, TextBox txt, bool dir)
@@ -265,20 +297,20 @@ namespace RobotWorkstation
 
         private void BtnAxisConveyorAdd_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.Conveyor;
-            MoveMaual(AxisIndex, CTxtAxisConveyorrStepPpu, true);
+            //Axis AxisIndex = Axis.Conveyor;
+            //MoveMaual(AxisIndex, CTxtAxisConveyorrStepPpu, true);
         }
 
         private void BtnAxisConveyorDec_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.Conveyor;
-            MoveMaual(AxisIndex, CTxtAxisConveyorrStepPpu, false);
+            //Axis AxisIndex = Axis.Conveyor;
+            //MoveMaual(AxisIndex, CTxtAxisConveyorrStepPpu, false);
         }
 
         private void BtnAxisConveyorResetError_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.Conveyor;
-            m_ArmControler.ResetError(AxisIndex);
+            //Axis AxisIndex = Axis.Conveyor;
+            //m_ArmControler.ResetError(AxisIndex);
         }
 
         /// <summary>
@@ -305,72 +337,228 @@ namespace RobotWorkstation
 
         #endregion
 
-        #region  //翻转机构
+        #region //四轴模组机器人
 
-        /// <summary>
-        /// 设置翻转电机轴速度
-        /// </summary>
-        /// <param name="axis">轴号</param>
-        private void SetSpeedParamTurnOverAxis(Axis axis, int Speed, bool Default)
+        private void CButtonSetMotionControlSpeedParam_Click(object sender, EventArgs e)
         {
-            int velStart, velRun, velAdd, velDec;
-            try
+            double AxVelLow = double.Parse(CTextBoxMotionControLowSpeed.Text);
+            double AxVelHigh = double.Parse(CTextBoxMotionControHighSpeed.Text);
+            double AxVelAcc = double.Parse(CTextBoxMotionControAccSpeed.Text);
+            double AxVelDec = double.Parse(CTextBoxMotionControDecSpeed.Text);
+            int AxDistance = int.Parse(CTextBoxMotionControlDistance.Text);
+
+            if (m_GraspRobot.m_IsConnected)
             {
-                velStart = 2000;
-                velRun = Speed;
-                velAdd = 10000;
-                velDec = 10000;
+                m_GraspRobot.m_Distance = AxDistance;
+                m_GraspRobot.SetSpeed((AxisNum)ComBoxGraspRobotAxis.SelectedIndex, AxVelLow, AxVelHigh, AxVelAcc, AxVelDec);
             }
-            catch
+        }
+
+        private void CButtonRobotMoveLift_Click(object sender, EventArgs e)
+        {
+            if (m_GraspRobot.m_IsConnected)
             {
-                Global.MessageBoxShow(Global.StrInputError);
-                return;
+                m_GraspRobot.MoveAxis(AxisNum.Axis_X, AxisRunDir.Dir_Forward);
             }
-
-            m_ArmControler.SetSpeedParam(axis, velStart, velRun, velAdd, velDec, Default);
         }
 
-        private void CBtnTurnOver_Click(object sender, EventArgs e)
+        private void CButtonRobotMoveRight_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.OverTurn;
-            m_ArmControler.ResetError(AxisIndex);
-            SetSpeedParamTurnOverAxis(AxisIndex, int.Parse((CTxtAxisTurnOverSpeed.Text)), false);
-            MoveMaual(AxisIndex, CTxtAxisTurnOverStep, true);
+            if (m_GraspRobot.m_IsConnected)
+            {
+                m_GraspRobot.MoveAxis(AxisNum.Axis_X, AxisRunDir.Dir_Reverse);
+            }
         }
 
-        private void CBtnTurnOverReset_Click(object sender, EventArgs e)
+        private void CButtonRobotMoveForward_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.OverTurn;
-            m_ArmControler.ResetError(AxisIndex);
-            m_ArmControler.BackHome(AxisIndex, AxisDir.Reverse);
+            if (m_GraspRobot.m_IsConnected)
+            {
+                m_GraspRobot.MoveAxis(AxisNum.Axis_Y, AxisRunDir.Dir_Forward);
+            }
         }
 
-        private void CBtnTurnOverLockCylOpen_Click(object sender, EventArgs e)
+        private void CButtonRobotMoveBack_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverLockAirCyl, IOValue.IOValueHigh);
+            if (m_GraspRobot.m_IsConnected)
+            {
+                m_GraspRobot.MoveAxis(AxisNum.Axis_Y, AxisRunDir.Dir_Reverse);
+            }
         }
 
-        private void CBtnTurnOverLockCylClose_Click(object sender, EventArgs e)
+        private void CButtonRobotMoveUp_Click(object sender, EventArgs e)
         {
-            m_ArmControler.SetArmControlBoardIo(Board.Controler, ARM_OutputPoint.IO_OUT_OverturnSalverLockAirCyl, IOValue.IOValueLow);
+            if (m_GraspRobot.m_IsConnected)
+            {
+                m_GraspRobot.MoveAxis(AxisNum.Axis_Z, AxisRunDir.Dir_Forward);
+            }
         }
 
-        private void CBtnTurnOverAxisErrorReset_Click(object sender, EventArgs e)
+        private void CButtonMotionControlDown_Click(object sender, EventArgs e)
         {
-            m_ArmControler.ResetError(Axis.OverTurn);
+            if (m_GraspRobot.m_IsConnected)
+            {
+                m_GraspRobot.MoveAxis(AxisNum.Axis_Z, AxisRunDir.Dir_Reverse);
+            }
         }
 
-        private void BtnAxisOverturnSetDefaultParam_Click(object sender, EventArgs e)
+        //抓件
+        private void CButtonRobotGrasp_Click(object sender, EventArgs e)
         {
-            Profile.m_Config.OverturnAxisRunSpeed = int.Parse(CTxtAxisTurnOverSpeed.Text);
-            Profile.m_Config.OverturnAxisMaxStep = int.Parse(CTxtAxisTurnOverStep.Text); ;
+            //if (m_GraspRobot.m_bInitBoard)
+            //{
+            //    m_GraspRobot.MoveMotion(GraspRobot.AxisNum.Axis_Z, false);
 
-            ArmControler.m_OverturnAxisMaxStep = Profile.m_Config.OverturnAxisMaxStep;
+            //    //启动吸嘴
+            //    Thread.Sleep(500);
 
-            SetSpeedParamTurnOverAxis(Axis.OverTurn, int.Parse((CTxtAxisTurnOverSpeed.Text)), true);
+            //    m_GraspRobot.MoveMotion(GraspRobot.AxisNum.Axis_Z, true);
+            //}
+        }
+
+        //抓盘
+        private void CButtonRobotGrapSalver_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonMotionAxisRunNeg_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonMotionAxisRunPos_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonMotionAxisHome_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonMotionAxisStop_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CButtonMotionControlResetError_Click(object sender, EventArgs e)
+        {
+            if (m_GraspRobot != null && m_GraspRobot.m_IsConnected)
+            {
+                for (int i = 0; i < (int)AxisNum.Axis_Total; i++)
+                {
+                    m_GraspRobot.ResetError((AxisNum)i);
+                }
+            }
         }
 
         #endregion
 
+        #region //二维码
+        //二维码读取器
+        public void InitQRCode()
+        {
+            ComBoxQRCodeDisconnect.Enabled = false;
+
+            //获取当前的串口设备
+            string[] CurPorts = SerialPort.GetPortNames();
+            if (CurPorts.Length > 0)
+            {
+                ComBoxQRCodeCom.Items.Clear();
+                for (int i = 0; i < CurPorts.Length; i++)
+                {
+                    ComBoxQRCodeCom.Items.Add(CurPorts[i]);
+                    if (CurPorts[i] == Profile.m_Config.QRCodePort)
+                    {
+                        ComBoxQRCodeCom.SelectedIndex = i;
+                    }
+                }
+            }
+
+            m_SyncContext = SynchronizationContext.Current;
+        }
+
+        private void ComBoxQRCodeConnect_Click(object sender, EventArgs e)
+        {
+            string Port = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
+            string BandRate = Profile.m_Config.QRCodeBandRate;
+
+            m_QRCode.QRCodeCommunParamInit(Port, BandRate);
+            m_QRCode.QRCodeInit();
+
+            if (m_QRCode.m_IsConnect)
+            {
+                ComBoxQRCodeConnect.Enabled = false;
+                ComBoxQRCodeDisconnect.Enabled = true;
+            }
+        }
+
+        private void ComBoxQRCodeDisconnect_Click(object sender, EventArgs e)
+        {
+            if (m_QRCode != null)
+            {
+                m_QRCode.m_SerialPort.Close();
+            }
+            ComBoxQRCodeConnect.Enabled = true;
+            ComBoxQRCodeDisconnect.Enabled = false;
+        }
+
+        private void ComBoxQRCodeClear_Click(object sender, EventArgs e)
+        {
+            ComBoxQRCodeReadShow.Text = "";
+        }
+
+        private void QRCodeRecvData(object sender, EventArgs e)
+        {
+            if (e is QRCodeEventArgers)
+            {
+                QRCodeEventArgers Temp = e as QRCodeEventArgers;
+
+                bool Check = WorkStation.CheckAndSaveQRCodeReadData(Temp.QRCodeRecv);
+                if (Check)
+                {
+                    WorkStation.m_ScanQRCode = true;
+                }
+                else
+                {
+                    WorkStation.m_ScanQRCode = false;
+                    //再次扫描
+                }
+
+                m_SyncContext.Post(SetQRCodeTextSafePost, Temp.QRCodeRecv);
+            }
+        }
+
+        private void SetQRCodeTextSafePost(object text)
+        {
+            ComBoxQRCodeReadShow.Text += (string)text;
+
+            ComBoxQRCodeReadShow.Focus();//获取焦点          
+            ComBoxQRCodeReadShow.Select(ComBoxQRCodeReadShow.TextLength, 0);//光标定位到文本最后
+            ComBoxQRCodeReadShow.ScrollToCaret();//滚动到光标处
+        }
+
+        private void ComBoxQRCodeConnect_EnabledChanged(object sender, EventArgs e)
+        {
+            if (ComBoxQRCodeConnect.Enabled)
+                ComBoxQRCodeConnect.BackColor = CustomColor.BtnGreenColor;
+            else
+                ComBoxQRCodeConnect.BackColor = Color.Gray;
+        }
+
+        private void ComBoxQRCodeDisconnect_EnabledChanged(object sender, EventArgs e)
+        {
+            if (ComBoxQRCodeDisconnect.Enabled)
+                ComBoxQRCodeDisconnect.BackColor = Color.Red;
+            else
+                ComBoxQRCodeDisconnect.BackColor = Color.Gray;
+        }
+
+        private void ComBoxQRCodeCom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //Profile.m_Config.QRCodePort = (string)ComBoxQRCodeCom.Items[ComBoxQRCodeCom.SelectedIndex];
+        }
+        #endregion
     }
 }

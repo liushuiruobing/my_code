@@ -148,12 +148,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AcceptedProduct.cs" />
     <Compile Include="ArmControler.cs" />
+    <Compile Include="BasketModule.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Conveyor.cs" />
     <Compile Include="CustomUI.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DataStruct.cs" />
+    <Compile Include="GraspRobot.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -173,14 +177,14 @@
     <Compile Include="ManualDebug.Designer.cs">
       <DependentUpon>ManualDebug.cs</DependentUpon>
     </Compile>
-    <Compile Include="Master.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="MotionControler.cs" />
     <Compile Include="MultiLanguage.cs" />
     <Compile Include="MyMath.cs" />
+    <Compile Include="Product.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RFID.cs" />
-    <Compile Include="RobotDevice.cs" />
+    <Compile Include="QRCode.cs" />
     <Compile Include="RunForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -201,12 +205,14 @@
       <DependentUpon>SystemSetingForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TCP.cs" />
+    <Compile Include="UnAcceptedProduct.cs" />
     <Compile Include="UserLimitsForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UserLimitsForm.Designer.cs">
       <DependentUpon>UserLimitsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Visual.cs" />
     <Compile Include="WorkStation.cs" />
     <EmbeddedResource Include="LoginForm.en-US.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
