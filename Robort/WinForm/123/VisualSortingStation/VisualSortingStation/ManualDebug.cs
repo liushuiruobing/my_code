@@ -254,10 +254,10 @@ namespace RobotWorkstation
                 for (int i = StartIndex; i < EndIndex; i++)
                 {
                     DGV_RobotGlobalPoint[0, i].Value = m_ManualRobot.m_PointList[i].Name;
-                    DGV_RobotGlobalPoint[1, i].Value = m_ManualRobot.m_PointList[i][eAxisName.X] / 1000;
-                    DGV_RobotGlobalPoint[2, i].Value = m_ManualRobot.m_PointList[i][eAxisName.Y] / 1000;
-                    DGV_RobotGlobalPoint[3, i].Value = m_ManualRobot.m_PointList[i][eAxisName.Z] / 1000;
-                    DGV_RobotGlobalPoint[4, i].Value = m_ManualRobot.m_PointList[i][eAxisName.RZ] / 1000;
+                    DGV_RobotGlobalPoint[1, i].Value = (m_ManualRobot.m_PointList[i][eAxisName.X] / 1000).ToString("0.000");
+                    DGV_RobotGlobalPoint[2, i].Value = (m_ManualRobot.m_PointList[i][eAxisName.Y] / 1000).ToString("0.000");
+                    DGV_RobotGlobalPoint[3, i].Value = (m_ManualRobot.m_PointList[i][eAxisName.Z] / 1000).ToString("0.000");
+                    DGV_RobotGlobalPoint[4, i].Value = (m_ManualRobot.m_PointList[i][eAxisName.RZ] / 1000).ToString("0.000"); 
                     DGV_RobotGlobalPoint[5, i].Value = m_ManualRobot.m_PointList[i].Info.Hand;
                     DGV_RobotGlobalPoint[6, i].Value = m_ManualRobot.m_PointList[i].Info.UserFrame;
                     DGV_RobotGlobalPoint[7, i].Value = m_ManualRobot.m_PointList[i].Info.ToolFrame;
@@ -329,6 +329,14 @@ namespace RobotWorkstation
             if (m_ManualRobot.IsConnected())
             {
                 m_ManualRobot.StopProgram();
+            }
+        }
+
+        private void CBtnRobotGoHome_Click(object sender, EventArgs e)
+        {
+            if (m_ManualRobot.IsConnected())
+            {
+                m_ManualRobot.RunAction((int)RobotAction.Action_Go_Home);
             }
         }
 
@@ -925,11 +933,30 @@ namespace RobotWorkstation
         #endregion
 
         #region  //传输线电机轴
+
+        public void SetConveyorAxisParamWithInput(bool Default)
+        {
+            int velStart, velRun, velAdd, velDec;
+            try
+            {
+                velStart = Convert.ToInt32(CTxtAxisConveyorSpeedStart.Text);
+                velRun = Convert.ToInt32(CTxtAxisConveyorSpeedRun.Text);
+                velAdd = Convert.ToInt32(CTxtAxisConveyorSpeedAdd.Text);
+                velDec = Convert.ToInt32(CTxtAxisConveyorSpeedDec.Text);
+            }
+            catch
+            {
+                Global.MessageBoxShow(Global.StrInputError);
+                return;
+            }
+            SetSpeedParamConveyorAxis(Axis.Conveyor, velStart, velRun, velAdd, velDec, Default);
+        }
+
         private void CBtnAxisConveyorMoveForward_Click(object sender, EventArgs e)
         {
             Axis AxisIndex = Axis.Conveyor;
             m_ArmControler.ResetError(AxisIndex);
-            SetSpeedParamConveyorAxis(AxisIndex);
+            SetConveyorAxisParamWithInput(false);
             m_ArmControler.MoveContinuous(AxisIndex, AxisDir.Forward);
         }
 
@@ -937,7 +964,7 @@ namespace RobotWorkstation
         {
             Axis AxisIndex = Axis.Conveyor;
             m_ArmControler.ResetError(AxisIndex);
-            SetSpeedParamConveyorAxis(AxisIndex);
+            SetConveyorAxisParamWithInput(false);
             m_ArmControler.MoveContinuous(AxisIndex, AxisDir.Reverse);
         }
 
@@ -968,7 +995,7 @@ namespace RobotWorkstation
             }
 
             m_ArmControler.ResetError(axis);
-            SetSpeedParamConveyorAxis(axis);
+            SetConveyorAxisParamWithInput(false);
             m_ArmControler.MoveRef(axis, step);
         }
 
@@ -994,23 +1021,22 @@ namespace RobotWorkstation
         /// 设置传输线电机轴速度
         /// </summary>
         /// <param name="axis">轴号</param>
-        private void SetSpeedParamConveyorAxis(Axis axis)
+        private void SetSpeedParamConveyorAxis(Axis axis, int Start, int Run, int Add, int Dec, bool Default)
         {
-            int velStart, velRun, velAdd, velDec;
-            try
-            {
-                velStart = Convert.ToInt32(CTxtAxisConveyorSpeedStart.Text);
-                velRun = Convert.ToInt32(CTxtAxisConveyorSpeedRun.Text);
-                velAdd = Convert.ToInt32(CTxtAxisConveyorSpeedAdd.Text);
-                velDec = Convert.ToInt32(CTxtAxisConveyorSpeedDec.Text);
-            }
-            catch
-            {
-                Global.MessageBoxShow(Global.StrInputError);
-                return;
-            }
+            m_ArmControler.SetSpeedParam(axis, Start, Run, Add, Dec, Default);
+        }
 
-            m_ArmControler.SetSpeedParam(axis, velStart, velRun, velAdd, velDec, false);
+        private void BtnAxisConveyorSetDefaultParam_Click(object sender, EventArgs e)
+        {
+            Profile.m_Config.AxisStartSpeed = int.Parse(CTxtAxisConveyorSpeedStart.Text);
+            Profile.m_Config.AxisAddSpeed = int.Parse(CTxtAxisConveyorSpeedAdd.Text);
+            Profile.m_Config.AxisDecSpeed = int.Parse(CTxtAxisConveyorSpeedDec.Text);
+
+            Profile.m_Config.ConveyorAxisRunSpeed = int.Parse(CTxtAxisConveyorSpeedRun.Text);
+            Profile.m_Config.ConveyorAxisMaxStep = int.Parse(CTxtAxisConveyorrStepPpu.Text);
+            ArmControler.m_ConveyorAxisMaxStep = Profile.m_Config.ConveyorAxisMaxStep;
+
+            SetConveyorAxisParamWithInput(true);
         }
 
         #endregion
@@ -1021,13 +1047,13 @@ namespace RobotWorkstation
         /// 设置翻转电机轴速度
         /// </summary>
         /// <param name="axis">轴号</param>
-        private void SetSpeedParamTurnOverAxis(Axis axis)
+        private void SetSpeedParamTurnOverAxis(Axis axis, int Speed, bool Default)
         {
             int velStart, velRun, velAdd, velDec;
             try
             {
                 velStart = 2000;
-                velRun = Convert.ToInt32(CTxtAxisTurnOverSpeed.Text);
+                velRun = Speed;
                 velAdd = 10000;
                 velDec = 10000;
             }
@@ -1037,14 +1063,14 @@ namespace RobotWorkstation
                 return;
             }
 
-            m_ArmControler.SetSpeedParam(axis, velStart, velRun, velAdd, velDec, false);
+            m_ArmControler.SetSpeedParam(axis, velStart, velRun, velAdd, velDec, Default);
         }
 
         private void CBtnTurnOver_Click(object sender, EventArgs e)
         {
             Axis AxisIndex = Axis.OverTurn;
             m_ArmControler.ResetError(AxisIndex);
-            SetSpeedParamTurnOverAxis(AxisIndex);
+            SetSpeedParamTurnOverAxis(AxisIndex, int.Parse((CTxtAxisTurnOverSpeed.Text)), false);
             MoveMaual(AxisIndex, CTxtAxisTurnOverStep, true);
         }
 
@@ -1067,11 +1093,20 @@ namespace RobotWorkstation
 
         private void CBtnTurnOverAxisErrorReset_Click(object sender, EventArgs e)
         {
-            Axis AxisIndex = Axis.OverTurn;
-            m_ArmControler.ResetError(AxisIndex);
+            m_ArmControler.ResetError(Axis.OverTurn);
         }
 
+        private void BtnAxisOverturnSetDefaultParam_Click(object sender, EventArgs e)
+        {
+            Profile.m_Config.OverturnAxisRunSpeed = int.Parse(CTxtAxisTurnOverSpeed.Text);
+            Profile.m_Config.OverturnAxisMaxStep = int.Parse(CTxtAxisTurnOverStep.Text); ;
+
+            ArmControler.m_OverturnAxisMaxStep = Profile.m_Config.OverturnAxisMaxStep;
+
+            SetSpeedParamTurnOverAxis(Axis.OverTurn, int.Parse((CTxtAxisTurnOverSpeed.Text)), true);
+        }
 
         #endregion
+
     }
 }

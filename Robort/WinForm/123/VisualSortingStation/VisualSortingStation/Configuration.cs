@@ -36,7 +36,16 @@ namespace RobotWorkstation
         public string ControlerArmIp;
         public string ControlerArmMac;
         public int ControlerArmPort;
-        
+
+        public int AxisStartSpeed;
+        public int AxisAddSpeed;
+        public int AxisDecSpeed;
+        public int ConveyorAxisRunSpeed;
+        public int ConveyorAxisMaxStep;     //传输线电机把盘送到位，所要运行的步数
+        public int OverturnAxisRunSpeed;
+        public int OverturnAxisMaxStep;      //翻转电机,翻转所需的步数
+
+
         //Sort Mode
         public SortMode SelectedSortMode;
 
@@ -64,12 +73,21 @@ namespace RobotWorkstation
             //RFID
             RfidIp = "192.168.1.24";
             RfidCh = 0;
-            RfidSn = "00000000000000001";
+            RfidSn = "0001";
 
             //Controler Arm
             ControlerArmIp = "192.168.1.42";
             ControlerArmPort = 20001;
             ControlerArmMac = "94-F7-20-01-BD-10";
+
+            AxisStartSpeed = 2000;
+            AxisAddSpeed = 10000;
+            AxisDecSpeed = 10000;
+
+            OverturnAxisRunSpeed = 8000;
+            ConveyorAxisRunSpeed = 8000;
+            OverturnAxisMaxStep = 1000;      //翻转电机,翻转所需的步数            
+            ConveyorAxisMaxStep = 1000;      //传输线电机把盘送到位，所要运行的步数
 
             SelectedSortMode = SortMode.SortWithVisual;
         }
@@ -78,7 +96,7 @@ namespace RobotWorkstation
     //配置文件
     public static class Profile
     {
-        private static readonly string m_FileName = "config.xml";  //配置文件名
+        private static readonly string m_FileName = "Config.xml";  //配置文件名
         public static Configuration m_Config = new Configuration();
 
         public static void LoadConfigFile()

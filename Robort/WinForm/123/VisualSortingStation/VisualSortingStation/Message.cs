@@ -34,42 +34,6 @@ namespace RobotWorkstation
             GetCurStationState = 0x10,
         }
 
-        public enum MessageCodeARM  //单片机控制板
-        {
-            SetOutput = 0x10,               //设置输出口
-            GetOutput,                      //读取输出口缓冲区数据
-            SetOutputDefault,               //设置输出口开机默认状态（需要存储到SPI-Flash）
-
-            GetInput = 0x18,                //读取输入口
-
-            GetAxisParameters = 0x20,       //读取电机轴运动参数
-            SetAxisParametersDefault,       //设置电机轴默认运动参数（需要存储到SPI-Flash）
-            SetAxisParameters,              //设置电机轴当前运动参数
-
-            GetAxisStepsAbs = 0x28,         //读取电机轴当前步数
-            SetAxisStepsAbs,                //设置电机轴步数(绝对值)
-            SetAxisStepsRef,                //设置电机轴步数(相对值)
-            SetAxisMoveContinuous,          //设置电机连续运动
-            SetAxisStepsMax,                //设置电机轴最大步数
-            StopAxis,                       //停止电机轴
-
-            GetAxisState = 0x30,            //读取电机轴状态
-            ResetAxisError,                 //复位电机轴错误状态
-
-            AxisGoHome  = 0x38,             //设置电机轴回原点
-
-            SetIp = 0x40,                   //设置板卡IP地址（需要存储到SPI-Flash）
-            SetVersionHardware ,            //设置板卡硬件版本（需要存储到SPI-Flash）
-
-            ResetFactory  = 0x48,           //恢复出厂设置（恢复除IP地址外的所有SPI-FLASH数据）
-
-            GetBoardInformation  = 0x50,    //读取板卡信息
-
-            SendControlerUpdateFileLength = 0x60,   //系统升级--发送升级文件长度数据
-            SendControlerUpdateFileData             //系统升级--发送升级文件
-
-        }
-
         public enum MessageCodeCamera  //与相机之间的指令
         {
             GetCameraCoords = 0x90,

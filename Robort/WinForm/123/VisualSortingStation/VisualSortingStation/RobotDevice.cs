@@ -8,6 +8,51 @@ using System.Threading.Tasks;
 
 namespace RobotWorkstation
 {
+    public enum RobotAction  //Action_Auto_Visual_Grap是视觉抓取和视觉放置时所用的索引，具体看使用的地方
+    {
+        Action_Go_Home = 0,
+        Action_Manual_Grap_1,
+        Action_Manual_Grap_2,
+        Action_Manual_Grap_3,
+        Action_Manual_Grap_4,
+        Action_Manual_Grap_5,
+        Action_Manual_Grap_6,
+        Action_Manual_Grap_7,
+        Action_Manual_Grap_8,
+        Action_Manual_Grap_9,
+        Action_Manual_Grap_10,
+        Action_Manual_Grap_11,
+        Action_Manual_Grap_12,
+        Action_Manual_Grap_13,
+        Action_Manual_Grap_14,
+        Action_Manual_Grap_15,
+        Action_Manual_Grap_16,
+        Action_Visual_Grap,
+
+        Action_QRCodeScan,
+
+        Action_Manual_Put_1,
+        Action_Manual_Put_2,
+        Action_Manual_Put_3,
+        Action_Manual_Put_4,
+        Action_Manual_Put_5,
+        Action_Manual_Put_6,
+        Action_Manual_Put_7,
+        Action_Manual_Put_8,
+        Action_Manual_Put_9,
+        Action_Manual_Put_10,
+        Action_Manual_Put_11,
+        Action_Manual_Put_12,
+        Action_Manual_Put_13,
+        Action_Manual_Put_14,
+        Action_Manual_Put_15,
+        Action_Manual_Put_16,
+        Action_Visual_Put,
+
+        Action_Visual_SetPoint,
+
+    }
+
     public enum Robot_IO_IN  //要与实际的接线对应
     {
         Robot_IO_IN_CylGoArrive = 0x01,     //抓手气缸进到位

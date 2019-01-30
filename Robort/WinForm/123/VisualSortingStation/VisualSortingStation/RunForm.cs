@@ -75,20 +75,20 @@ namespace RobotWorkstation
         {
             //运行指示灯
 
-            PicLedReady.Image = DataStruct.SysStat.Ready ? Properties.Resources.LightBlue : Properties.Resources.DarkBlue;
-            PicLedRun.Image = DataStruct.SysStat.Run ? Properties.Resources.LightGreen : Properties.Resources.DarkGreen;
-            PicLedAlarm.Image = DataStruct.SysStat.Pause ? Properties.Resources.LightYellow : Properties.Resources.DarkYellow;
-            PicLedStop.Image = DataStruct.SysStat.Stop ? Properties.Resources.LightRed : Properties.Resources.DarkRed;
+            PicLedReady.Image = DataStruct.SysStat.StationReady ? Properties.Resources.LightBlue : Properties.Resources.DarkBlue;
+            PicLedRun.Image = DataStruct.SysStat.StationRun ? Properties.Resources.LightGreen : Properties.Resources.DarkGreen;
+            PicLedAlarm.Image = DataStruct.SysStat.StationPause ? Properties.Resources.LightYellow : Properties.Resources.DarkYellow;
+            PicLedStop.Image = DataStruct.SysStat.StationStop ? Properties.Resources.LightRed : Properties.Resources.DarkRed;
 
             //设置报警灯的状态
-            if (DataStruct.SysStat.Run)
-                VisualSortingStation.SetSysAlarmLed(0);
-            else if (DataStruct.SysStat.Pause && !DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarmLed(1);
-            else if (!DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarmLed(2);
-            else if (DataStruct.SysStat.Pause && DataStruct.SysStat.Stop)
-                VisualSortingStation.SetSysAlarmLed(3);
+            if (DataStruct.SysStat.StationRun)
+                VisualSortingStation.SetSysAlarmTowerLed(AlarmLed.AlarmLed_Green);
+            else if (DataStruct.SysStat.StationPause && !DataStruct.SysStat.StationStop)
+                VisualSortingStation.SetSysAlarmTowerLed(AlarmLed.AlarmLed_Oriange);
+            else if (!DataStruct.SysStat.StationPause && DataStruct.SysStat.StationStop)
+                VisualSortingStation.SetSysAlarmTowerLed(AlarmLed.AlarmLed_Red);
+            else if (DataStruct.SysStat.StationPause && DataStruct.SysStat.StationStop)
+                VisualSortingStation.SetSysAlarmTowerLed(AlarmLed.AlarmLed_OriangeAndRed);
 
             //运行状态更新
             Bitmap bmpGreen = Properties.Resources.SmallGreen;

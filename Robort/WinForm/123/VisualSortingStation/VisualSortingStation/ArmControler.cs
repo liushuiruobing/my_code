@@ -7,12 +7,74 @@ using System.Threading.Tasks;
 
 namespace RobotWorkstation
 {
+    public enum ArmCommandCode:byte  //单片机控制板
+    {
+        SetOutput = 0x10,               //设置输出口
+        GetOutput,                      //读取输出口缓冲区数据
+        SetOutputDefault,               //设置输出口开机默认状态（需要存储到SPI-Flash）
+
+        GetInput = 0x18,                //读取输入口
+
+        GetAxisParameters = 0x20,       //读取电机轴运动参数
+        SetAxisParametersDefault,       //设置电机轴默认运动参数（需要存储到SPI-Flash）
+        SetAxisParameters,              //设置电机轴当前运动参数
+
+        GetAxisStepsAbs = 0x28,         //读取电机轴当前步数
+        SetAxisStepsAbs,                //设置电机轴步数(绝对值)
+        SetAxisStepsRef,                //设置电机轴步数(相对值)
+        SetAxisMoveContinuous,          //设置电机连续运动
+        SetAxisStepsMax,                //设置电机轴最大步数
+        StopAxis,                       //停止电机轴
+
+        GetAxisState = 0x30,            //读取电机轴状态
+        ResetAxisError,                 //复位电机轴错误状态
+
+        AxisGoHome = 0x38,             //设置电机轴回原点
+
+        SetIp = 0x40,                   //设置板卡IP地址（需要存储到SPI-Flash）
+        SetVersionHardware,            //设置板卡硬件版本（需要存储到SPI-Flash）
+
+        ResetFactory = 0x48,           //恢复出厂设置（恢复除IP地址外的所有SPI-FLASH数据）
+
+        GetBoardInformation = 0x50,    //读取板卡信息
+
+        SendControlerUpdateFileLength = 0x60,   //系统升级--发送升级文件长度数据
+        SendControlerUpdateFileData             //系统升级--发送升级文件
+
+    }
+
     //单片机板卡定义
     public enum Board
     {
         Controler = 0,   //控制板卡，IO、翻转电机、传输线电机
         Max              //板卡总数
     }
+
+    #region   //电机相关
+
+    //电机轴定义
+    public enum Axis
+    {
+        Conveyor = 0,   //传输线轴
+        OverTurn,       //翻转电机轴
+        Max             //总轴数
+    }
+
+    //电机轴运动方向
+    public enum AxisDir
+    {
+        Forward = 0,  //正转
+        Reverse = 1,  //反转
+    }
+
+    //电机驱动状态
+    public enum AxisState
+    {
+        Ready = 0,      //轴已准备就绪
+        ErrorStop = 1,  //出现错误，轴停止
+        Motion = 2,     //轴正在执行运动
+    }
+    #endregion
 
     #region  //IO相关
 
@@ -70,32 +132,6 @@ namespace RobotWorkstation
 
     #endregion
 
-    #region   //电机相关
-
-    //电机轴定义
-    public enum Axis
-    {
-        Conveyor = 0,   //传输线轴
-        OverTurn,       //翻转电机轴
-        Max             //总轴数
-    }
-
-    //电机轴运动方向
-    public enum AxisDir
-    {
-        Forward = 0,  //正转
-        Reverse = 1,  //反转
-    }
-
-    //电机驱动状态
-    public enum AxisState
-    {
-        Ready = 0,      //轴已准备就绪
-        ErrorStop = 1,  //出现错误，轴停止
-        Motion = 2,     //轴正在执行运动
-    }
-    #endregion
-
     public class ArmControler
     {
         private static ArmControler m_UniqueIo = null;
@@ -111,8 +147,8 @@ namespace RobotWorkstation
         private int[,] m_AxisState = new int[(int)Board.Max, MAX_AXIS_CHANNEL]{ { 0, 0, 0, 0, 0, 0, 0, 0, } };  //电机轴状态
         private int[,] m_AxisPostion = new int[(int)Board.Max, MAX_AXIS_CHANNEL] { { 0, 0, 0, 0, 0, 0, 0, 0, } };  //电机轴当前位置
 
-        public const int m_ConveyorAxisMaxStep = 100;   //传输线电机把盘送到位，所要运行的步数
-        public const int m_OverturnAxisMaxStep = 100;   //翻转电机,翻转所需的步数
+        public static int m_ConveyorAxisMaxStep = 1000;   //传输线电机把盘送到位，所要运行的步数
+        public static int m_OverturnAxisMaxStep = 1000;   //翻转电机,翻转所需的步数
 
         private ArmControler()
         { 
@@ -177,17 +213,17 @@ namespace RobotWorkstation
         }
 
         //给单片机发送非电机轴的指令，仅指令，无参数
-        public void SendCommandToArm(Board board, byte Code)
+        public void SendCommandToArm(Board board, ArmCommandCode Code)
         {
             if (!IsBoardConnected(board))
                 return;
 
-            Message.MakeSendArrayByCode(Code, ref m_SendMeas);
+            Message.MakeSendArrayByCode((byte)Code, ref m_SendMeas);
             m_MyTcpClientArm[(int)board].ClientWrite(m_SendMeas);
         }
 
         //给单片机发送电机轴相关的指令，axis 轴号， code命令
-        public bool SendCommandToArmWithAxis(Axis axis, byte Code)
+        public bool SendCommandToArmWithAxis(Axis axis, ArmCommandCode Code)
         {
             int indexBoard = (int)axis / MAX_AXIS_CHANNEL;  //板卡索引
             int indexAxis = (int)axis % MAX_AXIS_CHANNEL;  //板卡内轴号索引
@@ -195,7 +231,7 @@ namespace RobotWorkstation
             if (!IsBoardConnected((Board)indexBoard))
                 return false;
 
-            Message.MakeSendArrayByCode(Code, ref m_SendMeas);
+            Message.MakeSendArrayByCode((byte)Code, ref m_SendMeas);
             m_SendMeas[Message.MessageCommandIndex + 1] = (byte)indexAxis;
             m_SendMeas[Message.MessageSumCheck] = MyMath.CalculateSum(m_SendMeas, Message.MessageLength);
 
@@ -210,7 +246,7 @@ namespace RobotWorkstation
         /// <param name="board">板卡类型</param>
         public void SendReadInputPoint(Board board)
         {
-            SendCommandToArm(board, (byte)Message.MessageCodeARM.GetInput);
+            SendCommandToArm(board, ArmCommandCode.GetInput);
         }
 
         /// <summary>
@@ -264,7 +300,7 @@ namespace RobotWorkstation
         /// <param name="axis">轴号</param>
         public void SendReadAxisPostion(Axis axis)
         {
-            SendCommandToArmWithAxis(axis, (byte)Message.MessageCodeARM.GetAxisStepsAbs);
+            SendCommandToArmWithAxis(axis, ArmCommandCode.GetAxisStepsAbs);
         }
 
         /// <summary>
@@ -302,7 +338,7 @@ namespace RobotWorkstation
         /// <param name="axis">轴号</param>
         public void SendReadAxisState(Axis axis)
         {
-            SendCommandToArmWithAxis(axis, (byte)Message.MessageCodeARM.GetAxisState);
+            SendCommandToArmWithAxis(axis, ArmCommandCode.GetAxisState);
         }
 
         /// <summary>
@@ -379,7 +415,7 @@ namespace RobotWorkstation
             if (!IsBoardConnected((Board)indexBoard))
                 return false;
 
-            Message.MessageCodeARM Code = Default ? Message.MessageCodeARM.SetAxisParametersDefault : Message.MessageCodeARM.SetAxisParameters;
+            ArmCommandCode Code = Default ? ArmCommandCode.SetAxisParametersDefault : ArmCommandCode.SetAxisParameters;
             Message.MakeSendArrayByCode((byte)Code, ref m_SendMeas);
 
             int DataIndex = Message.MessageCommandIndex + 1;
@@ -423,7 +459,7 @@ namespace RobotWorkstation
             if (!IsBoardConnected((Board)indexBoard))
                 return false;
 
-            Message.MakeSendArrayByCode((byte)Message.MessageCodeARM.SetAxisStepsAbs, ref m_SendMeas);
+            Message.MakeSendArrayByCode((byte)ArmCommandCode.SetAxisStepsAbs, ref m_SendMeas);
 
             int DataIndex = Message.MessageCommandIndex + 1;
 
@@ -454,7 +490,7 @@ namespace RobotWorkstation
             if (!IsBoardConnected((Board)indexBoard))
                 return false;
 
-            Message.MakeSendArrayByCode((byte)Message.MessageCodeARM.SetAxisStepsRef, ref m_SendMeas);
+            Message.MakeSendArrayByCode((byte)ArmCommandCode.SetAxisStepsRef, ref m_SendMeas);
 
             int DataIndex = Message.MessageCommandIndex + 1;
 
@@ -479,7 +515,7 @@ namespace RobotWorkstation
         /// <returns></returns>
         public bool MoveContinuous(Axis axis, AxisDir dir)
         {
-            bool Re = SendCommandToArmWithAxis(axis, (byte)Message.MessageCodeARM.SetAxisMoveContinuous);
+            bool Re = SendCommandToArmWithAxis(axis, ArmCommandCode.SetAxisMoveContinuous);
             return Re;
         }
 
@@ -491,7 +527,7 @@ namespace RobotWorkstation
         /// <returns></returns>
         public bool BackHome(Axis axis, AxisDir dir)
         {
-            bool Re = SendCommandToArmWithAxis(axis, (byte)Message.MessageCodeARM.AxisGoHome);
+            bool Re = SendCommandToArmWithAxis(axis, ArmCommandCode.AxisGoHome);
             return Re;
         }
 
@@ -502,14 +538,14 @@ namespace RobotWorkstation
         /// <returns></returns>
         public bool Stop(Axis axis)
         {
-            bool Re = SendCommandToArmWithAxis(axis, (byte)Message.MessageCodeARM.StopAxis);
+            bool Re = SendCommandToArmWithAxis(axis, ArmCommandCode.StopAxis);
             return Re;
         }
 
         //复位轴错误状态，如果轴处于ErrorStop状态，则在调用此函数后状态将更改为Ready。
         public bool ResetError(Axis axis)
         {
-            bool Re = SendCommandToArmWithAxis(axis, (byte)Message.MessageCodeARM.ResetAxisError);
+            bool Re = SendCommandToArmWithAxis(axis, ArmCommandCode.ResetAxisError);
             return Re;
         }
 
@@ -525,7 +561,7 @@ namespace RobotWorkstation
             int data4 = 32;
 
             const int CommandIndex = Message.MessageCommandIndex;
-            Message.MakeSendArrayByCode((byte)Message.MessageCodeARM.SetOutput, ref m_SendMeas);
+            Message.MakeSendArrayByCode((byte)ArmCommandCode.SetOutput, ref m_SendMeas);
 
             //根据Type， Value 设置使能位和数据
             int TempIo = (int)Io;
@@ -593,5 +629,24 @@ namespace RobotWorkstation
 
             SetArmControlBoardIo(board, KeyLed, Value);
         }
+
+        //轮询所有单片机控制板的状态
+        public void SendCommandToReadAllArmController()
+        {
+            for (int i = 0; i < (int)Board.Max; i++)
+            {
+                if (IsBoardConnected((Board)i))
+                {
+                    SendReadInputPoint((Board)i);   //读取IO输入点的状态
+
+                    for (int j = 0; j < (int)Axis.Max; j++)
+                    {
+                        SendReadAxisPostion((Axis)j);   //读取传输线各电机的当前位置
+                        SendReadAxisState((Axis)j);
+                    }
+                }
+            }
+        }
+
     }
 }

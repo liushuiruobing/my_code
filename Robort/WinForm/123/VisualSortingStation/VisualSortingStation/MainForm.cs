@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define WithVisual
+
+using System;
 using System.Drawing;
 using System.Net;
 using System.Windows.Forms;
@@ -23,7 +25,7 @@ namespace RobotWorkstation
         private QRCode m_QRCode = null; //二维码
         public static ArmControler m_ArmControler = ArmControler.GetInstance();
         private static MyTcpClient m_MyTcpClientArm = null;
-        private static MyTcpClient m_MyTcpClientCamera = null;
+        private static MyTcpClient m_MyTcpClientVisual = null;
         private MyTcpServer m_MyTcpServer = null;
         private SysAlarm m_SysAlarm = SysAlarm.GetInstance();
 
@@ -61,9 +63,9 @@ namespace RobotWorkstation
             MultiLanguage.LoadLanguage(this, typeof(MainForm));
         }
 
-        public static MyTcpClient GetMyTcpClientCamera()
+        public static MyTcpClient GetMyTcpClientVisual()
         {
-            return m_MyTcpClientCamera;
+            return m_MyTcpClientVisual;
         }
 
         public void InitWindowSize()
@@ -241,9 +243,12 @@ namespace RobotWorkstation
             if (m_Robot != null)
                 m_Robot.Close();
 
+#if WithVisual
+
             if (m_VisualProcess != null)
                 m_VisualProcess.Dispose();
 
+#endif
             Profile.SaveConfigFile();
             this.Close();
 
@@ -264,6 +269,7 @@ namespace RobotWorkstation
         //启动视觉服务程序
         public void InitAndRunVisualService()
         {
+#if WithVisual
             const string VisualService = "VisualService.exe";
             string VisualServicePath = AppDomain.CurrentDomain.BaseDirectory + "VisualService\\" + VisualService;
 
@@ -278,18 +284,20 @@ namespace RobotWorkstation
             {
                 Global.MessageBoxShow(Global.StrStartVisualServiceError);
             }
+#endif
+
         }
 
         public void InitTcp()
         {
             //和Camera通信
-            m_MyTcpClientCamera = new MyTcpClient();
-            if (m_MyTcpClientCamera != null)
+            m_MyTcpClientVisual = new MyTcpClient();
+            if (m_MyTcpClientVisual != null)
             {
                 IPAddress CameraIp = IPAddress.Parse(Profile.m_Config.CameraIp);
                 int CameraPort = Profile.m_Config.CameraPort;
-                m_MyTcpClientCamera.CreateConnect(CameraIp, CameraPort);
-                if (!m_MyTcpClientCamera.IsConnected)
+                m_MyTcpClientVisual.CreateConnect(CameraIp, CameraPort);
+                if (!m_MyTcpClientVisual.IsConnected)
                 {
                     DataStruct.SysStat.CameraOk = false;
                     m_SysAlarm.SetAlarm(SysAlarm.Type.Camera, true);
@@ -313,6 +321,9 @@ namespace RobotWorkstation
             {
                 DataStruct.SysStat.ArmControlerOk = true;
                 m_SysAlarm.SetAlarm(SysAlarm.Type.ARM, false);
+
+                //设置电机默认参数
+                InitArmControlerAxisPamera();
             }
 
             //创建Tcp Server
@@ -402,6 +413,38 @@ namespace RobotWorkstation
         public void InitAndCreateAllThread()
         {
             VisualSortingStation.CreateAllThread();
+        }
+
+        public void InitArmControlerAxisPamera()
+        {
+            ArmControler.m_ConveyorAxisMaxStep = Profile.m_Config.ConveyorAxisMaxStep;
+            ArmControler.m_OverturnAxisMaxStep = Profile.m_Config.OverturnAxisMaxStep;
+
+            int StartSpeed = Profile.m_Config.AxisStartSpeed;
+            int AddSpeed = Profile.m_Config.AxisAddSpeed;
+            int DecSpeed = Profile.m_Config.AxisDecSpeed;
+
+            for (int i = 0; i < (int)Axis.Max; i++)
+            {
+                Axis axis = (Axis)i;
+                switch (axis)
+                {
+                    case Axis.Conveyor:
+                        {
+                            int RunSpeed = Profile.m_Config.ConveyorAxisRunSpeed;
+                            m_ArmControler.SetSpeedParam(Axis.Conveyor, StartSpeed, RunSpeed, AddSpeed, DecSpeed, true);
+                        }
+                        break;
+                    case Axis.OverTurn:
+                        {
+                            int RunSpeed = Profile.m_Config.OverturnAxisRunSpeed;
+                            m_ArmControler.SetSpeedParam(Axis.OverTurn, StartSpeed, RunSpeed, AddSpeed, DecSpeed, true);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

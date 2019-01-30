@@ -21,11 +21,11 @@ namespace RobotWorkstation
             public static bool ServerOk;                                        
 
             //系统的运行状态
-            public static bool Ready;          
-            public static bool Run;   
-            public static bool Pause;
-            public static bool Stop;
-            public static bool Reset;
+            public static bool StationReady;          
+            public static bool StationRun;   
+            public static bool StationPause;
+            public static bool StationStop;
+            public static bool StationReset;
 
             //外部按键输入
             public static bool KeyRun;
@@ -79,11 +79,11 @@ namespace RobotWorkstation
             SysStat.ArmControlerOk = false;
             SysStat.ServerOk = false;
 
-            SysStat.Ready = false;
-            SysStat.Run = false;
-            SysStat.Pause = false;
-            SysStat.Stop = false;
-            SysStat.Reset = false;
+            SysStat.StationReady = false;
+            SysStat.StationRun = false;
+            SysStat.StationPause = false;
+            SysStat.StationStop = false;
+            SysStat.StationReset = false;
 
             SysStat.KeyRun = false;
             SysStat.KeyPause = false;
